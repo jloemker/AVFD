@@ -35,15 +35,17 @@ void runSingleCentrality()
 	fQC->SetEtaGapNeg(0);
 	fQC->SetEtaGapPos(0);
 	
-	Int_t centID = 0; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70%
+	//Here I can specify which centrality bin I want to analyse	
+	Int_t centID = 1; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70%
 
 	Int_t nTotalEvent = 0;
 	for (Int_t k = 0; k < nSplit; k++) {
 		string directory;
+		//string directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.02TeV/Centrality5-10/Baseline/job-%d/particle_distribution_final/%d.dat",ithJob,ithFile);
 		if (centID == 0 || centID == 1) {
-			directory = Form("/dcache/alice/shiqiu/2020_AVFD_5.44TeV/Baseline/tree_Baseline_5.44TeV_Cent%d_%d_%d.root", (centID)*5, (centID+1)*5, k);
+			directory = Form("/user/jlomker/project/AVFD/5.02TeV/baseline/tree_Baseline_5.02TeV_Cent%d_%d_%d.root", (centID)*5, (centID+1)*5, k);
 		} else {
-			directory = Form("/dcache/alice/shiqiu/2020_AVFD_5.44TeV/Baseline/tree_Baseline_5.44TeV_Cent%d_%d_%d.root", (centID-1)*10, (centID)*10, k);
+			directory = Form("/user/jlomker/project/AVFD/5.02TeV/baseline/tree_Baseline_5.02TeV_Cent%d_%d_%d.root", (centID-1)*10, (centID)*10, k);
 		}
 		TFile *f = TFile::Open(directory.c_str(), "READ");
 		
@@ -96,9 +98,9 @@ void runSingleCentrality()
 	// Save list holding histogram with weights:
 	TFile *ResultsFile;
 	if (centID == 0 || centID == 1) {
-		ResultsFile = new TFile(Form("AnalysisResults_Baseline_5.44TeV_Cent%d_%d.root", (centID)*5, (centID+1)*5), "RECREATE");
+		ResultsFile = new TFile(Form("result/AnalysisResults_Baseline_5.02TeV_Cent%d_%d.root", (centID)*5, (centID+1)*5), "RECREATE");
 	} else {
-		ResultsFile = new TFile(Form("AnalysisResults_Baseline_5.44TeV_Cent%d_%d.root", (centID-1)*10, (centID)*10), "RECREATE");
+		ResultsFile = new TFile(Form("result/AnalysisResults_Baseline_5.02TeV_Cent%d_%d.root", (centID-1)*10, (centID)*10), "RECREATE");
 	}  
 
 	ResultsFile->WriteObject(fQC->GetQAList(),"QAList","SingleKey");

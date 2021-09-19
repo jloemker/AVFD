@@ -4,15 +4,16 @@
 #include <map>
 #include "TFile.h"
 #include "TTree.h"
-
-const int nPid = 29;
+#include "Event.h"
+#include "Particle.h"
+const int nPid = 10;//changed from 29
 //https://github.com/chunshen1987/iEBE/blob/54435e159f8cc0d05a0b32b78902e2569fcf4016/EBE-Node/EbeCollector/EbeCollector.py
-const int UrQMDpid[nPid] = {2101, -1899, 101 , 1106, -894, -1106, 894, 1001, -999, -1001, 999, 2040, -1960, 40, -2040, 1960, -40, 1049, -951, -1049, 951, 27, -27, 55, -55, 109, 102, 107, 100};
+const int UrQMDpid[nPid] = {2101, -1899, 101 , 1106, -894, -1106, 894, 1001, -999, -1001};//, 999, 2040, -1960, 40, -2040, 1960, -40, 1049, -951, -1049, 951, 27, -27, 55, -55, 109, 102, 107, 100};
                   
-const int PDGpid[nPid] = {211, -211, 111, 321, 311, -321, -311, 2212, 2112, -2212, -2112, 3222, 3112, 3212, -3222, -3112, -3212, 3322, 3312, -3322, -3312, 3122, -3122, 3334, -3334, 333, 221, 331, 22};
+const int PDGpid[nPid] = {211, -211, 111, 321, 311, -321, -311, 2212, 2112, -2212};//, -2112, 3222, 3112, 3212, -3222, -3112, -3212, 3322, 3312, -3322, -3312, 3122, -3122, 3334, -3334, 333, 221, 331, 22};
                     
-
-class Particle {
+/*
+class Particle { public:
  public:
   Particle(int pid, int charge, float energy, float rapidity, float pt,
            float phi)
@@ -51,11 +52,11 @@ class Event {
   Particle getParticle(int ith) { return particles_.at(ith); };
   int getnTrack() { return nTrack_; };
 };
-
+*/
 void convert_tree_splitFiles() {
-  int nJob = 2000;
-  int nFile = 201;
-  int nFinalFiles = 10;
+  int nJob = 100;//was 2000
+  int nFile = 5;//was 201
+  int nFinalFiles = 5;
   // map to convert UrQMD pid to PDG pid
   std::map<int, int> pid_conversion_map;
   for (int ithPid = 0; ithPid < nPid; ithPid++) {  
@@ -73,9 +74,10 @@ void convert_tree_splitFiles() {
   int nNegKaon{0};
   int nPosProton{0};
   int nNegProton{0};
-  
+ 
+ 
   for (int nthOutput = 0; nthOutput < nFinalFiles; nthOutput++) {
-	  TFile file(Form("tree_Baseline_5.02TeV_Cent5_10_%d.root", nthOutput), "RECREATE");
+	  TFile file(Form("5.02TeV/baseline/tree_Baseline_5.02TeV_Cent5_10_%d.root", nthOutput), "RECREATE");
 	  TTree tree("events", "event");
 	  Event ev;
 	  tree.Branch("event", &ev);
@@ -83,7 +85,7 @@ void convert_tree_splitFiles() {
 		for (int ithFile = 1; ithFile <= nFile; ithFile++) {
 		  std::ifstream file_dat;
 		  
-		  string directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.02TeV/Centrality5-10/Baseline/job-%d/Result/event-1/particle_distribution_final/%d.dat",ithJob,ithFile);
+		  string directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.02TeV/Centrality5-10/Baseline/job-%d/particle_distribution_final/%d.dat",ithJob,ithFile);
 		  file_dat.open(directory.c_str());
 		  
 		  if (!file_dat.is_open()) {
