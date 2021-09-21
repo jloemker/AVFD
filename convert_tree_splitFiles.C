@@ -10,8 +10,7 @@ const int nPid = 10;//changed from 29
 //https://github.com/chunshen1987/iEBE/blob/54435e159f8cc0d05a0b32b78902e2569fcf4016/EBE-Node/EbeCollector/EbeCollector.py
 const int UrQMDpid[nPid] = {2101, -1899, 101 , 1106, -894, -1106, 894, 1001, -999, -1001};//, 999, 2040, -1960, 40, -2040, 1960, -40, 1049, -951, -1049, 951, 27, -27, 55, -55, 109, 102, 107, 100};
                   
-const int PDGpid[nPid] = {211, -211, 111, 321, 311, -321, -311, 2212, 2112, -2212};//, -2112, 3222, 3112, 3212, -3222, -3112, -3212, 3322, 3312, -3322, -3312, 3122, -3122, 3334, -3334, 333, 221, 331, 22};
-                    
+const int PDGpid[nPid] = {211, -211, 111, 321, 311, -321, -311, 2212, 2112, -2212};//, -2112, 3222, 3112, 3212, -3222, -3112, -3212, 3322, 3312, -3322, -3312, 3122, -3122, 3334, -3334, 333, 221, 331, 22};                    
 /*
 class Particle { public:
  public:
@@ -53,10 +52,15 @@ class Event {
   int getnTrack() { return nTrack_; };
 };
 */
-void convert_tree_splitFiles() {
-  int nJob = 100;//was 2000
-  int nFile = 5;//was 201
-  int nFinalFiles = 5;
+void convert_tree_splitFiles() 
+{
+for(Int_t centID = 0; centID < 7; centID++){
+  std::cout <<"Centrality ID: " << centID <<std::endl;
+ //Int_t centID = {0,1,2,3,4,5,6,7}; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70%
+
+  int nJob = 200;//was 2000
+  int nFile = 10;//was 201
+  int nFinalFiles = 5;//was 10
   // map to convert UrQMD pid to PDG pid
   std::map<int, int> pid_conversion_map;
   for (int ithPid = 0; ithPid < nPid; ithPid++) {  
@@ -74,18 +78,30 @@ void convert_tree_splitFiles() {
   int nNegKaon{0};
   int nPosProton{0};
   int nNegProton{0};
- 
- 
+  int val1;
+  int val2;
+  string directory;
+
+
   for (int nthOutput = 0; nthOutput < nFinalFiles; nthOutput++) {
-	  TFile file(Form("5.02TeV/baseline/tree_Baseline_5.02TeV_Cent5_10_%d.root", nthOutput), "RECREATE");
+     	  val1 = (centID-1)*10;
+	  val2 = (centID)*10;
+	  if (centID == 0 || centID == 1) {
+          val1 = (centID)*5;
+	  val2 = (centID+1)*5;
+          } 
+	  TFile file(Form("5.44TeV/a-0.1/tree_Baseline_5.44TeV_Cent%d_%d_%d.root",val1, val2, nthOutput),"RECREATE");
 	  TTree tree("events", "event");
 	  Event ev;
 	  tree.Branch("event", &ev);
 	  for (int ithJob = jobNum; ithJob <= jobNum+(nJob/nFinalFiles)+(nJob%nFinalFiles); ithJob++) {
 		for (int ithFile = 1; ithFile <= nFile; ithFile++) {
 		  std::ifstream file_dat;
-		  
-		  string directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.02TeV/Centrality5-10/Baseline/job-%d/particle_distribution_final/%d.dat",ithJob,ithFile);
+		  if (centID == 0 || centID == 1) {
+			directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality%d-%d/a-0.1/job-%d/particle_distribution_final/%d.dat",val1, val2,ithJob,ithFile);
+                	} else {
+                        directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality%d-%d/a-0.1/job-%d/particle_distribution_final/%d.dat",val1, val2,ithJob,ithFile);
+                	}
 		  file_dat.open(directory.c_str());
 		  
 		  if (!file_dat.is_open()) {
@@ -143,11 +159,10 @@ void convert_tree_splitFiles() {
 		  ev = Event(nTrack, p);
 
 		  tree.Fill();
-
 		  file_dat.close();
 		}
+		
 	  }
-	  
 	  jobNum = jobNum+(nJob/nFinalFiles)+(nJob%nFinalFiles)+1;
 	  tree.Write();
   }
@@ -160,4 +175,5 @@ void convert_tree_splitFiles() {
   cout<<"===> nNegKaon ======= "<<nNegKaon<<endl;
   cout<<"===> nPosProton ======= "<<nPosProton<<endl;
   cout<<"===> nNegProton ======= "<<nNegProton<<endl;
+}
 }
