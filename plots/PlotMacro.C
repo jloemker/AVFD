@@ -12,30 +12,42 @@ TFile* File = new TFile("/user/jlomker/project/AVFD/result/AnalysisResult_a-0.1_
 
 //v2 = File.Get('FlowFromBWList/V2IntPro');//or V2IntProQC
 //gpp= File.Get('CMEList/')
-//                 
+
 //Getting the list(s) of files
-TList *QA = (TList*) File->Get("QAList;1");
+TList *QA = (TList*) File->Get("QAList;1");//Kinematics from POI`s
+TList *FlowQC = (TList*) File->Get("FlowQCList;1");//Matrices for calculations ?
+TList *FlowGF = (TList*) File->Get("FLowGFList;1");//Matrices for calculations ?
+TList *FlowFromBW = (TList*) File->Get("FlowFromBWList;1");//Flow harmonics v2 -> v4
+TList *CME = (TList*) File->Get("CMEList;1");//(SS/OS/Delta) delta, gamma 
+TList *CMW = (TList*) File->Get("CMWList;1");//Different methods for flow harmonics, eta, etc..
+TList *CMWQA = (TList*) File->Get("CMWQAList;1");//2 more (empty) directories
+
+//Transverse momentum example
 //Extracting the histogram(s) from the list             
 TH1F *pT = (TH1F*) QA->FindObject("fPtChargedParticlesDistribution");
 //Define the Canvas for the plot
 TCanvas *c1 = new TCanvas("c1","pT",400,400);
-//
 // Some things to make things more professional 
-//pT -> GetYaxis()->SetTitle("#eta AK8_{2}");
-//pT ->GetXaxis()->SetTitle("#eta AK8_{1}");
-//pT -> SetTitle("#eta AK8_{1} vs #eta AK8_{2}");
+pT ->GetYaxis()->SetTitle("Transverse momentum p_{T}");
+pT ->GetXaxis()->SetTitle("GeV");
+pT ->SetTitle("Charged particles");
 pT->Draw();
 c1->SaveAs("pT.pdf");
-/*
-TCanvas *c2 = new TCanvas("c2","Delta delta",400,400);
-TH1F *delDelta = (TH1F*) File->Get("CMEList;1/DeltaD11");
-delDelta->Draw();
-c2->SaveAs("delDelta.pdf");
 
+//Delta delta
+TCanvas *c2 = new TCanvas("c2","Delta delta",400,400);
+TH1F *delDelta = (TH1F*) CME->FindObject("DeltaD11");
+//delDelta ->GetYaxis()->SetTitle("#Delta #delta"); not reallz sure if it is what i think
+delDelta ->GetXaxis()->SetTitle("Centrality");
+delDelta->Draw();
+c2->SaveAs("delD11.pdf");
+
+//Delta gamma
 TCanvas *c3 = new TCanvas("c3","Delta gamma", 400, 400);
-TH1F *delGamma = (TH1F*) File->Get("CMEList;1/DeltaG112");
+TH1F *delGamma = (TH1F*) CME->FindObject("DeltaG112");
+//delgamma ->GetYaxis()->SetTitle("#Delta #Gamma"); not reallz sure if it is what i think
+delGamma ->GetXaxis()->SetTitle("Centrality");
 delGamma ->Draw();
-c3->SaveAs("delGamma.pdf");
-*/
+c3->SaveAs("delG112.pdf");
 }
 
