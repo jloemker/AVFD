@@ -6,11 +6,11 @@
 #include "TTree.h"
 #include "Event.h"
 #include "Particle.h"
-const int nPid = 10;//changed from 29
+const int nPid = 29;//changed from 29
 //https://github.com/chunshen1987/iEBE/blob/54435e159f8cc0d05a0b32b78902e2569fcf4016/EBE-Node/EbeCollector/EbeCollector.py
-const int UrQMDpid[nPid] = {2101, -1899, 101 , 1106, -894, -1106, 894, 1001, -999, -1001};//, 999, 2040, -1960, 40, -2040, 1960, -40, 1049, -951, -1049, 951, 27, -27, 55, -55, 109, 102, 107, 100};
+const int UrQMDpid[nPid] = {2101, -1899, 101 , 1106, -894, -1106, 894, 1001, -999, -1001, 999, 2040, -1960, 40, -2040, 1960, -40, 1049, -951, -1049, 951, 27, -27, 55, -55, 109, 102, 107, 100};
                   
-const int PDGpid[nPid] = {211, -211, 111, 321, 311, -321, -311, 2212, 2112, -2212};//, -2112, 3222, 3112, 3212, -3222, -3112, -3212, 3322, 3312, -3322, -3312, 3122, -3122, 3334, -3334, 333, 221, 331, 22};                    
+const int PDGpid[nPid] = {211, -211, 111, 321, 311, -321, -311, 2212, 2112, -2212, -2112, 3222, 3112, 3212, -3222, -3112, -3212, 3322, 3312, -3322, -3312, 3122, -3122, 3334, -3334, 333, 221, 331, 22};                    
 /*
 class Particle { public:
  public:
@@ -54,13 +54,14 @@ class Event {
 */
 void convert_tree_splitFiles() 
 {
+//Int_t centID = 7;
 for(Int_t centID = 0; centID < 7; centID++){
   std::cout <<"Centrality ID: " << centID <<std::endl;
  //Int_t centID = {0,1,2,3,4,5,6,7}; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70%
 
-  int nJob = 200;//was 2000
-  int nFile = 10;//was 201
-  int nFinalFiles = 5;//was 10
+  int nJob = 2000;//was 2000
+  int nFile = 201;//was 201
+  int nFinalFiles = 10;//was 10
   // map to convert UrQMD pid to PDG pid
   std::map<int, int> pid_conversion_map;
   for (int ithPid = 0; ithPid < nPid; ithPid++) {  

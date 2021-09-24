@@ -20,7 +20,7 @@ for(Int_t centID = 0; centID < 8; centID++){
 	        //Int_t centID = {0,1,2,3,4,5,6,7}; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70
 
 	//should be according to the number of files per centrality
-	const Int_t nSplit = 5;
+	const Int_t nSplit = 10;
 	//TFile *f[nCentBin][nSplit];
 
 	CalculateFlowCME *fQC = new CalculateFlowCME("CalculateFlowCME");
