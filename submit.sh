@@ -1,31 +1,17 @@
-#!/bin/bash
+##!/bin/bash
 SCRIPT="runAnalysis.sh"
-#runNumber=1
-#while [ $Cent_ID -le 8 ]; do
-echo "Opening the script"
+centID=0
+while [ $centID -le 7 ]; do
+echo "Opening the script for centrality ID: $centID"
 
 #make the script to submit
     (echo "#!/bin/bash"
 echo "source /cvmfs/alice.cern.ch/etc/login.sh"
 
-#echo "source /cmvfs/alice.cern.ch/bin/alienv"
-
-#echo "eval $(alienv printenv VO_ALICE@AliPhysics::vAN-20210910-1)"
 echo "eval $(alienv printenv AliPhysics/vAN-20210915_ROOT6-1)"
 echo "which aliroot || exit 1"
-#echo "mkdir -p /user/jlomker/project/AVFD/output"
-#echo "cd /user/jlomker/project/AVFD/output"
-#echo "mkdir -p ${TMPDIR}"
-echo "cd ${TMPDIR}"
+echo "cd /user/jlomker/project/AVFD"
 echo "pwd"
-#echo "if [ -f AnalysisResults_$Cent_ID ]"
-#echo "  then "
-#echo "rm -rf AnalysisResults_$Cent_ID"
-#echo "fi"
-#echo "if [! -f runSingleCentrality.C]"
-#echo "then "
-#echo "ln -s /user/jlomker/project/AVFD/runSingleCentrality.C ."
-#echo "fi"
 echo "if [ ! -f convert_tree_splitFiles.C ]"
 echo " then "
 echo "ln -s /user/jlomker/project/AVFD/convert_tree_splitFiles.C ." 
@@ -46,14 +32,14 @@ echo "if [ ! -f runSingleCentrality.C ]"
 echo " then "
 echo "ln -s /user/jlomker/project/AVFD/runSingleCentrality.C ."
 echo "fi"
-echo "exec aliroot -b -q convert_tree_splitFiles.C"
-echo "exec aliroot -b -q CalulateFlowCME.cxx"
-echo "exec aliroot -b -q runSingleCentrality.C"
+echo "exec aliroot .x convert_tree_splitFiles.C '($centID)'"
+echo "exec aliroot .x CalulateFlowCME.cxx++"
+echo "exec aliroot .x runSingleCentrality.C++ '($centID)'"
     ) > $SCRIPT
-echo "success !"
 
 qsub -q generic $SCRIPT 
 
-#let runNumber++
+let centID++
 
-#done
+done
+echo "success !"

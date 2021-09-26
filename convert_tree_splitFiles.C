@@ -52,10 +52,11 @@ class Event {
   int getnTrack() { return nTrack_; };
 };
 */
-void convert_tree_splitFiles() 
+void convert_tree_splitFiles(Int_t centID=0) 
 {
+//Int_t centID;
 //Int_t centID = 7;
-for(Int_t centID = 0; centID < 7; centID++){
+//for(Int_t centID = 0; centID < 7; centID++){
   std::cout <<"Centrality ID: " << centID <<std::endl;
  //Int_t centID = {0,1,2,3,4,5,6,7}; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70%
 
@@ -176,5 +177,5 @@ for(Int_t centID = 0; centID < 7; centID++){
   cout<<"===> nNegKaon ======= "<<nNegKaon<<endl;
   cout<<"===> nPosProton ======= "<<nPosProton<<endl;
   cout<<"===> nNegProton ======= "<<nNegProton<<endl;
-}
+//}
 }
