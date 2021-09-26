@@ -32,9 +32,9 @@ echo "if [ ! -f runSingleCentrality.C ]"
 echo " then "
 echo "ln -s /user/jlomker/project/AVFD/runSingleCentrality.C ."
 echo "fi"
-echo "exec aliroot .x convert_tree_splitFiles.C '($centID)'"
-echo "exec aliroot .x CalulateFlowCME.cxx++"
-echo "exec aliroot .x runSingleCentrality.C++ '($centID)'"
+echo "exec aliroot -b -q convert_tree_splitFiles.C'($centID)' "
+echo "exec aliroot -b -q CalulateFlowCME.cxx "
+echo "exec aliroot -b -q runSingleCentrality.C'($centID)'"
     ) > $SCRIPT
 
 qsub -q generic $SCRIPT 

@@ -13,7 +13,9 @@
 #include "CalculateFlowCME.h"
 using namespace std;
 
-void runSingleCentrality(Int_t centID=0){
+//Int_t centID;
+
+void runSingleCentrality(Int_t centID){
 //Int_t centID;
 //for(Int_t centID = 0; centID < 8; centID++){
 	//Loop over all centrality bins

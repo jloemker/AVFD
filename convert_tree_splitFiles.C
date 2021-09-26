@@ -52,7 +52,8 @@ class Event {
   int getnTrack() { return nTrack_; };
 };
 */
-void convert_tree_splitFiles(Int_t centID=0) 
+//Int_t centID;
+void convert_tree_splitFiles(Int_t centID) 
 {
 //Int_t centID;
 //Int_t centID = 7;
