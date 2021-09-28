@@ -8,7 +8,15 @@ aliroot convert_tree_splitFiles.C
 Event.h Particle.h CalculateFlowCME.cxx CalculateFlowCME.h runSingleCentrality.C
 ```
 Event.h and Particle.h are two basic classes which store the information of particle tracks and should not be changed.
+Inside runSingleCentrality.C, you have to specify the centrality bin that you want to analyze. 
+```
+Int_t centID = 0; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70%
+```
 To run the analysis, one has to first compile ```CalculateFlowCME.cxx``` followed by compiling ```runSingleCentrality.C``` under aliroot environment. 
+Then, one has to put the right directory which stores the root data in this variable:
+```
+directory = Form("/dcache/alice/shiqiu/2020_AVFD_2.76TeV/Baseline/tree_Baseline_Cent%d_%d_%d.root", (centID)*5, (centID+1)*5, k);
+```
 First, one gets into aliroot environment by typing:
 ```
 aliroot
@@ -18,11 +26,7 @@ Then, one types:
 .x CalculateFlowCME.cxx++
 .x runSingleCentrality.C++
 ```
-Inside runSingleCentrality.C, you have to specify the centrality bin that you want to analyze. 
+3. Alternatively one can specify the centrality bin(s) within the the ```submit.sh``` and instead of the previous compiling steps the whole analysis can be run by typing:
 ```
-Int_t centID = 0; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70%
-```
-Then, one has to put the right directory which stores the root data in this variable:
-```
-directory = Form("/dcache/alice/shiqiu/2020_AVFD_2.76TeV/Baseline/tree_Baseline_Cent%d_%d_%d.root", (centID)*5, (centID+1)*5, k);
+source submit.sh
 ```
