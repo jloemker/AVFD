@@ -63,7 +63,7 @@ void convert_tree_splitFiles(Int_t centID)
 
   int nJob = 2000;//was 2000
   int nFile = 201;//was 201
-  int nFinalFiles = 10;//was 10
+  int nFinalFiles =10;//was 10
   // map to convert UrQMD pid to PDG pid
   std::map<int, int> pid_conversion_map;
   for (int ithPid = 0; ithPid < nPid; ithPid++) {  
@@ -93,7 +93,7 @@ void convert_tree_splitFiles(Int_t centID)
           val1 = (centID)*5;
 	  val2 = (centID+1)*5;
           } 
-	  TFile file(Form("tree_Baseline_5.44TeV_Cent%d_%d_%d.root",val1, val2, nthOutput),"RECREATE");
+	  TFile file(Form("tree_a-0.1_5.44TeV_Cent%d_%d_%d.root",val1, val2, nthOutput),"RECREATE");
 	  TTree tree("events", "event");
 	  Event ev;
 	  tree.Branch("event", &ev);

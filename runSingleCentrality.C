@@ -45,9 +45,9 @@ void runSingleCentrality(Int_t centID){
 		string directory;
 		//string directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality0-5/Baseline/job-%d/particle_distribution_final/%d.dat",ithJob,ithFile);
 		if (centID == 0 || centID == 1) {
-			directory = Form("tree_Baseline_5.44TeV_Cent%d_%d_%d.root", (centID)*5, (centID+1)*5, k);
+			directory = Form("/data/alice/jlomker/AVFD/Centrality-centID/tree_a-0.1_5.44TeV_Cent%d_%d_%d.root", (centID)*5, (centID+1)*5, k);
 		} else {
-			directory = Form("tree_Baseline_5.44TeV_Cent%d_%d_%d.root", (centID-1)*10, (centID)*10, k);
+			directory = Form("/data/alice/jlomker/AVFD/Centrality-centID/tree_a-0.1_5.44TeV_Cent%d_%d_%d.root", (centID-1)*10, (centID)*10, k);
 		}
 		TFile *f = TFile::Open(directory.c_str(), "READ");
 		
@@ -100,9 +100,9 @@ void runSingleCentrality(Int_t centID){
 	// Save list holding histogram with weights:
 	TFile *ResultsFile;
 	if (centID == 0 || centID == 1) {
-		ResultsFile = new TFile(Form("AnalysisResults_a-0.1_5.44TeV_Cent%d_%d.root", (centID)*5, (centID+1)*5), "RECREATE");
+		ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/AnalysisResults_a-0.1_5.44TeV_Cent%d_%d.root", (centID)*5, (centID+1)*5), "RECREATE");
 	} else {
-		ResultsFile = new TFile(Form("AnalysisResults_a-0.1_5.44TeV_Cent%d_%d.root", (centID-1)*10, (centID)*10), "RECREATE");
+		ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/AnalysisResults_a-0.1_5.44TeV_Cent%d_%d.root", (centID-1)*10, (centID)*10), "RECREATE");
 	}  
 
 	ResultsFile->WriteObject(fQC->GetQAList(),"QAList","SingleKey");
