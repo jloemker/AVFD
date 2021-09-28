@@ -8,7 +8,7 @@
 void PlotMacro(){
 //gStyle -> SetOptStat(0);
 //gROOT->SetBatch();
-TFile* File = new TFile("/user/jlomker/project/AVFD/result/AnalysisResult_a-0.1_5.44TeV.root");
+TFile* File = new TFile("/project/alice/users/jlomker/AnalysisResult_a-0.1_5.44TeV.root");
 
 //v2 = File.Get('FlowFromBWList/V2IntPro');//or V2IntProQC
 //gpp= File.Get('CMEList/')

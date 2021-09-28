@@ -93,7 +93,7 @@ void convert_tree_splitFiles(Int_t centID)
           val1 = (centID)*5;
 	  val2 = (centID+1)*5;
           } 
-	  TFile file(Form("5.44TeV/a-0.1/tree_Baseline_5.44TeV_Cent%d_%d_%d.root",val1, val2, nthOutput),"RECREATE");
+	  TFile file(Form("tree_Baseline_5.44TeV_Cent%d_%d_%d.root",val1, val2, nthOutput),"RECREATE");
 	  TTree tree("events", "event");
 	  Event ev;
 	  tree.Branch("event", &ev);
