@@ -45,9 +45,9 @@ void runSingleCentrality(Int_t centID){
 		string directory;
 		//string directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality0-5/Baseline/job-%d/particle_distribution_final/%d.dat",ithJob,ithFile);
 		if (centID == 0 || centID == 1) {
-			directory = Form("/data/alice/jlomker/AVFD/Centrality-centID/tree_a-0.1_5.44TeV_Cent%d_%d_%d.root", (centID)*5, (centID+1)*5, k);
+			directory = Form("/data/alice/jlomker/AVFD/Centrality-%d/tree_a-0.1_5.44TeV_Cent%d_%d_%d.root",centID, (centID)*5, (centID+1)*5, k);
 		} else {
-			directory = Form("/data/alice/jlomker/AVFD/Centrality-centID/tree_a-0.1_5.44TeV_Cent%d_%d_%d.root", (centID-1)*10, (centID)*10, k);
+			directory = Form("/data/alice/jlomker/AVFD/Centrality-%d/tree_a-0.1_5.44TeV_Cent%d_%d_%d.root",centID, (centID-1)*10, (centID)*10, k);
 		}
 		TFile *f = TFile::Open(directory.c_str(), "READ");
 		
