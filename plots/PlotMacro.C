@@ -5,13 +5,12 @@
 #include "TStyle.h"
 #include <math.h>
 
+//easy for ratio plot: https://root.cern/doc/v610/ratioplotOld_8C_source.html
+
 void PlotMacro(){
-//gStyle -> SetOptStat(0);
+gStyle -> SetOptStat(0);
 //gROOT->SetBatch();
 TFile* File = new TFile("/project/alice/users/jlomker/AnalysisResult_a-0.1_5.44TeV.root");
-
-//v2 = File.Get('FlowFromBWList/V2IntPro');//or V2IntProQC
-//gpp= File.Get('CMEList/')
 
 //Getting the list(s) of files
 TList *QA = (TList*) File->Get("QAList;1");//Kinematics from POI`s
@@ -31,23 +30,64 @@ TCanvas *c1 = new TCanvas("c1","pT",400,400);
 pT ->GetYaxis()->SetTitle("Transverse momentum p_{T}");
 pT ->GetXaxis()->SetTitle("GeV");
 pT ->SetTitle("Charged particles");
-pT->Draw();
-c1->SaveAs("pT.pdf");
+//pT->Draw();
+//c1->SaveAs("pT.pdf");
 
-//Delta delta
-TCanvas *c2 = new TCanvas("c2","Delta delta",400,400);
+
+//double canvas:
+TCanvas *duo = new TCanvas("duo","duo",200,300);
+duo->Divide(1,2,0,0);
+
+duo->cd(1);
+duo->cd(1)->SetTopMargin(0.1);
+duo->cd(1)->SetLeftMargin(0.2);
+duo->cd(1)->SetRightMargin(0.1);
+duo->cd(1)->Draw();
+
 TH1F *delDelta = (TH1F*) CME->FindObject("DeltaD11");
-//delDelta ->GetYaxis()->SetTitle("#Delta #delta"); not reallz sure if it is what i think
-delDelta ->GetXaxis()->SetTitle("Centrality");
+delDelta->SetTitle("");
+//some beauty issues left - marker style and consistency with the legend ... 
+delDelta->SetLineColor(2);
+delDelta->SetLineStyle(1);
+delDelta->SetLineWidth(3);
+delDelta->GetYaxis()->SetRangeUser(-0.002,0.004);
+delDelta->GetYaxis()->SetNdivisions(3);
+delDelta->GetYaxis()->SetTitle("#Delta #delta_{1}");
+delDelta->GetYaxis()->SetTitleSize(0.05);
+delDelta->GetYaxis()->CenterTitle();
+delDelta->GetXaxis()->SetRangeUser(0,70);
+delDelta->GetXaxis()->SetTickLength(0);
+delDelta->GetXaxis()->SetLabelSize(0);
 delDelta->Draw();
-c2->SaveAs("delD11.pdf");
+//Adding the legend -> some beauty issues left
+auto legend = new TLegend(0.3,0.35);
+legend->SetHeader("AVFD Xe-Xe, #sqrt{s_{NN}} = 4.55TeV","C");
+legend->AddEntry("delDelta", " n_{5}/s = 0.1 - LCC = 0");
 
-//Delta gamma
-TCanvas *c3 = new TCanvas("c3","Delta gamma", 400, 400);
+duo->cd(2);
+duo->cd(2)->SetLeftMargin(0.2);
+duo->cd(2)->SetBottomMargin(0.2);
+duo->cd(2)->SetRightMargin(0.1);
+duo->cd(2)->Draw();
 TH1F *delGamma = (TH1F*) CME->FindObject("DeltaG112");
-//delgamma ->GetYaxis()->SetTitle("#Delta #Gamma"); not reallz sure if it is what i think
-delGamma ->GetXaxis()->SetTitle("Centrality");
+delGamma->SetTitle("");
+delGamma->SetLineColor(2);
+delGamma->SetLineStyle(1);
+delGamma->SetLineWidth(3);
+delGamma->GetYaxis()->SetRangeUser(0,0.0022);
+delGamma->GetYaxis()->SetNdivisions(3);
+delGamma->GetYaxis()->SetTitle("#Delta #gamma_{1,1}");
+delGamma->GetYaxis()->SetTitleSize(0.05);
+delGamma->GetYaxis()->CenterTitle();
+delGamma->GetXaxis()->SetRangeUser(0, 70);
+delGamma ->GetXaxis()->SetTitle("centrality, %");
+delGamma ->GetXaxis()->CenterTitle();
+delGamma ->GetXaxis()->SetTitleSize(0.05);
 delGamma ->Draw();
-c3->SaveAs("delG112.pdf");
+
+legend->AddEntry("delGamma", "n_{5}/s = 0.1 - LCC = 0");
+legend->SetBorderSize(0);
+legend->Draw();
+duo->SaveAs("delD_delG.pdf");
 }
 
