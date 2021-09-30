@@ -35,3 +35,8 @@ One can specify the centrality bin(s) within the the ```submit.sh``` and instead
 ```
 source submit.sh
 ```
+When the jobs are done the results are stored in the directory specified in ```runSingleCentrality.C```. The root files from all centralities can be merged in the root environment via:
+```
+hadd outputfilename.root inputfiles
+```
+The output can then be analysed with the macro(s) in ```/plots```.
