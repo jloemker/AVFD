@@ -13,11 +13,11 @@
 #include "CalculateFlowCME.h"
 using namespace std;
 
-void runSingleCentrality(){
-for(Int_t centID = 0; centID < 8; centID++){
-	//Loop over all centrality bins
+void runSingleCentrality(Int_t centID){
+//for(Int_t centID = 0; centID < 8; centID++){
+	//Loop over all centrality bins for manual run with reduced sample 
 	std::cout << "Centrality ID: " << centID <<std::endl;
-	        //Int_t centID = {0,1,2,3,4,5,6,7}; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70
+        //Int_t centID = {0,1,2,3,4,5,6,7}; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70
 
 	//should be according to the number of files per centrality
 	const Int_t nSplit = 10;
@@ -43,11 +43,12 @@ for(Int_t centID = 0; centID < 8; centID++){
 	Int_t nTotalEvent = 0;
 	for (Int_t k = 0; k < nSplit; k++) {
 		string directory;
-		//string directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality0-5/Baseline/job-%d/particle_distribution_final/%d.dat",ithJob,ithFile);
+	//here comes the input directory	
+	//string directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality0-5/Baseline/job-%d/particle_distribution_final/%d.dat",ithJob,ithFile);
 		if (centID == 0 || centID == 1) {
-			directory = Form("/data/alice/jlomker/AVFD/Centrality-%d/tree_a-0.1_5.44TeV_Cent%d_%d_%d.root",centID, (centID)*5, (centID+1)*5, k);
+			directory = Form("tree_a-0.1_5.44TeV_Cent%d_%d_%d.root", (centID)*5, (centID+1)*5, k);
 		} else {
-			directory = Form("/data/alice/jlomker/AVFD/Centrality-%d/tree_a-0.1_5.44TeV_Cent%d_%d_%d.root",centID, (centID-1)*10, (centID)*10, k);
+			directory = Form("tree_a-0.1_5.44TeV_Cent%d_%d_%d.root", (centID-1)*10, (centID)*10, k);
 		}
 		TFile *f = TFile::Open(directory.c_str(), "READ");
 		
@@ -99,6 +100,7 @@ for(Int_t centID = 0; centID < 8; centID++){
 
 	// Save list holding histogram with weights:
 	TFile *ResultsFile;
+	// Here comes the output directory
 	if (centID == 0 || centID == 1) {
 		ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/AnalysisResults_a-0.1_5.44TeV_Cent%d_%d.root", (centID)*5, (centID+1)*5), "RECREATE");
 	} else {
@@ -112,5 +114,5 @@ for(Int_t centID = 0; centID < 8; centID++){
 	ResultsFile->WriteObject(fQC->GetCMEList(),"CMEList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetCMWList(),"CMWList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetCMWQAList(),"CMWQAList","SingleKey");
-	}	
+//	}	
 }

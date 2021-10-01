@@ -6,9 +6,8 @@ echo "Opening the script for centrality ID: $centID"
 #make the script to submit
     (echo "#!/bin/bash"
 echo "source /cvmfs/alice.cern.ch/etc/login.sh"
-#echo "eval $(alienv printenv AliPhysics/vAN-20210923_ROOT6-1)"
 echo "eval $(alienv printenv VO_ALICE@AliPhysics::vAN-20210923_ROOT6-1)"
-echo "which aliroot || exit 1"
+#echo "which aliroot || exit 1"
 echo "mkdir -p /data/alice/jlomker/AVFD/Centrality-$centID"
 echo "cd /data/alice/jlomker/AVFD/Centrality-$centID"
 echo "pwd"
@@ -40,8 +39,7 @@ echo "if [ ! -f runSingleCentrality.C ]"
 echo " then "
 echo "ln -s /project/alice/users/jlomker/AVFD/runSingleCentrality.C ."
 echo "fi"
-#echo "exec aliroot -b -q convert_tree_splitFiles.C'($centID)' CalulateFlowCME.cxx++ runSingleCentrality.C++'($centID)'"
-echo "exec aliroot -b -q convert_tree_splitFiles.C'($centID)' " 
+echo "exec aliroot -b -q convert_tree_splitFiles.C'($centID)' CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID)'" 
     ) > $SCRIPT
 
 qsub -q gpu $SCRIPT 
