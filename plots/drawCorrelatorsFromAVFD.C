@@ -10,7 +10,12 @@ void drawCorrelatorsFromAVFD() {
     cout<<"The fit parameters for the Xe system are not found..."<<endl;
     return;
   }
-  
+ //my results
+  TFile* File = TFile::Open("/project/alice/users/jlomker/AnalysisResult_a-0.1_5.44TeV.root", "READ");
+  TList *CME = (TList*) File->Get("CMEList;1");
+  THF1* delGamma = (TH1F*) CME -> FindObject("DeltaG112");
+  THF1* delDelta = (TH1F*) CME -> FindObject("DeltaD11");
+ 
   TF1* fDeltaLCCPb5[7]; // [0]*x + [1]
   TF1* fDeltaCMEPb5[7]; // [0]*x*x + [1]*x + [2]
   TF1* fGammaLCCPb5[7]; // [0]*x + [1]
@@ -784,8 +789,8 @@ void drawCorrelatorsFromAVFD() {
 
   legend2->Draw();
 
-  c1->SaveAs("../graphs/deltaGammaAVFD.eps");
-  c1->SaveAs("../graphs/deltaGammaAVFD.png");
+  //c1->SaveAs("../graphs/deltaGammaAVFD.eps");
+  //c1->SaveAs("../graphs/deltaGammaAVFD.png");
  
   //____________________Delta delta_______________________//
   TCanvas *c2 = new TCanvas("c2","Centrality dependence: Delta delta",100,100,700,800);
@@ -848,8 +853,8 @@ void drawCorrelatorsFromAVFD() {
 
   legend2->Draw();
 
-  c2->SaveAs("../graphs/deltaDeltaAVFD.eps");
-  c2->SaveAs("../graphs/deltaDeltaAVFD.png");
+  //c2->SaveAs("../graphs/deltaDeltaAVFD.eps");
+  //c2->SaveAs("../graphs/deltaDeltaAVFD.png");
 
   //____________________Delta gamma_______________________//
   TCanvas *c3 = new TCanvas("c3","Centrality dependence: Delta gamma",200,200,700,800);

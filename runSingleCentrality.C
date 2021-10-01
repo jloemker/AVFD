@@ -13,8 +13,8 @@
 #include "CalculateFlowCME.h"
 using namespace std;
 
-void runSingleCentrality(Int_t centID){
-//for(Int_t centID = 0; centID < 8; centID++){
+void runSingleCentrality(){
+for(Int_t centID = 0; centID < 8; centID++){
 	//Loop over all centrality bins
 	std::cout << "Centrality ID: " << centID <<std::endl;
 	        //Int_t centID = {0,1,2,3,4,5,6,7}; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70
@@ -112,5 +112,5 @@ void runSingleCentrality(Int_t centID){
 	ResultsFile->WriteObject(fQC->GetCMEList(),"CMEList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetCMWList(),"CMWList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetCMWQAList(),"CMWQAList","SingleKey");
-//	}	
+	}	
 }
