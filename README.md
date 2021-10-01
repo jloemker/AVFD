@@ -31,11 +31,16 @@ Then, one types:
 
 ## Full analysis
 The current directories in the ```convert_tree_splitFile.C``` and ```runSingleCentrality.C``` are set to perform the whole analysis steps (in batch mode) in the data directory.
-One can specify the centrality bin(s) within the the ```submit.sh``` and instead of the previous compiling steps the whole analysis can be run by typing:
+One can specify the centrality bin(s) within the the ```submit.sh``` and instead of the previous compiling steps the first step could be run by typing:
 ```
 source submit.sh
 ```
-When the jobs are done the results are stored in the directory specified in ```runSingleCentrality.C```. The root files from all centralities can be merged in the root environment via:
+When the jobs are done the second step follows manually in the ALIROOT environment as before with a loop over all centralties: 
+```
+.x CalculateFlowCME.cxx++
+.x runSingleCentrality.C++
+```
+The new root fies are stored in ```result``` and can be merged in the root environment via:
 ```
 hadd outputfilename.root inputfiles
 ```
