@@ -232,6 +232,29 @@ void drawCorrelatorsFromAVFD() {
  	 JDeltaD11Xe_a_010[i] = DeltaD11Xe_a_010 -> GetBinContent(i);
  	 JDeltaD11Xe_a_010Err[i] = DeltaD11Xe_a_010 -> GetBinError(i);
   }
+//here I caluclate 1) the differences J - f and the errors
+  Double_t DiffD11Xe_a_010[7];
+  Double_t DiffD11Xe_a_010Err[7];
+  Double_t DiffG112Xe_a_010[7];
+  Double_t DiffG112Xe_a_010Err[7];
+  for(int i = 0; i < 8; i++){
+	 DiffD11Xe_a_010[i] = JDeltaD11Xe_a_010[i] - fDeltaD11Xe_alpha010[i];
+         DiffD11Xe_a_010Err[i] = sqrt(pow(JDeltaG112Xe_a_010Err[i],2) + pow(fDeltaD11Xe_alpha010Err[i],2));
+         DiffG112Xe_a_010[i] = JDeltaG112Xe_a_010[i] - fDeltaG112Xe_alpha010[i];
+         DiffG112Xe_a_010Err[i] = sqrt(pow(JDeltaG112Xe_a_010Err[i],2) + pow(fDeltaG112Xe_alpha010Err[i],2));  
+  }
+//here I calculate 2) the ratios of J/f and the errors
+  Double_t RatioD11Xe_a_010[7];
+  Double_t RatioD11Xe_a_010Err[7];
+  Double_t RatioG112Xe_a_010[7];
+  Double_t RatioG112Xe_a_010Err[7];
+  for(int i = 0; i < 8; i++){
+	 RatioD11Xe_a_010[i] = JDeltaD11Xe_a_010[i]/fDeltaD11Xe_alpha010[i];
+	 RatioD11Xe_a_010Err[i] = RatioD11Xe_a_010[i]*sqrt( pow(JDeltaD11Xe_a_010Err[i]/JDeltaD11Xe_a_010[i],2)+ pow(fDeltaD11Xe_alpha010Err[i]/fDeltaD11Xe_alpha010[i],2));
+	 RatioG112Xe_a_010[i] = JDeltaG112Xe_a_010[i]/JDeltaG112Xe_a_010[i];
+	 RatioG112Xe_a_010Err[i] = RatioG112Xe_a_010[i]*sqrt( pow(JDeltaG112Xe_a_010Err[i]/JDeltaG112Xe_a_010[i],2)+ pow(fDeltaG112Xe_alpha010Err[i]/fDeltaG112Xe_alpha010[i],2));
+  }
+
   // loaded for i>=2 for Pb5
   // loaded for i>=1 for Xe
   Double_t gCentralityAVFD[7] = { 5.,15.,25.,35.,45.,55.,65.};
@@ -245,8 +268,20 @@ void drawCorrelatorsFromAVFD() {
   grDelta1AVFD0->SetLineWidth(1);
   grDelta1AVFD0->SetFillColor(kGreen+2);
   grDelta1AVFD0->SetFillStyle(1);
-  
+
+/*
+JGraphDiffDeltaD11Xe_a_010 
+JGraphDiffDeltaG112Xe_a_010
+JGraphRatioDeltaD11Xe_a_010
+JGraphRatioDeltaG112Xe_a_010
+*/
 //here I have to pass the extracted values from above to the TGraphErrors
+ // What will be on x ?? what would be the error on x ?
+  TGraphErrors* JGraphDiffDeltaD11Xe_a_010 = new TGraphErrors(7,gCentralityAVFD, DiffD11Xe_a_010, gCentralityAVFDError, DiffD11Xe_a_010Err);
+  TGraphErrors* JGraphDiffDeltaG112Xe_a_010 = new TGraphErrors(7, gCentralityAVFD, DiffG112Xe_a_010, gCentralityAVFDError, DiffG112Xe_a_010Err);
+  TGraphErrors* JGraphRatioDeltaD11Xe_a_010 = new TGraphErrors(7, gCentralityAVFD, RatioD11Xe_a_010, gCentralityAVFDError, RatioD11Xe_a_010Err); 
+  TGraphErrors* JGraphRatioDeltaG112Xe_a_010 = new TGraphErrors(7, gCentralityAVFD, RatioG112Xe_a_010, gCentralityAVFDError, RatioG112Xe_a_010Err);
+
   TGraphErrors* JGraphErrorsDeltaD11Xe_a_010 = new TGraphErrors(7, gCentralityAVFD, JDeltaD11Xe_a_010, gCentralityAVFDError, JDeltaD11Xe_a_010Err );
   TGraphErrors* JGraphErrorsDeltaG112Xe_a_010 = new TGraphErrors(7, gCentralityAVFD, JDeltaG112Xe_a_010, gCentralityAVFDError, JDeltaG112Xe_a_010Err );
 
@@ -284,6 +319,14 @@ void drawCorrelatorsFromAVFD() {
   TGraphErrors* fGraphErrorsDeltaD11Xe_alpha010 = new TGraphErrors(7, gCentralityAVFD, fDeltaD11Xe_alpha010, gCentralityAVFDError, fDeltaD11Xe_alpha010Err);
   TGraphErrors* fGraphErrorsDeltaG112Xe_alpha010 = new TGraphErrors(7, gCentralityAVFD, fDeltaG112Xe_alpha010, gCentralityAVFDError, fDeltaG112Xe_alpha010Err);
   ///////////////////////////////////////////////////
+  ///*
+  //JGraphDiffDeltaD11Xe_a_010 
+  //JGraphDiffDeltaG112Xe_a_010
+  //JGraphRatioDeltaD11Xe_a_010
+  //JGraphRatioDeltaG112Xe_a_010
+  //*/
+  //Set styles for the 4 plots + setup canvas for the 2/4
+  //
   fGraphErrorsDeltaD11Pb5_Baseline->SetMarkerStyle(20);
   fGraphErrorsDeltaD11Pb5_Baseline->SetMarkerColor(kBlue+2);
   fGraphErrorsDeltaD11Pb5_Baseline->SetLineColor(kBlue+2);
@@ -1023,4 +1066,11 @@ void drawCorrelatorsFromAVFD() {
 
   //c4->SaveAs("/graphs/deltaDeltaAVFDVsNch.eps");
   //c4->SaveAs("/graphs/deltaDeltaAVFDVsNch.png");
+
+  //=============Diff of J and f data==========//
+  //For D11
+  //For G112
+  //=============Ratio of J and f data=========//
+  //For D11
+  //For G112
 }
