@@ -10,12 +10,12 @@ void drawCorrelatorsFromAVFD() {
     cout<<"The fit parameters for the Xe system are not found..."<<endl;
     return;
   }
- //my results
+ //getting my histograms
   TFile* File = TFile::Open("/project/alice/users/jlomker/AnalysisResult_a-0.1_5.44TeV.root", "READ");
   TList *CME = (TList*) File->Get("CMEList;1");
-  THF1* delGamma = (TH1F*) CME -> FindObject("DeltaG112");
-  THF1* delDelta = (TH1F*) CME -> FindObject("DeltaD11");
- 
+  TH1F* DeltaG112Xe_a_010 = (TH1F*) CME -> FindObject("DeltaG112");
+  TH1F* DeltaD11Xe_a_010 = (TH1F*) CME -> FindObject("DeltaD11");
+ //declaring arrays for parameter fit
   TF1* fDeltaLCCPb5[7]; // [0]*x + [1]
   TF1* fDeltaCMEPb5[7]; // [0]*x*x + [1]*x + [2]
   TF1* fGammaLCCPb5[7]; // [0]*x + [1]
@@ -220,7 +220,18 @@ void drawCorrelatorsFromAVFD() {
   // =====> DeltaG112_alpha_010_502TeV
   Double_t fDeltaG112Pb5_alpha010[7] = {0, 0, 0.000170681, 0.00034874, 0.000573241, 0.00113717, 0.00213};
   Double_t fDeltaG112Pb5_alpha010Err[7] = {0, 0, 6.82479e-06, 1.01803e-05, 1.5729e-05, 2.68995e-05, 5.17827e-05};
-  
+ 
+//here I try to get bin contents and errors as doubles to pass them to my TGraphErrors in the next step 
+  Double_t JDeltaG112Xe_a_010[7];
+  Double_t JDeltaG112Xe_a_010Err[7];
+  Double_t JDeltaD11Xe_a_010[7];
+  Double_t JDeltaD11Xe_a_010Err[7];
+  for(int i = 0; i < 8; i++){
+	 JDeltaG112Xe_a_010[i] = DeltaG112Xe_a_010 -> GetBinContent(i);
+ 	 JDeltaG112Xe_a_010Err[i] = DeltaG112Xe_a_010 -> GetBinError(i);
+ 	 JDeltaD11Xe_a_010[i] = DeltaD11Xe_a_010 -> GetBinContent(i);
+ 	 JDeltaD11Xe_a_010Err[i] = DeltaD11Xe_a_010 -> GetBinError(i);
+  }
   // loaded for i>=2 for Pb5
   // loaded for i>=1 for Xe
   Double_t gCentralityAVFD[7] = { 5.,15.,25.,35.,45.,55.,65.};
@@ -235,6 +246,10 @@ void drawCorrelatorsFromAVFD() {
   grDelta1AVFD0->SetFillColor(kGreen+2);
   grDelta1AVFD0->SetFillStyle(1);
   
+//here I have to pass the extracted values from above to the TGraphErrors
+  TGraphErrors* JGraphErrorsDeltaD11Xe_a_010 = new TGraphErrors(7, gCentralityAVFD, JDeltaD11Xe_a_010, gCentralityAVFDError, JDeltaD11Xe_a_010Err );
+  TGraphErrors* JGraphErrorsDeltaG112Xe_a_010 = new TGraphErrors(7, gCentralityAVFD, JDeltaG112Xe_a_010, gCentralityAVFDError, JDeltaG112Xe_a_010Err );
+
   TGraphErrors* fGraphErrorsDeltaD11Pb5_Baseline = new TGraphErrors(7, gCentralityAVFD, fDeltaD11Pb5_Baseline, gCentralityAVFDError, fDeltaD11Pb5_BaselineErr);
   TGraphErrors* fGraphErrorsDeltaG112Pb5_Baseline = new TGraphErrors(7, gCentralityAVFD, fDeltaG112Pb5_Baseline, gCentralityAVFDError, fDeltaG112Pb5_BaselineErr);
   
@@ -392,7 +407,20 @@ void drawCorrelatorsFromAVFD() {
   fGraphErrorsDeltaG112Pb5_alpha010->GetYaxis()->SetTitle("#Delta#gamma_{112}");
   fGraphErrorsDeltaG112Pb5_alpha010->SetFillColor(kBlue+2);
   fGraphErrorsDeltaG112Pb5_alpha010->SetFillStyle(1);
+//here I add mine:
+  JGraphErrorsDeltaG112Xe_a_010->SetLineColor(kRed+2);
+  JGraphErrorsDeltaG112Xe_a_010->SetLineWidth(1);
+  JGraphErrorsDeltaG112Xe_a_010->GetYaxis()->SetTitle("#Delta#gamma_{112}");
+  JGraphErrorsDeltaG112Xe_a_010->SetFillColor(kRed+2);  
+  JGraphErrorsDeltaG112Xe_a_010->SetFillStyle(1);
   
+  JGraphErrorsDeltaD11Xe_a_010->SetLineColor(kRed+2);   
+  JGraphErrorsDeltaD11Xe_a_010->SetLineWidth(1);
+  JGraphErrorsDeltaD11Xe_a_010->GetYaxis()->SetTitle("#Delta#delta_{11}");                    
+  JGraphErrorsDeltaD11Xe_a_010->SetFillColor(kRed+2);
+  JGraphErrorsDeltaD11Xe_a_010->SetFillStyle(100);
+
+
   fGraphErrorsDeltaD11Xe_alpha005->SetLineColor(kGreen+2);
   fGraphErrorsDeltaD11Xe_alpha005->SetLineWidth(1);
   fGraphErrorsDeltaD11Xe_alpha005->GetYaxis()->SetTitle("#Delta#delta_{11}");
@@ -695,6 +723,8 @@ void drawCorrelatorsFromAVFD() {
   legend2->AddEntry(fGraphErrorsDeltaG112Xe_alpha007,"Xe-Xe n_{5}/s=0.07-LCC=0%","F");
   legend2->AddEntry(fGraphErrorsDeltaG112Pb5_alpha010,"Pb-Pb n_{5}/s=0.10-LCC=0%","F");
   legend2->AddEntry(fGraphErrorsDeltaG112Xe_alpha010,"Xe-Xe n_{5}/s=0.10-LCC=0%","F");
+//here mine:
+  legend2->AddEntry(JGraphErrorsDeltaG112Xe_a_010, "J: Xe-Xe n_{5}/s=0.10-LCC=0%","F");
 
   TLegend *legend3 =new TLegend(0.55,0.4,0.85,0.865);
   legend3->SetBorderSize(0);
@@ -722,7 +752,9 @@ void drawCorrelatorsFromAVFD() {
   legend4->AddEntry(fGraphErrorsDeltaG112Xe_alpha007,"Xe-Xe n_{5}/s=0.07-LCC=0%","F");
   legend4->AddEntry(fGraphErrorsDeltaG112Pb5_alpha010,"Pb-Pb n_{5}/s=0.10-LCC=0%","F");
   legend4->AddEntry(fGraphErrorsDeltaG112Xe_alpha010,"Xe-Xe n_{5}/s=0.10-LCC=0%","F");
-  
+  //here not needed
+  //legend4->AddEntry(JGraphErrorsDeltaG112Xe_a_010, "J: Xe-Xe n_{5}/s=0.10-LCC=0%","F");    
+
   TF1 *f1 = new TF1("f1","0",0,1000);
   f1->SetLineColor(1); 
   f1->SetLineStyle(1); 
@@ -780,6 +812,8 @@ void drawCorrelatorsFromAVFD() {
   gEmpty->GetYaxis()->SetTitle("#Delta#gamma_{1,1}");
   gEmpty->DrawCopy();
   f1->Draw("same");
+//here mine:
+  JGraphErrorsDeltaG112Xe_a_010->Draw("P3");
   fGraphErrorsDeltaG112Pb5_alpha005->Draw("P3");
   fGraphErrorsDeltaG112Xe_alpha005->Draw("P3");
   fGraphErrorsDeltaG112Pb5_alpha007->Draw("P3");
@@ -789,8 +823,8 @@ void drawCorrelatorsFromAVFD() {
 
   legend2->Draw();
 
-  //c1->SaveAs("../graphs/deltaGammaAVFD.eps");
-  //c1->SaveAs("../graphs/deltaGammaAVFD.png");
+  c1->SaveAs("graphs/deltaGammaAVFD.eps");
+  c1->SaveAs("graphs/deltaGammaAVFD.png");
  
   //____________________Delta delta_______________________//
   TCanvas *c2 = new TCanvas("c2","Centrality dependence: Delta delta",100,100,700,800);
@@ -844,6 +878,8 @@ void drawCorrelatorsFromAVFD() {
   gEmpty->GetYaxis()->SetTitle("#Delta#delta_{1}");
   gEmpty->DrawCopy();
   f1->Draw("same");
+//here mine:
+  JGraphErrorsDeltaD11Xe_a_010->Draw("P3");
   fGraphErrorsDeltaD11Pb5_alpha005->Draw("P3");
   fGraphErrorsDeltaD11Xe_alpha005->Draw("P3");
   fGraphErrorsDeltaD11Pb5_alpha007->Draw("P3");
@@ -853,8 +889,8 @@ void drawCorrelatorsFromAVFD() {
 
   legend2->Draw();
 
-  //c2->SaveAs("../graphs/deltaDeltaAVFD.eps");
-  //c2->SaveAs("../graphs/deltaDeltaAVFD.png");
+  c2->SaveAs("graphs/deltaDeltaAVFD.eps");
+  c2->SaveAs("graphs/deltaDeltaAVFD.png");
 
   //____________________Delta gamma_______________________//
   TCanvas *c3 = new TCanvas("c3","Centrality dependence: Delta gamma",200,200,700,800);
@@ -908,7 +944,8 @@ void drawCorrelatorsFromAVFD() {
   gEmpty0->GetYaxis()->SetTitle("#Delta#gamma_{1,1}");
   gEmpty0->DrawCopy();
   f1->Draw("same");
-  
+  //here better not mine :P
+  //JGraphErrorsDeltaG112Xe_a_010->Draw("P3");
   fGraphvsMultDeltaG112Pb5_alpha005->Draw("P3");
   fGraphvsMultDeltaG112Xe_alpha005->Draw("P3");
   fGraphvsMultDeltaG112Pb5_alpha007->Draw("P3");
@@ -918,8 +955,8 @@ void drawCorrelatorsFromAVFD() {
 
   legend4->Draw();
 
-  c3->SaveAs("../graphs/deltaGammaAVFDVsNch.eps");
-  c3->SaveAs("../graphs/deltaGammaAVFDVsNch.png");
+  //c3->SaveAs("/graphs/deltaGammaAVFDVsNch.eps");
+  //c3->SaveAs("/graphs/deltaGammaAVFDVsNch.png");
 
    //____________________Delta gamma_______________________//
   TCanvas *c4 = new TCanvas("c4","Centrality dependence: Delta delta",300,300,700,800);
@@ -973,7 +1010,8 @@ void drawCorrelatorsFromAVFD() {
   gEmpty0->GetYaxis()->SetTitle("#Delta#delta_{1}");
   gEmpty0->DrawCopy();
   f1->Draw("same");
-  
+  //here better not mine :P
+  //JGraphErrorsDeltaD11Xe_a_010->Draw("P3");  
   fGraphvsMultDeltaD11Pb5_alpha005->Draw("P3");
   fGraphvsMultDeltaD11Xe_alpha005->Draw("P3");
   fGraphvsMultDeltaD11Pb5_alpha007->Draw("P3");
@@ -983,6 +1021,6 @@ void drawCorrelatorsFromAVFD() {
 
   legend4->Draw();
 
-  c4->SaveAs("../graphs/deltaDeltaAVFDVsNch.eps");
-  c4->SaveAs("../graphs/deltaDeltaAVFDVsNch.png");
+  //c4->SaveAs("/graphs/deltaDeltaAVFDVsNch.eps");
+  //c4->SaveAs("/graphs/deltaDeltaAVFDVsNch.png");
 }
