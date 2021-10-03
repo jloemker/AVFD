@@ -900,19 +900,19 @@ void drawCorrelatorsFromAVFD() {
   f1->Draw("same");
   JGraphDiffDeltaG112Xe_a_010->Draw("P");
   legend6->Draw();
-  d1->SaveAs("graphs/deltaJ_PSJ_AVFD.eps");
-  d1->SaveAs("graphs/deltaJ_PSJ_AVFD.png");
+  //d1->SaveAs("graphs/deltaJ_PSJ_AVFD.eps");
+  //d1->SaveAs("graphs/deltaJ_PSJ_AVFD.png");
 
   //_____________________Ratios___________________________//
-  TCanvas *r1 = new TCanvas("r1","Ratios: PSJ/J",0,0,700,800);
-  r1->SetFillColor(10);
-  r1->SetHighLightColor(10);
-  r1->Divide(1,2,0.99,0.0,10);
+  TCanvas *d2 = new TCanvas("d2","Ratios: PSJ/J",0,0,700,800);
+  d2->SetFillColor(10);
+  d2->SetHighLightColor(10);
+  d2->Divide(1,2,0.99,0.0,10);
 
   //===============Delta delta=============//
-  r1->cd(1)->SetLeftMargin(0.19);
-  r1->cd(1)->SetRightMargin(0.01);
-  r1->cd(1)->SetTopMargin(0.083);
+  d2->cd(1)->SetLeftMargin(0.19);
+  d2->cd(1)->SetRightMargin(0.01);
+  d2->cd(1)->SetTopMargin(0.083);
   gEmpty->GetYaxis()->SetLabelSize(0.075);
   gEmpty->GetXaxis()->SetLabelSize(0.075);
   gEmpty->GetYaxis()->SetTitleSize(0.095);
@@ -920,16 +920,18 @@ void drawCorrelatorsFromAVFD() {
   gEmpty->GetXaxis()->SetTitleSize(0.075);
   gEmpty->GetYaxis()->SetNdivisions(4);
   gEmpty->GetXaxis()->SetNdivisions(0);
-  gEmpty->GetYaxis()->SetRangeUser(0,1.8); // delta D11
+  gEmpty->GetYaxis()->SetRangeUser(0.5,2); // delta D11 doesn't work... why ?
+  //gEmpty->GetYaxis()->SetMinimum(0.5);
+  //gEmpty->GetYaxis()->SetMaximum(1.8);
   gEmpty->GetYaxis()->SetTitle("#Delta#delta_{1}(PSJ/J)");
   gEmpty->DrawCopy();
   f1->Draw("same");
   JGraphRatioDeltaD11Xe_a_010->Draw("P");
   legend7->Draw();
   //============Delta gamma===============//
-  r1->cd(2)->SetLeftMargin(0.19);
-  r1->cd(2)->SetRightMargin(0.01);
-  r1->cd(2)->SetBottomMargin(0.183);
+  d2->cd(2)->SetLeftMargin(0.19);
+  d2->cd(2)->SetRightMargin(0.01);
+  d2->cd(2)->SetBottomMargin(0.183);
   gEmpty->GetYaxis()->SetTitleOffset(0.85);
   gEmpty->GetYaxis()->SetLabelSize(0.07);
   gEmpty->GetXaxis()->SetLabelSize(0.07);
@@ -937,15 +939,19 @@ void drawCorrelatorsFromAVFD() {
   gEmpty->GetXaxis()->SetTitleSize(0.075);
   gEmpty->GetYaxis()->SetNdivisions(5);
   gEmpty->GetXaxis()->SetNdivisions(10);
-  gEmpty->GetYaxis()->SetRangeUser(0,3); // delta G112
+  gEmpty->GetYaxis()->SetRangeUser(1.5,3);
+  //gEmpty->GetYaxis()->SetMinimum(1.5); // delta G112
+  //gEmpty->GetYaxis()->SetMaximum(3);// No clue why the SetRangeUser doesn't work here -.-
   gEmpty->GetYaxis()->SetTitle("#Delta#gamma_{1,1}(PSJ/J)");
+  gEmpty->GetYaxis()->SetRangeUser(1.5,3);
   gEmpty->DrawCopy();
   f1->Draw("same");
+  JGraphRatioDeltaG112Xe_a_010->GetYaxis()->SetRangeUser(1.5,3);
   JGraphRatioDeltaG112Xe_a_010->Draw("P");
   legend8->Draw();
 
-  r1->SaveAs("graphs/ratioJ_PSJ_AVFD.eps");
-  r1->SaveAs("graphs/ratioJ_PSJ_AVFD.png");
+  //d2->SaveAs("graphs/ratioJ_PSJ_AVFD.eps");
+  //d2->SaveAs("graphs/ratioJ_PSJ_AVFD.png");
 
   //____________________Delta gamma_______________________//
   TCanvas *c1 = new TCanvas("c1","Centrality dependence: Delta gamma",0,0,700,800);
@@ -1010,8 +1016,8 @@ void drawCorrelatorsFromAVFD() {
 
   legend2->Draw();
 
-  c1->SaveAs("graphs/deltaGammaAVFD.eps");
-  c1->SaveAs("graphs/deltaGammaAVFD.png");
+  //c1->SaveAs("graphs/deltaGammaAVFD.eps");
+  //c1->SaveAs("graphs/deltaGammaAVFD.png");
  
   //____________________Delta delta_______________________//
   TCanvas *c2 = new TCanvas("c2","Centrality dependence: Delta delta",100,100,700,800);
@@ -1076,8 +1082,8 @@ void drawCorrelatorsFromAVFD() {
 
   legend2->Draw();
 
-  c2->SaveAs("graphs/deltaDeltaAVFD.eps");
-  c2->SaveAs("graphs/deltaDeltaAVFD.png");
+  //c2->SaveAs("graphs/deltaDeltaAVFD.eps");
+  //c2->SaveAs("graphs/deltaDeltaAVFD.png");
 
   //____________________Delta gamma_______________________//
   TCanvas *c3 = new TCanvas("c3","Centrality dependence: Delta gamma",200,200,700,800);
