@@ -30,8 +30,8 @@ Then, one types:
 ```
 
 ## Full analysis
-The current directories in the ```convert_tree_splitFile.C``` and ```runSingleCentrality.C``` are set to perform the whole analysis steps (in batch mode) in the data directory.
-One can specify the centrality bin(s) within the the ```submit.sh``` and instead of the previous compiling steps the whole analysis can be run by typing:
+The current directories in the ```convert_tree_splitFile.C``` and ```runSingleCentrality.C``` are set to perform the whole analysis steps for the baseline and/or alpha = 0.1 (in batch mode) in the data directory.
+One can specify the centrality bin(s) ```centID = {0: 0-5, 1: 5-10, 2: 10-20, 3: 20-30, 4: 30-40, 5: 40-50, 6: 50-60, 7: 60-70}``` and the samples ```dirID = {0: baseline, 1: a-0.1}``` within the the ```submit.sh``` and instead of the previous compiling steps the whole analysis can be run by typing:
 ```
 source submit.sh
 ```
