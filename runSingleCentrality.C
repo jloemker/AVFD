@@ -13,7 +13,7 @@
 #include "CalculateFlowCME.h"
 using namespace std;
 
-void runSingleCentrality(Int_t centID){
+void runSingleCentrality(Int_t centID, char *dir){
 //for(Int_t centID = 0; centID < 8; centID++){
 	//Loop over all centrality bins for manual run with reduced sample 
 	std::cout << "Centrality ID: " << centID <<std::endl;
@@ -32,7 +32,7 @@ void runSingleCentrality(Int_t centID){
 	fQC->SetmaxPtCut(5);
 	fQC->SetminPtCut(0.2);
 	fQC->SetminNtrackCut(500);
-	fQC->SetmaxEtaCut(5);
+	fQC->SetmaxEtaCut(0.8);
 	fQC->SetdoQA(kTRUE);
 
 	//fQC->SetEtaGapNeg(-0.1);
@@ -46,9 +46,9 @@ void runSingleCentrality(Int_t centID){
 	//here comes the input directory	
 	//string directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality0-5/Baseline/job-%d/particle_distribution_final/%d.dat",ithJob,ithFile);
 		if (centID == 0 || centID == 1) {
-			directory = Form("tree_a-0.1_5.44TeV_Cent%d_%d_%d.root", (centID)*5, (centID+1)*5, k);
+			directory = Form("tree_%s_5.44TeV_Cent%d_%d_%d.root", dir, (centID)*5, (centID+1)*5, k);
 		} else {
-			directory = Form("tree_a-0.1_5.44TeV_Cent%d_%d_%d.root", (centID-1)*10, (centID)*10, k);
+			directory = Form("tree_%s_5.44TeV_Cent%d_%d_%d.root", dir, (centID-1)*10, (centID)*10, k);
 		}
 		TFile *f = TFile::Open(directory.c_str(), "READ");
 		
@@ -102,9 +102,9 @@ void runSingleCentrality(Int_t centID){
 	TFile *ResultsFile;
 	// Here comes the output directory
 	if (centID == 0 || centID == 1) {
-		ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/AnalysisResults_a-0.1_5.44TeV_Cent%d_%d.root", (centID)*5, (centID+1)*5), "RECREATE");
+		ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/AnalysisResults_%s_5.44TeV_Cent%d_%d.root", dir, (centID)*5, (centID+1)*5), "RECREATE");
 	} else {
-		ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/AnalysisResults_a-0.1_5.44TeV_Cent%d_%d.root", (centID-1)*10, (centID)*10), "RECREATE");
+		ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/AnalysisResults_%s_5.44TeV_Cent%d_%d.root", dir, (centID-1)*10, (centID)*10), "RECREATE");
 	}  
 
 	ResultsFile->WriteObject(fQC->GetQAList(),"QAList","SingleKey");

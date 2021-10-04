@@ -253,9 +253,9 @@ void drawCorrelatorsFromAVFD() {
          DiffD11Xe_a_010Err[i] = TMath::Sqrt(TMath::Power(JDeltaG112Xe_a_010Err[i],2) + TMath::Power(fDeltaD11Xe_alpha010Err[i],2));
          DiffG112Xe_a_010[i] = JDeltaG112Xe_a_010[i] - fDeltaG112Xe_alpha010[i];
          DiffG112Xe_a_010Err[i] = TMath::Sqrt(TMath::Power(JDeltaG112Xe_a_010Err[i],2) + TMath::Power(fDeltaG112Xe_alpha010Err[i],2));  
- // cout<<"DiffD11: "<<DiffD11Xe_a_010[i]<<endl;
- // cout<<"J: "<<JDeltaG112Xe_a_010[i]<<" PSJ: "<<fDeltaG112Xe_alpha010[i]<<endl;
- // cout<<"DiffG112: "<<DiffG112Xe_a_010[i]<<endl;
+  cout<<"DiffD11: "<<DiffD11Xe_a_010[i]<<endl;
+  cout<<"J: "<<JDeltaG112Xe_a_010[i]<<" PSJ: "<<fDeltaG112Xe_alpha010[i]<<endl;
+  cout<<"DiffG112: "<<DiffG112Xe_a_010[i]<<endl;
   }
 //here I calculate 2) the ratios of J/f and the errors
   Double_t RatioD11Xe_a_010[7];

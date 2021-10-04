@@ -1,6 +1,12 @@
 ##!/bin/bash
 SCRIPT="runAnalysis.sh"
-centID=2
+centID=0
+declare -a directory=("Baseline" "a-0.1")
+## now loop through the above array
+for dir in "${directory[@]}"
+do
+echo "Directory: $dir"
+# You can access them via $dir or using ${arr[0]}
 while [ $centID -le 7 ]; do
 echo "Opening the script for centrality ID: $centID"
 #make the script to submit
@@ -39,13 +45,15 @@ echo "if [ ! -f runSingleCentrality.C ]"
 echo " then "
 echo "ln -s /project/alice/users/jlomker/AVFD/runSingleCentrality.C ."
 echo "fi"
-#echo "exec aliroot -b -q CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID)'"
-echo "exec aliroot -b -q convert_tree_splitFiles.C'($centID)' CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID)'" 
+#echo "exec aliroot -b -q CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID, $dir)'"
+echo "exec aliroot -b -q convert_tree_splitFiles.C'($centID, $dir)' CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID, $dir)'"
     ) > $SCRIPT
 
 qsub -q gpu $SCRIPT 
 
 let centID++
+
+done
 
 done
 
