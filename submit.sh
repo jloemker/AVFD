@@ -1,12 +1,9 @@
 ##!/bin/bash
 SCRIPT="runAnalysis.sh"
+dirID=0
+while [ $dirID -le 1 ]; do
+echo "Directory ID: $dirID"
 centID=0
-declare -a directory=("Baseline" "a-0.1")
-## now loop through the above array
-for dir in "${directory[@]}"
-do
-echo "Directory: $dir"
-# You can access them via $dir or using ${arr[0]}
 while [ $centID -le 7 ]; do
 echo "Opening the script for centrality ID: $centID"
 #make the script to submit
@@ -14,8 +11,8 @@ echo "Opening the script for centrality ID: $centID"
 echo "source /cvmfs/alice.cern.ch/etc/login.sh"
 echo "eval $(alienv printenv VO_ALICE@AliPhysics::vAN-20210923_ROOT6-1)"
 #echo "which aliroot || exit 1"
-echo "mkdir -p /data/alice/jlomker/AVFD/Centrality-$centID"
-echo "cd /data/alice/jlomker/AVFD/Centrality-$centID"
+echo "mkdir -p /data/alice/jlomker/AVFD/Centrality-$centID/dirID-$dirID"
+echo "cd /data/alice/jlomker/AVFD/Centrality-$centID/dirID-$dirID"
 echo "pwd"
 #echo "if [ -f *.root ]"
 #echo "  then "
@@ -46,7 +43,7 @@ echo " then "
 echo "ln -s /project/alice/users/jlomker/AVFD/runSingleCentrality.C ."
 echo "fi"
 #echo "exec aliroot -b -q CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID, $dir)'"
-echo "exec aliroot -b -q convert_tree_splitFiles.C'($centID, $dir)' CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID, $dir)'"
+echo "exec aliroot -b -q convert_tree_splitFiles.C'($centID, $dirID)' CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID,$dirID)' "
     ) > $SCRIPT
 
 qsub -q gpu $SCRIPT 
@@ -54,6 +51,8 @@ qsub -q gpu $SCRIPT
 let centID++
 
 done
+
+let dirID++
 
 done
 

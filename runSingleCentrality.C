@@ -13,10 +13,10 @@
 #include "CalculateFlowCME.h"
 using namespace std;
 
-void runSingleCentrality(Int_t centID, char *dir){
+void runSingleCentrality(Int_t centID, Int_t dirID){
 //for(Int_t centID = 0; centID < 8; centID++){
 	//Loop over all centrality bins for manual run with reduced sample 
-	std::cout << "Centrality ID: " << centID <<std::endl;
+	std::cout << "Centrality ID: " << centID << "Directory ID: " << dirID <<std::endl;
         //Int_t centID = {0,1,2,3,4,5,6,7}; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70
 
 	//should be according to the number of files per centrality
@@ -46,9 +46,19 @@ void runSingleCentrality(Int_t centID, char *dir){
 	//here comes the input directory	
 	//string directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality0-5/Baseline/job-%d/particle_distribution_final/%d.dat",ithJob,ithFile);
 		if (centID == 0 || centID == 1) {
-			directory = Form("tree_%s_5.44TeV_Cent%d_%d_%d.root", dir, (centID)*5, (centID+1)*5, k);
+			if(dirID == 0){
+			directory = Form("tree_baseline_5.44TeV_Cent%d_%d_%d.root", (centID)*5, (centID+1)*5, k);
+			}
+			if(dirID == 1){
+                        directory = Form("tree_a-0.1_5.44TeV_Cent%d_%d_%d.root", (centID)*5, (centID+1)*5, k);
+                        }
 		} else {
-			directory = Form("tree_%s_5.44TeV_Cent%d_%d_%d.root", dir, (centID-1)*10, (centID)*10, k);
+			if(dirID == 0){
+			directory = Form("tree_baseline_5.44TeV_Cent%d_%d_%d.root", (centID-1)*10, (centID)*10, k);
+			}
+			if(dirID == 1){
+			directory = Form("tree_a-0.1_5.44TeV_Cent%d_%d_%d.root", (centID-1)*10, (centID)*10, k);
+			}		
 		}
 		TFile *f = TFile::Open(directory.c_str(), "READ");
 		
@@ -102,9 +112,19 @@ void runSingleCentrality(Int_t centID, char *dir){
 	TFile *ResultsFile;
 	// Here comes the output directory
 	if (centID == 0 || centID == 1) {
-		ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/AnalysisResults_%s_5.44TeV_Cent%d_%d.root", dir, (centID)*5, (centID+1)*5), "RECREATE");
-	} else {
-		ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/AnalysisResults_%s_5.44TeV_Cent%d_%d.root", dir, (centID-1)*10, (centID)*10), "RECREATE");
+		if(dirID == 0){
+		ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/AnalysisResults_baseline_5.44TeV_Cent%d_%d.root", (centID)*5, (centID+1)*5), "RECREATE");
+		}
+		if(dirID == 1){
+		ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/AnalysisResults_a-0.1_5.44TeV_Cent%d_%d.root", (centID)*5, (centID+1)*5), "RECREATE");
+		}	
+		} else {
+		if(dirID == 0){
+		ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/AnalysisResults_baseline_5.44TeV_Cent%d_%d.root", (centID-1)*10, (centID)*10), "RECREATE");
+		}
+		if(dirID == 1){
+                ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/AnalysisResults_a-0.1_5.44TeV_Cent%d_%d.root", (centID-1)*10, (centID)*10), "RECREATE");
+		}
 	}  
 
 	ResultsFile->WriteObject(fQC->GetQAList(),"QAList","SingleKey");
@@ -115,4 +135,5 @@ void runSingleCentrality(Int_t centID, char *dir){
 	ResultsFile->WriteObject(fQC->GetCMWList(),"CMWList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetCMWQAList(),"CMWQAList","SingleKey");
 //	}	
+//
 }

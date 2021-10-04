@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <string>
 #include <map>
 #include "TFile.h"
 #include "TTree.h"
@@ -53,13 +54,20 @@ class Event {
 };
 
 */
-void convert_tree_splitFiles(Int_t centID, char *dir) 
+void convert_tree_splitFiles(Int_t centID, Int_t dirID) 
 {
 //for(Int_t centID = 0; centID < 7; centID++){
-  std::cout <<"Centrality ID: " << centID <<std::endl;
+string dir;
+if(dirID == 0){
+dir = "Baseline";
+} 
+if(dirID ==1){
+dir = "a-0.1";
+}
+ std::cout <<"Centrality ID: " << centID << " and directory: " << dir << std::endl;
  //Int_t centID = {0,1,2,3,4,5,6,7}; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70%
 
-  int nJob = 2000;//was 2000 but panos has only 999 jobs in baseline dir
+  int nJob = 2000;//was 2000 but panos has only 999 jobs in baseline tir
   int nFile = 201;//was 201
   int nFinalFiles =10;//was 10
   // map to convert UrQMD pid to PDG pid
@@ -90,8 +98,13 @@ void convert_tree_splitFiles(Int_t centID, char *dir)
 	  if (centID == 0 || centID == 1) {
           val1 = (centID)*5;
 	  val2 = (centID+1)*5;
-          } 
-	  TFile file(Form("tree_%s_5.44TeV_Cent%d_%d_%d.root", dir, val1, val2, nthOutput),"RECREATE");
+          }
+	  if(dirID == 0){
+	  TFile file(Form("tree_baseline_5.44TeV_Cent%d_%d_%d.root", val1, val2, nthOutput),"RECREATE");
+	  }
+	  if(dirID == 1){
+	  TFile file(Form("tree_a-0.1_5.44TeV_Cent%d_%d_%d.root", val1, val2, nthOutput),"RECREATE");	
+	  }
 	  TTree tree("events", "event");
 	  Event ev;
 	  tree.Branch("event", &ev);
@@ -99,10 +112,19 @@ void convert_tree_splitFiles(Int_t centID, char *dir)
 		for (int ithFile = 1; ithFile <= nFile; ithFile++) {
 		  std::ifstream file_dat;
 		  if (centID == 0 || centID == 1) {
-			directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality%d-%d/%s/job-%d/particle_distribution_final/%d.dat",val1, val2, dir, ithJob,ithFile);
-                	} else {
-                        directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality%d-%d/%s/job-%d/particle_distribution_final/%d.dat",val1, val2, dir, ithJob,ithFile);
-                	}
+			if(dirID == 0){
+			directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality%d-%d/Baseline/job-%d/particle_distribution_final/%d.dat",val1, val2, ithJob,ithFile);
+                	}if(dirID == 1){
+			directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality%d-%d/a-0.1/job-%d/particle_distribution_final/%d.dat",val1, val2, ithJob,ithFile);
+  		  	}	
+		  }else {
+			if(dirID == 0){
+                        directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality%d-%d/Baseline/job-%d/particle_distribution_final/%d.dat",val1, val2, ithJob,ithFile);
+         		}
+			if(dirID == 1){
+                        directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality%d-%d/a-0.1/job-%d/particle_distribution_final/%d.dat",val1, val2, ithJob,ithFile);
+			}
+		  }
 		  file_dat.open(directory.c_str());
 		  
 		  if (!file_dat.is_open()) {
