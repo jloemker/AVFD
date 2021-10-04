@@ -118,11 +118,12 @@ void runSingleCentrality(Int_t centID, Int_t dirID){
 		if(dirID == 1){
 		ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/AnalysisResults_a-0.1_5.44TeV_Cent%d_%d.root", (centID)*5, (centID+1)*5), "RECREATE");
 		}	
-		} else {
+	} else {
 		if(dirID == 0){
 		ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/AnalysisResults_baseline_5.44TeV_Cent%d_%d.root", (centID-1)*10, (centID)*10), "RECREATE");
 		}
-		if(dirID == 1){
+		//if(dirID == 1){ otherwise crash
+		else{
                 ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/AnalysisResults_a-0.1_5.44TeV_Cent%d_%d.root", (centID-1)*10, (centID)*10), "RECREATE");
 		}
 	}  
