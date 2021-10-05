@@ -1,3 +1,16 @@
+//1 for PJS and 2 for J - abs() in sqrt required to get val !=-nan
+void totalCorrErr(Double_t ErrCorr[], Double_t arr1[], Double_t arr2[], Double_t Err1[], Double_t Err2[], bool Ratio){//2 is for J 1 is for PSJ
+  if(Ratio == false){
+  	for(int i = 0; i < 8; i++){
+        	ErrCorr[i] = TMath::Sqrt( std::abs(TMath::Power(Err1[i],2) + TMath::Power(Err2[i],2)- 2*TMath::Power(Err1[i],2)));
+        }
+   }else{
+        for(int i = 0; i < 8; i++){
+        	ErrCorr[i] = TMath::Sqrt( std::abs(TMath::Power(arr1[i]*Err2[i],2)/TMath::Power(arr2[i],4) + TMath::Power(Err1[i]/arr2[i],2) - 2*arr1[i]*TMath::Power(Err1[i],2)/TMath::Power(arr2[i],3)));
+        }
+   }
+}
+
 void drawCorrelatorsFromAVFD() {
   TFile* fFitPb5 = TFile::Open("DataPoints/fitPb5.root", "READ");
   if((!fFitPb5)||(!fFitPb5->IsOpen())) {
@@ -10,16 +23,26 @@ void drawCorrelatorsFromAVFD() {
     cout<<"The fit parameters for the Xe system are not found..."<<endl;
     return;
   }
- //getting my histograms /data/alice/jlomker/AVFD/result/AnalysisResult_a-0.1_5.44TeV.root
- //For test with reduced sample TFile* File = TFile::Open("/project/alice/users/jlomker/AnalysisResult_a-0.1_5.44TeV.root", "READ");
-  TFile* File = TFile::Open("/data/alice/jlomker/AVFD/result/AnalysisResult_a-0.1_5.44TeV.root", "READ");
-  if((!File)||(!File->IsOpen())){
-  cout<<"The histograms for my comparisons cannot be found..."<<endl;
+ //getting my histograms
+ //======================baseline
+  TFile* File_baseline = TFile::Open("/data/alice/jlomker/AVFD/result/AnalysisResult_baseline_5.44TeV.root", "READ");
+  if((!File_baseline)||(!File_baseline->IsOpen())){
+  cout<<"The histograms for my baseline comparisons cannot be found..."<<endl;
   return;
   }
-  TList *CME = (TList*) File->Get("CMEList;1");
-  TH1F* DeltaG112Xe_a_010 = (TH1F*) CME -> FindObject("DeltaG112");
-  TH1F* DeltaD11Xe_a_010 = (TH1F*) CME -> FindObject("DeltaD11");
+  TList *CME_baseline = (TList*) File_baseline->Get("CMEList;1");
+  TH1F* DeltaG112Xe_baseline = (TH1F*) CME_baseline -> FindObject("DeltaG112");
+  TH1F* DeltaD11Xe_baseline = (TH1F*) CME_baseline -> FindObject("DeltaD11"); 
+ //======================alpha 0.10
+  TFile* File_a_010 = TFile::Open("/data/alice/jlomker/AVFD/result/AnalysisResult_a-0.1_5.44TeV.root", "READ");
+  if((!File_a_010)||(!File_a_010->IsOpen())){
+  cout<<"The histograms for my alpha 0.10 comparisons cannot be found..."<<endl;
+  return;
+  }
+  TList *CME_a_010 = (TList*) File_a_010->Get("CMEList;1");
+  TH1F* DeltaG112Xe_a_010 = (TH1F*) CME_a_010 -> FindObject("DeltaG112");
+  TH1F* DeltaD11Xe_a_010 = (TH1F*) CME_a_010 -> FindObject("DeltaD11");
+
  //declaring arrays for parameter fit
   TF1* fDeltaLCCPb5[7]; // [0]*x + [1]
   TF1* fDeltaCMEPb5[7]; // [0]*x*x + [1]*x + [2]
@@ -226,56 +249,97 @@ void drawCorrelatorsFromAVFD() {
   Double_t fDeltaG112Pb5_alpha010[7] = {0, 0, 0.000170681, 0.00034874, 0.000573241, 0.00113717, 0.00213};
   Double_t fDeltaG112Pb5_alpha010Err[7] = {0, 0, 6.82479e-06, 1.01803e-05, 1.5729e-05, 2.68995e-05, 5.17827e-05};
  
-//here I try to get bin contents and errors as doubles to pass them to my TGraphErrors in the next step !!! I have only 5 centrality bins !!! 
+//here I try to get bin contents and errors as doubles to pass them to my TGraphErrors in the next step !!! I have only 5 centrality bins in alpha 0.10 !!! 
   Double_t JDeltaG112Xe_a_010[7];
   Double_t JDeltaG112Xe_a_010Err[7];
   Double_t JDeltaD11Xe_a_010[7];
   Double_t JDeltaD11Xe_a_010Err[7];
+
+  Double_t JDeltaG112Xe_baseline[7];
+  Double_t JDeltaG112Xe_baselineErr[7];
+  Double_t JDeltaD11Xe_baseline[7];
+  Double_t JDeltaD11Xe_baselineErr[7];
+
+
   for(int i = 0; i < 8; i++){
 	 JDeltaG112Xe_a_010[i] = DeltaG112Xe_a_010 -> GetBinContent(i);
  	 JDeltaG112Xe_a_010Err[i] = DeltaG112Xe_a_010 -> GetBinError(i);
  	 JDeltaD11Xe_a_010[i] = DeltaD11Xe_a_010 -> GetBinContent(i);
  	 JDeltaD11Xe_a_010Err[i] = DeltaD11Xe_a_010 -> GetBinError(i);
-  }
-//here I caluclate 1) the differences J - f and the errors
+
+         JDeltaG112Xe_baseline[i] = DeltaG112Xe_baseline -> GetBinContent(i);
+         JDeltaG112Xe_baselineErr[i] = DeltaG112Xe_baseline -> GetBinError(i);
+         JDeltaD11Xe_baseline[i] = DeltaD11Xe_baseline -> GetBinContent(i);
+         JDeltaD11Xe_baselineErr[i] = DeltaD11Xe_baseline -> GetBinError(i);
+ }
+//1) the differences J - f
   Double_t DiffD11Xe_a_010[7];
   Double_t DiffD11Xe_a_010Err[7];
   Double_t DiffG112Xe_a_010[7];
   Double_t DiffG112Xe_a_010Err[7];
-  for(int i = 0; i < 2; i++){
+ 
+  Double_t DiffD11Xe_baseline[7];
+  Double_t DiffD11Xe_baselineErr[7];
+  Double_t DiffG112Xe_baseline[7];
+  Double_t DiffG112Xe_baselineErr[7];
+
+  for(int i = 0; i < 8; i++){
+	 DiffD11Xe_a_010[i] = JDeltaD11Xe_a_010[i] - fDeltaD11Xe_alpha010[i];
+         DiffG112Xe_a_010[i] = JDeltaG112Xe_a_010[i] - fDeltaG112Xe_alpha010[i];
+         DiffD11Xe_baseline[i] = JDeltaD11Xe_baseline[i] - fDeltaD11Xe_Baseline[i];
+	 DiffG112Xe_baseline[i] = JDeltaG112Xe_baseline[i] - fDeltaG112Xe_Baseline[i]; 
+  }
+  for(int i = 0; i < 2; i++){//alpha 0.01 has no entries in the first 2 bins
   DiffD11Xe_a_010[i] = 0;
   DiffD11Xe_a_010Err[i] = 0;
   DiffG112Xe_a_010[i] = 0;
   DiffG112Xe_a_010Err[i] = 0;
   }
-  for(int i = 2; i < 8; i++){
-	 DiffD11Xe_a_010[i] = JDeltaD11Xe_a_010[i] - fDeltaD11Xe_alpha010[i];
-         DiffD11Xe_a_010Err[i] = TMath::Sqrt(TMath::Power(JDeltaG112Xe_a_010Err[i],2) + TMath::Power(fDeltaD11Xe_alpha010Err[i],2));
-         DiffG112Xe_a_010[i] = JDeltaG112Xe_a_010[i] - fDeltaG112Xe_alpha010[i];
-         DiffG112Xe_a_010Err[i] = TMath::Sqrt(TMath::Power(JDeltaG112Xe_a_010Err[i],2) + TMath::Power(fDeltaG112Xe_alpha010Err[i],2));  
-  cout<<"DiffD11: "<<DiffD11Xe_a_010[i]<<endl;
-  cout<<"J: "<<JDeltaG112Xe_a_010[i]<<" PSJ: "<<fDeltaG112Xe_alpha010[i]<<endl;
-  cout<<"DiffG112: "<<DiffG112Xe_a_010[i]<<endl;
-  }
-//here I calculate 2) the ratios of J/f and the errors
+  //error calulation for difference of the total correlated variables
+  Double_t DiffD11Xe_a_010Err[7] = {};
+  Double_t DiffG112Xe_a_010Err[7] = {};
+  Double_t DiffD11Xe_baselineErr[7] = {};
+  Double_t DiffG112Xe_baselineErr[7] = {};
+
+  totalCorrErr(DiffD11Xe_a_010Err,fDeltaD11Xe_alpha010, JDeltaD11Xe_a_010, fDeltaD11Xe_alpha010Err,JDeltaD11Xe_a_010Err, false);
+  totalCorrErr(DiffG112Xe_a_010Err,fDeltaG112Xe_alpha010, JDeltaG112Xe_a_010, fDeltaG112Xe_alpha010Err,JDeltaG112Xe_a_010Err, false);
+  totalCorrErr(DiffD11Xe_baselineErr,fDeltaD11Xe_Baseline, JDeltaD11Xe_baseline, fDeltaD11Xe_BaselineErr,JDeltaD11Xe_baselineErr, false);
+  totalCorrErr(DiffG112Xe_baselineErr,fDeltaG112Xe_Baseline, JDeltaG112Xe_baseline, fDeltaG112Xe_BaselineErr,JDeltaD11Xe_baselineErr, false);
+
+//2) the ratios of PSJ/J
   Double_t RatioD11Xe_a_010[7];
   Double_t RatioD11Xe_a_010Err[7];
   Double_t RatioG112Xe_a_010[7];
   Double_t RatioG112Xe_a_010Err[7];
-  for(int i = 0; i < 2; i++){
-  RatioD11Xe_a_010[i] = 0;
-  RatioD11Xe_a_010Err[i] = 0;
-  RatioG112Xe_a_010[i] = 0;
-  RatioG112Xe_a_010Err[i] = 0;
-  }
+ 
+  Double_t RatioD11Xe_baseline[7];
+  Double_t RatioD11Xe_baselineErr[7];
+  Double_t RatioG112Xe_baseline[7];
+  Double_t RatioG112Xe_baselineErr[7];
+
   for(int i = 2; i < 8; i++){
 	 RatioD11Xe_a_010[i] = (1/JDeltaD11Xe_a_010[i])*fDeltaD11Xe_alpha010[i];
-	 RatioD11Xe_a_010Err[i] = RatioD11Xe_a_010[i]*TMath::Sqrt(TMath::Power(JDeltaD11Xe_a_010Err[i]/JDeltaD11Xe_a_010[i],2)+ TMath::Power(fDeltaD11Xe_alpha010Err[i]/fDeltaD11Xe_alpha010[i],2));
 	 RatioG112Xe_a_010[i] = (1/JDeltaG112Xe_a_010[i])*fDeltaG112Xe_alpha010[i];
-	 RatioG112Xe_a_010Err[i] = RatioG112Xe_a_010[i]*TMath::Sqrt( TMath::Power(JDeltaG112Xe_a_010Err[i]/JDeltaG112Xe_a_010[i],2)+ TMath::Power(fDeltaG112Xe_alpha010Err[i]/fDeltaG112Xe_alpha010[i],2));
-  cout<<"RatioD11: "<<RatioD11Xe_a_010[i]<<"J: "<< JDeltaD11Xe_a_010[i]<<" PSJ: "<<fDeltaD11Xe_alpha010[i]<<endl;
-  cout<<"RatioG112: "<<RatioG112Xe_a_010[i]<<"J: "<< JDeltaG112Xe_a_010[i]<<" PSJ: "<<fDeltaG112Xe_alpha010[i]<<endl;
+         RatioD11Xe_baseline[i] = (1/JDeltaD11Xe_baseline[i])*fDeltaD11Xe_Baseline[i];
+         RatioG112Xe_baseline[i] = (1/JDeltaG112Xe_baseline[i])*fDeltaG112Xe_Baseline[i];
   }
+  for(int i = 0; i < 2; i++){//first 2 bins of alpha 0.10 are empty!
+  RatioD11Xe_a_010[i] = 0; 
+  RatioD11Xe_a_010Err[i] = 0;
+  RatioG112Xe_a_010[i] = 0; 
+  RatioG112Xe_a_010Err[i] = 0;
+  }
+
+  //error calulation for difference of the total correlated variables
+  Double_t RatioD11Xe_a_010Err[7] = {};
+  Double_t RatioG112Xe_a_010Err[7] = {};
+  Double_t RatioD11Xe_baselineErr[7] = {};
+  Double_t RatioG112Xe_baselineErr[7] = {};
+
+  totalCorrErr(RatioD11Xe_a_010Err,fDeltaD11Xe_alpha010, JDeltaD11Xe_a_010, fDeltaD11Xe_alpha010Err,JDeltaD11Xe_a_010Err, true);
+  totalCorrErr(RatioG112Xe_a_010Err,fDeltaG112Xe_alpha010, JDeltaG112Xe_a_010, fDeltaG112Xe_alpha010Err,JDeltaG112Xe_a_010Err, true);
+  totalCorrErr(RatioD11Xe_baselineErr,fDeltaD11Xe_Baseline, JDeltaD11Xe_baseline, fDeltaD11Xe_BaselineErr,JDeltaD11Xe_baselineErr, true);
+  totalCorrErr(RatioG112Xe_baselineErr,fDeltaG112Xe_Baseline, JDeltaG112Xe_baseline, fDeltaG112Xe_BaselineErr,JDeltaD11Xe_baselineErr, true);
 
   // loaded for i>=2 for Pb5
   // loaded for i>=1 for Xe
@@ -299,7 +363,16 @@ void drawCorrelatorsFromAVFD() {
 
   TGraphErrors* JGraphErrorsDeltaD11Xe_a_010 = new TGraphErrors(7, gCentralityAVFD, JDeltaD11Xe_a_010, gCentralityAVFDError, JDeltaD11Xe_a_010Err );
   TGraphErrors* JGraphErrorsDeltaG112Xe_a_010 = new TGraphErrors(7, gCentralityAVFD, JDeltaG112Xe_a_010, gCentralityAVFDError, JDeltaG112Xe_a_010Err );
+//repeat for baseline
+  TGraphErrors* JGraphDiffDeltaD11Xe_baseline = new TGraphErrors(7,gCentralityAVFD, DiffD11Xe_baseline, gCentralityAVFDError, DiffD11Xe_baselineErr);
+  TGraphErrors* JGraphDiffDeltaG112Xe_baseline = new TGraphErrors(7, gCentralityAVFD, DiffG112Xe_baseline, gCentralityAVFDError, DiffG112Xe_baselineErr);
+  TGraphErrors* JGraphRatioDeltaD11Xe_baseline = new TGraphErrors(7, gCentralityAVFD, RatioD11Xe_baseline, gCentralityAVFDError, RatioD11Xe_baselineErr);
+  TGraphErrors* JGraphRatioDeltaG112Xe_baseline = new TGraphErrors(7, gCentralityAVFD, RatioG112Xe_baseline, gCentralityAVFDError, RatioG112Xe_baselineErr);
 
+  TGraphErrors* JGraphErrorsDeltaD11Xe_baseline = new TGraphErrors(7, gCentralityAVFD, JDeltaD11Xe_baseline, gCentralityAVFDError, JDeltaD11Xe_baselineErr );
+  TGraphErrors* JGraphErrorsDeltaG112Xe_baseline = new TGraphErrors(7, gCentralityAVFD, JDeltaG112Xe_baseline, gCentralityAVFDError, JDeltaG112Xe_baselineErr );
+
+//PSJ stuff
   TGraphErrors* fGraphErrorsDeltaD11Pb5_Baseline = new TGraphErrors(7, gCentralityAVFD, fDeltaD11Pb5_Baseline, gCentralityAVFDError, fDeltaD11Pb5_BaselineErr);
   TGraphErrors* fGraphErrorsDeltaG112Pb5_Baseline = new TGraphErrors(7, gCentralityAVFD, fDeltaG112Pb5_Baseline, gCentralityAVFDError, fDeltaG112Pb5_BaselineErr);
   
@@ -379,7 +452,22 @@ void drawCorrelatorsFromAVFD() {
   fGraphErrorsDeltaG112Pb5_LCC50->GetYaxis()->SetTitle("#Delta#gamma_{112}");
   fGraphErrorsDeltaG112Pb5_LCC50->SetFillColor(kBlue+2);
   fGraphErrorsDeltaG112Pb5_LCC50->SetFillStyle(3008);
-  
+//here mine:
+  JGraphErrorsDeltaD11Xe_baseline->SetMarkerStyle(24);
+  JGraphErrorsDeltaD11Xe_baseline->SetMarkerColor(kRed+2);
+  JGraphErrorsDeltaD11Xe_baseline->SetLineColor(kRed+2);
+  JGraphErrorsDeltaD11Xe_baseline->SetLineWidth(1);
+  JGraphErrorsDeltaD11Xe_baseline->GetYaxis()->SetTitle("#Delta#delta_{11}");
+  JGraphErrorsDeltaD11Xe_baseline->SetFillColor(kRed+2);
+  JGraphErrorsDeltaD11Xe_baseline->SetFillStyle(3144);
+  JGraphErrorsDeltaG112Xe_baseline->SetMarkerStyle(24);
+  JGraphErrorsDeltaG112Xe_baseline->SetMarkerColor(kRed+2);
+  JGraphErrorsDeltaG112Xe_baseline->SetLineColor(kRed+2);
+  JGraphErrorsDeltaG112Xe_baseline->SetLineWidth(1);
+  JGraphErrorsDeltaG112Xe_baseline->GetYaxis()->SetTitle("#Delta#gamma_{112}");
+  JGraphErrorsDeltaG112Xe_baseline->SetFillColor(kRed+2);
+  JGraphErrorsDeltaG112Xe_baseline->SetFillStyle(3144);
+
   fGraphErrorsDeltaD11Xe_Baseline->SetMarkerStyle(24);
   fGraphErrorsDeltaD11Xe_Baseline->SetMarkerColor(kGreen+2);
   fGraphErrorsDeltaD11Xe_Baseline->SetLineColor(kGreen+2);
@@ -463,7 +551,6 @@ void drawCorrelatorsFromAVFD() {
   JGraphErrorsDeltaG112Xe_a_010->GetYaxis()->SetTitle("#Delta#gamma_{112}");
   JGraphErrorsDeltaG112Xe_a_010->SetFillColor(kRed+2);  
   JGraphErrorsDeltaG112Xe_a_010->SetFillStyle(1);
-  
   JGraphErrorsDeltaD11Xe_a_010->SetLineColor(kRed+2);   
   JGraphErrorsDeltaD11Xe_a_010->SetLineWidth(1);
   JGraphErrorsDeltaD11Xe_a_010->GetYaxis()->SetTitle("#Delta#delta_{11}");                    
@@ -502,6 +589,7 @@ void drawCorrelatorsFromAVFD() {
   fGraphErrorsDeltaG112Xe_alpha010->SetFillColor(kGreen+2);
   fGraphErrorsDeltaG112Xe_alpha010->SetFillStyle(1);
 //here I add the differences and ratios
+  //==============Alpha = 0.10====================
   JGraphDiffDeltaG112Xe_a_010->SetLineColor(kRed+2);
   JGraphDiffDeltaG112Xe_a_010->SetLineWidth(1);
   JGraphDiffDeltaG112Xe_a_010->GetYaxis()->SetTitle("#Delta#gamma_{112}(J) - #Delta#gamma_{112}");
@@ -523,6 +611,29 @@ void drawCorrelatorsFromAVFD() {
   JGraphRatioDeltaD11Xe_a_010->GetYaxis()->SetTitle("#Delta#delta_{11}(PSJ/J)");
   JGraphRatioDeltaD11Xe_a_010->SetFillColor(kRed+4);
   JGraphRatioDeltaD11Xe_a_010->SetFillStyle(1000);
+  //=================Baseline======================
+  JGraphDiffDeltaG112Xe_baseline->SetLineColor(kGreen+2);
+  JGraphDiffDeltaG112Xe_baseline->SetLineWidth(2);
+  JGraphDiffDeltaG112Xe_baseline->GetYaxis()->SetTitle("#Delta#gamma_{112}(J) - #Delta#gamma_{112}");
+  JGraphDiffDeltaG112Xe_baseline->SetFillColor(kGreen+2);
+  JGraphDiffDeltaG112Xe_baseline->SetFillStyle(1);
+  JGraphDiffDeltaD11Xe_baseline->SetLineColor(kGreen+4);
+  JGraphDiffDeltaD11Xe_baseline->SetLineWidth(2);
+  JGraphDiffDeltaD11Xe_baseline->GetYaxis()->SetTitle("#Delta#delta_{11}(J) - #Delta#delta_{11}");
+  JGraphDiffDeltaD11Xe_baseline->SetFillColor(kGreen+4);
+  JGraphDiffDeltaD11Xe_baseline->SetFillStyle(1000);
+
+  JGraphRatioDeltaG112Xe_baseline->SetLineColor(kGreen+2);
+  JGraphRatioDeltaG112Xe_baseline->SetLineWidth(2);
+  JGraphRatioDeltaG112Xe_baseline->GetYaxis()->SetTitle("#Delta#gamma_{112}(PSJ/J)");
+  JGraphRatioDeltaG112Xe_baseline->SetFillColor(kGreen+2);
+  JGraphRatioDeltaG112Xe_baseline->SetFillStyle(1);
+  JGraphRatioDeltaD11Xe_baseline->SetLineColor(kGreen+4);
+  JGraphRatioDeltaD11Xe_baseline->SetLineWidth(2);
+  JGraphRatioDeltaD11Xe_baseline->GetYaxis()->SetTitle("#Delta#delta_{11}(PSJ/J)");
+  JGraphRatioDeltaD11Xe_baseline->SetFillColor(kGreen+4);
+  JGraphRatioDeltaD11Xe_baseline->SetFillStyle(1000);
+
 
 
   //====================vs dN/deta===========================//
@@ -783,6 +894,8 @@ void drawCorrelatorsFromAVFD() {
   //legend1->AddEntry(fGraphErrorsDeltaG112Xe_LCC33,"Xe-Xe n_{5}/s=0.0-LCC=33%","F");
   legend1->AddEntry(fGraphErrorsDeltaG112Pb5_LCC50,"Pb-Pb n_{5}/s=0.0-LCC=50%","F");
   legend1->AddEntry(fGraphErrorsDeltaG112Xe_LCC50,"Xe-Xe n_{5}/s=0.0-LCC=50%","F");
+//here mine:
+  legend1->AddEntry(JGraphErrorsDeltaG112Xe_baseline, "J: Xe-Xe Baseline", "P");
 
   TLegend *legend2 =new TLegend(0.20,0.66,0.45,0.97);
   legend2->SetBorderSize(0);
@@ -832,6 +945,7 @@ void drawCorrelatorsFromAVFD() {
   legend5->SetTextFont(42);
   legend5->SetTextSize(0.035);//from 0.045
   legend5->AddEntry(JGraphDiffDeltaD11Xe_a_010,"Xe-Xe n_{5}/s=0.1-LCC=0%","F");
+  legend5->AddEntry(JGraphDiffDeltaD11Xe_baseline, "Xe-Xe baseline", "P");
 
   TLegend *legend6 =new TLegend(0.20,0.66,0.45,0.8);
   legend6->SetBorderSize(0);
@@ -839,6 +953,7 @@ void drawCorrelatorsFromAVFD() {
   legend6->SetTextFont(42);
   legend6->SetTextSize(0.035);
   legend6->AddEntry(JGraphDiffDeltaG112Xe_a_010,"Xe-Xe n_{5}/s=0.1-LCC=0%","F");
+  legend6->AddEntry(JGraphDiffDeltaG112Xe_baseline,"Xe-Xe baseline","P");
 
   TLegend *legend7 =new TLegend(0.20,0.66,0.45,0.8);
   legend7->SetBorderSize(0);
@@ -846,6 +961,7 @@ void drawCorrelatorsFromAVFD() {
   legend7->SetTextFont(42);
   legend7->SetTextSize(0.035);
   legend7->AddEntry(JGraphRatioDeltaD11Xe_a_010,"Xe-Xe n_{5}/s=0.1-LCC=0%","F");
+  legend7->AddEntry(JGraphRatioDeltaD11Xe_a_010,"Xe-Xe Baseline","P");
 
   TLegend *legend8 =new TLegend(0.20,0.66,0.45,0.8);
   legend8->SetBorderSize(0);
@@ -853,6 +969,7 @@ void drawCorrelatorsFromAVFD() {
   legend8->SetTextFont(42);
   legend8->SetTextSize(0.035);
   legend8->AddEntry(JGraphRatioDeltaG112Xe_a_010,"Xe-Xe n_{5}/s=0.1-LCC=0%","F");
+  legend8->AddEntry(JGraphRatioDeltaG112Xe_a_010,"Xe-Xe baseline","P");
 
   TF1 *f1 = new TF1("f1","0",0,1000);
   f1->SetLineColor(1); 
@@ -882,6 +999,7 @@ void drawCorrelatorsFromAVFD() {
   gEmpty->DrawCopy();
   f1->Draw("same");
   JGraphDiffDeltaD11Xe_a_010->Draw("P");
+  JGraphDiffDeltaD11Xe_baseline->Draw("P");
   legend5->Draw();
   //============Delta gamma===============//
   d1->cd(2)->SetLeftMargin(0.19);
@@ -899,6 +1017,7 @@ void drawCorrelatorsFromAVFD() {
   gEmpty->DrawCopy();
   f1->Draw("same");
   JGraphDiffDeltaG112Xe_a_010->Draw("P");
+  JGraphDiffDeltaG112Xe_baseline->Draw("P");
   legend6->Draw();
   //d1->SaveAs("graphs/deltaJ_PSJ_AVFD.eps");
   //d1->SaveAs("graphs/deltaJ_PSJ_AVFD.png");
@@ -927,6 +1046,7 @@ void drawCorrelatorsFromAVFD() {
   gEmpty->DrawCopy();
   f1->Draw("same");
   JGraphRatioDeltaD11Xe_a_010->Draw("P");
+  JGraphRatioDeltaD11Xe_baseline->Draw("P");
   legend7->Draw();
   //============Delta gamma===============//
   d2->cd(2)->SetLeftMargin(0.19);
@@ -946,8 +1066,8 @@ void drawCorrelatorsFromAVFD() {
   gEmpty->GetYaxis()->SetRangeUser(1.5,3);
   gEmpty->DrawCopy();
   f1->Draw("same");
-  JGraphRatioDeltaG112Xe_a_010->GetYaxis()->SetRangeUser(1.5,3);
   JGraphRatioDeltaG112Xe_a_010->Draw("P");
+  JGraphRatioDeltaG112Xe_baseline->Draw("P");
   legend8->Draw();
 
   //d2->SaveAs("graphs/ratioJ_PSJ_AVFD.eps");
@@ -977,6 +1097,8 @@ void drawCorrelatorsFromAVFD() {
   gEmpty->DrawCopy();
 
   f1->Draw("same");
+//here mine:
+  JGraphErrorsDeltaG112Xe_baseline->Draw("P");
   fGraphErrorsDeltaG112Xe_Baseline->Draw("P");
   fGraphErrorsDeltaG112Pb5_Baseline->Draw("P");
   fGraphErrorsDeltaG112Xe_LCC15->Draw("P3");
@@ -1043,6 +1165,8 @@ void drawCorrelatorsFromAVFD() {
   gEmpty->DrawCopy();
 
   f1->Draw("same");
+//here mine:
+  JGraphErrorsDeltaD11Xe_baseline->Draw("P");
   fGraphErrorsDeltaD11Xe_Baseline->Draw("P");
   fGraphErrorsDeltaD11Pb5_Baseline->Draw("P");
   fGraphErrorsDeltaD11Xe_LCC15->Draw("P3");
