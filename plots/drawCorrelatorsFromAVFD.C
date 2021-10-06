@@ -271,17 +271,13 @@ void drawCorrelatorsFromAVFD() {
          JDeltaG112Xe_baselineErr[i] = DeltaG112Xe_baseline -> GetBinError(i);
          JDeltaD11Xe_baseline[i] = DeltaD11Xe_baseline -> GetBinContent(i);
          JDeltaD11Xe_baselineErr[i] = DeltaD11Xe_baseline -> GetBinError(i);
+	cout << JDeltaG112Xe_a_010[i]<<endl;
  }
 //1) the differences J - f
   Double_t DiffD11Xe_a_010[7];
-  Double_t DiffD11Xe_a_010Err[7];
   Double_t DiffG112Xe_a_010[7];
-  Double_t DiffG112Xe_a_010Err[7];
- 
   Double_t DiffD11Xe_baseline[7];
-  Double_t DiffD11Xe_baselineErr[7];
   Double_t DiffG112Xe_baseline[7];
-  Double_t DiffG112Xe_baselineErr[7];
 
   for(int i = 0; i < 8; i++){
 	 DiffD11Xe_a_010[i] = JDeltaD11Xe_a_010[i] - fDeltaD11Xe_alpha010[i];
@@ -291,9 +287,9 @@ void drawCorrelatorsFromAVFD() {
   }
   for(int i = 0; i < 2; i++){//alpha 0.01 has no entries in the first 2 bins
   DiffD11Xe_a_010[i] = 0;
-  DiffD11Xe_a_010Err[i] = 0;
+  //DiffD11Xe_a_010Err[i] = 0;
   DiffG112Xe_a_010[i] = 0;
-  DiffG112Xe_a_010Err[i] = 0;
+  //DiffG112Xe_a_010Err[i] = 0;
   }
   //error calulation for difference of the total correlated variables
   Double_t DiffD11Xe_a_010Err[7] = {};
@@ -308,14 +304,9 @@ void drawCorrelatorsFromAVFD() {
 
 //2) the ratios of PSJ/J
   Double_t RatioD11Xe_a_010[7];
-  Double_t RatioD11Xe_a_010Err[7];
   Double_t RatioG112Xe_a_010[7];
-  Double_t RatioG112Xe_a_010Err[7];
- 
   Double_t RatioD11Xe_baseline[7];
-  Double_t RatioD11Xe_baselineErr[7];
   Double_t RatioG112Xe_baseline[7];
-  Double_t RatioG112Xe_baselineErr[7];
 
   for(int i = 2; i < 8; i++){
 	 RatioD11Xe_a_010[i] = (1/JDeltaD11Xe_a_010[i])*fDeltaD11Xe_alpha010[i];
@@ -325,9 +316,9 @@ void drawCorrelatorsFromAVFD() {
   }
   for(int i = 0; i < 2; i++){//first 2 bins of alpha 0.10 are empty!
   RatioD11Xe_a_010[i] = 0; 
-  RatioD11Xe_a_010Err[i] = 0;
+  //RatioD11Xe_a_010Err[i] = 0;
   RatioG112Xe_a_010[i] = 0; 
-  RatioG112Xe_a_010Err[i] = 0;
+  //RatioG112Xe_a_010Err[i] = 0;
   }
 
   //error calulation for difference of the total correlated variables
@@ -945,7 +936,7 @@ void drawCorrelatorsFromAVFD() {
   legend5->SetTextFont(42);
   legend5->SetTextSize(0.035);//from 0.045
   legend5->AddEntry(JGraphDiffDeltaD11Xe_a_010,"Xe-Xe n_{5}/s=0.1-LCC=0%","F");
-  legend5->AddEntry(JGraphDiffDeltaD11Xe_baseline, "Xe-Xe baseline", "P");
+  legend5->AddEntry(JGraphDiffDeltaD11Xe_baseline, "Xe-Xe baseline", "F");
 
   TLegend *legend6 =new TLegend(0.20,0.66,0.45,0.8);
   legend6->SetBorderSize(0);
@@ -953,7 +944,7 @@ void drawCorrelatorsFromAVFD() {
   legend6->SetTextFont(42);
   legend6->SetTextSize(0.035);
   legend6->AddEntry(JGraphDiffDeltaG112Xe_a_010,"Xe-Xe n_{5}/s=0.1-LCC=0%","F");
-  legend6->AddEntry(JGraphDiffDeltaG112Xe_baseline,"Xe-Xe baseline","P");
+  legend6->AddEntry(JGraphDiffDeltaG112Xe_baseline,"Xe-Xe baseline","F");
 
   TLegend *legend7 =new TLegend(0.20,0.66,0.45,0.8);
   legend7->SetBorderSize(0);
@@ -961,7 +952,7 @@ void drawCorrelatorsFromAVFD() {
   legend7->SetTextFont(42);
   legend7->SetTextSize(0.035);
   legend7->AddEntry(JGraphRatioDeltaD11Xe_a_010,"Xe-Xe n_{5}/s=0.1-LCC=0%","F");
-  legend7->AddEntry(JGraphRatioDeltaD11Xe_a_010,"Xe-Xe Baseline","P");
+  legend7->AddEntry(JGraphRatioDeltaD11Xe_a_010,"Xe-Xe Baseline","F");
 
   TLegend *legend8 =new TLegend(0.20,0.66,0.45,0.8);
   legend8->SetBorderSize(0);
@@ -969,7 +960,7 @@ void drawCorrelatorsFromAVFD() {
   legend8->SetTextFont(42);
   legend8->SetTextSize(0.035);
   legend8->AddEntry(JGraphRatioDeltaG112Xe_a_010,"Xe-Xe n_{5}/s=0.1-LCC=0%","F");
-  legend8->AddEntry(JGraphRatioDeltaG112Xe_a_010,"Xe-Xe baseline","P");
+  legend8->AddEntry(JGraphRatioDeltaG112Xe_a_010,"Xe-Xe baseline","F");
 
   TF1 *f1 = new TF1("f1","0",0,1000);
   f1->SetLineColor(1); 
