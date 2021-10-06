@@ -582,25 +582,25 @@ void drawCorrelatorsFromAVFD() {
 //here I add the differences and ratios
   //==============Alpha = 0.10====================
   JGraphDiffDeltaG112Xe_a_010->SetLineColor(kRed+2);
-  JGraphDiffDeltaG112Xe_a_010->SetLineWidth(1);
+  JGraphDiffDeltaG112Xe_a_010->SetLineWidth(2);
   JGraphDiffDeltaG112Xe_a_010->GetYaxis()->SetTitle("#Delta#gamma_{112}(J) - #Delta#gamma_{112}");
   JGraphDiffDeltaG112Xe_a_010->SetFillColor(kRed+2);
   JGraphDiffDeltaG112Xe_a_010->SetFillStyle(1);
-  JGraphDiffDeltaD11Xe_a_010->SetLineColor(kRed+4);
-  JGraphDiffDeltaD11Xe_a_010->SetLineWidth(1);
+  JGraphDiffDeltaD11Xe_a_010->SetLineColor(kRed+2);
+  JGraphDiffDeltaD11Xe_a_010->SetLineWidth(2);
   JGraphDiffDeltaD11Xe_a_010->GetYaxis()->SetTitle("#Delta#delta_{11}(J) - #Delta#delta_{11}");
-  JGraphDiffDeltaD11Xe_a_010->SetFillColor(kRed+4);
+  JGraphDiffDeltaD11Xe_a_010->SetFillColor(kRed+2);
   JGraphDiffDeltaD11Xe_a_010->SetFillStyle(1000);
 
   JGraphRatioDeltaG112Xe_a_010->SetLineColor(kRed+2);
-  JGraphRatioDeltaG112Xe_a_010->SetLineWidth(1);
+  JGraphRatioDeltaG112Xe_a_010->SetLineWidth(2);
   JGraphRatioDeltaG112Xe_a_010->GetYaxis()->SetTitle("#Delta#gamma_{112}(PSJ/J)");
   JGraphRatioDeltaG112Xe_a_010->SetFillColor(kRed+2);
   JGraphRatioDeltaG112Xe_a_010->SetFillStyle(1);
-  JGraphRatioDeltaD11Xe_a_010->SetLineColor(kRed+4);
-  JGraphRatioDeltaD11Xe_a_010->SetLineWidth(1);
+  JGraphRatioDeltaD11Xe_a_010->SetLineColor(kRed+2);
+  JGraphRatioDeltaD11Xe_a_010->SetLineWidth(2);
   JGraphRatioDeltaD11Xe_a_010->GetYaxis()->SetTitle("#Delta#delta_{11}(PSJ/J)");
-  JGraphRatioDeltaD11Xe_a_010->SetFillColor(kRed+4);
+  JGraphRatioDeltaD11Xe_a_010->SetFillColor(kRed+2);
   JGraphRatioDeltaD11Xe_a_010->SetFillStyle(1000);
   //=================Baseline======================
   JGraphDiffDeltaG112Xe_baseline->SetLineColor(kGreen+2);
@@ -608,10 +608,10 @@ void drawCorrelatorsFromAVFD() {
   JGraphDiffDeltaG112Xe_baseline->GetYaxis()->SetTitle("#Delta#gamma_{112}(J) - #Delta#gamma_{112}");
   JGraphDiffDeltaG112Xe_baseline->SetFillColor(kGreen+2);
   JGraphDiffDeltaG112Xe_baseline->SetFillStyle(1);
-  JGraphDiffDeltaD11Xe_baseline->SetLineColor(kGreen+4);
+  JGraphDiffDeltaD11Xe_baseline->SetLineColor(kGreen+2);
   JGraphDiffDeltaD11Xe_baseline->SetLineWidth(2);
   JGraphDiffDeltaD11Xe_baseline->GetYaxis()->SetTitle("#Delta#delta_{11}(J) - #Delta#delta_{11}");
-  JGraphDiffDeltaD11Xe_baseline->SetFillColor(kGreen+4);
+  JGraphDiffDeltaD11Xe_baseline->SetFillColor(kGreen+2);
   JGraphDiffDeltaD11Xe_baseline->SetFillStyle(1000);
 
   JGraphRatioDeltaG112Xe_baseline->SetLineColor(kGreen+2);
@@ -619,10 +619,10 @@ void drawCorrelatorsFromAVFD() {
   JGraphRatioDeltaG112Xe_baseline->GetYaxis()->SetTitle("#Delta#gamma_{112}(PSJ/J)");
   JGraphRatioDeltaG112Xe_baseline->SetFillColor(kGreen+2);
   JGraphRatioDeltaG112Xe_baseline->SetFillStyle(1);
-  JGraphRatioDeltaD11Xe_baseline->SetLineColor(kGreen+4);
+  JGraphRatioDeltaD11Xe_baseline->SetLineColor(kGreen+2);
   JGraphRatioDeltaD11Xe_baseline->SetLineWidth(2);
   JGraphRatioDeltaD11Xe_baseline->GetYaxis()->SetTitle("#Delta#delta_{11}(PSJ/J)");
-  JGraphRatioDeltaD11Xe_baseline->SetFillColor(kGreen+4);
+  JGraphRatioDeltaD11Xe_baseline->SetFillColor(kGreen+2);
   JGraphRatioDeltaD11Xe_baseline->SetFillStyle(1000);
 
 
@@ -952,7 +952,7 @@ void drawCorrelatorsFromAVFD() {
   legend7->SetTextFont(42);
   legend7->SetTextSize(0.035);
   legend7->AddEntry(JGraphRatioDeltaD11Xe_a_010,"Xe-Xe n_{5}/s=0.1-LCC=0%","F");
-  legend7->AddEntry(JGraphRatioDeltaD11Xe_a_010,"Xe-Xe Baseline","F");
+  legend7->AddEntry(JGraphRatioDeltaD11Xe_baseline,"Xe-Xe Baseline","F");
 
   TLegend *legend8 =new TLegend(0.20,0.66,0.45,0.8);
   legend8->SetBorderSize(0);
@@ -960,7 +960,7 @@ void drawCorrelatorsFromAVFD() {
   legend8->SetTextFont(42);
   legend8->SetTextSize(0.035);
   legend8->AddEntry(JGraphRatioDeltaG112Xe_a_010,"Xe-Xe n_{5}/s=0.1-LCC=0%","F");
-  legend8->AddEntry(JGraphRatioDeltaG112Xe_a_010,"Xe-Xe baseline","F");
+  legend8->AddEntry(JGraphRatioDeltaG112Xe_baseline,"Xe-Xe baseline","F");
 
   TF1 *f1 = new TF1("f1","0",0,1000);
   f1->SetLineColor(1); 
