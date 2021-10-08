@@ -3,11 +3,13 @@ void totalCorrErr(Double_t ErrCorr[], Double_t arr1[], Double_t arr2[], Double_t
   if(Ratio == false){
   	for(int i = 0; i < 8; i++){
         	ErrCorr[i] = TMath::Sqrt( std::abs(TMath::Power(Err1[i],2) + TMath::Power(Err2[i],2)- 2*TMath::Power(Err1[i],2)));
-        }
+		cout << "Error Difference: "<< ErrCorr[i]<<endl;  
+      }
    }else{
         for(int i = 0; i < 8; i++){
         	ErrCorr[i] = TMath::Sqrt( std::abs(TMath::Power(arr1[i]*Err2[i],2)/TMath::Power(arr2[i],4) + TMath::Power(Err1[i]/arr2[i],2) - 2*arr1[i]*TMath::Power(Err1[i],2)/TMath::Power(arr2[i],3)));
-        }
+       		cout<<"Error Ratio: "<<ErrCorr[i]<<endl;
+	 }
    }
 }
 
@@ -25,7 +27,7 @@ void drawCorrelatorsFromAVFD() {
   }
  //getting my histograms
  //======================baseline
-  TFile* File_baseline = TFile::Open("/data/alice/jlomker/AVFD/result/AnalysisResult_baseline_5.44TeV.root", "READ");
+  TFile* File_baseline = TFile::Open("/data/alice/jlomker/AVFD/result/dirID-0/AnalysisResult_baseline_5.44TeV.root", "READ");
   if((!File_baseline)||(!File_baseline->IsOpen())){
   cout<<"The histograms for my baseline comparisons cannot be found..."<<endl;
   return;
@@ -34,7 +36,7 @@ void drawCorrelatorsFromAVFD() {
   TH1F* DeltaG112Xe_baseline = (TH1F*) CME_baseline -> FindObject("DeltaG112");
   TH1F* DeltaD11Xe_baseline = (TH1F*) CME_baseline -> FindObject("DeltaD11"); 
  //======================alpha 0.10
-  TFile* File_a_010 = TFile::Open("/data/alice/jlomker/AVFD/result/AnalysisResult_a-0.1_5.44TeV.root", "READ");
+  TFile* File_a_010 = TFile::Open("/data/alice/jlomker/AVFD/result/dirID-1/AnalysisResult_a-0.1_5.44TeV.root", "READ");
   if((!File_a_010)||(!File_a_010->IsOpen())){
   cout<<"The histograms for my alpha 0.10 comparisons cannot be found..."<<endl;
   return;
@@ -284,13 +286,13 @@ void drawCorrelatorsFromAVFD() {
          DiffG112Xe_a_010[i] = JDeltaG112Xe_a_010[i] - fDeltaG112Xe_alpha010[i];
          DiffD11Xe_baseline[i] = JDeltaD11Xe_baseline[i] - fDeltaD11Xe_Baseline[i];
 	 DiffG112Xe_baseline[i] = JDeltaG112Xe_baseline[i] - fDeltaG112Xe_Baseline[i]; 
-  }
+  }/*
   for(int i = 0; i < 2; i++){//alpha 0.01 has no entries in the first 2 bins
   DiffD11Xe_a_010[i] = 0;
   //DiffD11Xe_a_010Err[i] = 0;
   DiffG112Xe_a_010[i] = 0;
   //DiffG112Xe_a_010Err[i] = 0;
-  }
+  }*/
   //error calulation for difference of the total correlated variables
   Double_t DiffD11Xe_a_010Err[7] = {};
   Double_t DiffG112Xe_a_010Err[7] = {};
@@ -308,18 +310,18 @@ void drawCorrelatorsFromAVFD() {
   Double_t RatioD11Xe_baseline[7];
   Double_t RatioG112Xe_baseline[7];
 
-  for(int i = 2; i < 8; i++){
+  for(int i = 0; i < 8; i++){
 	 RatioD11Xe_a_010[i] = (1/JDeltaD11Xe_a_010[i])*fDeltaD11Xe_alpha010[i];
 	 RatioG112Xe_a_010[i] = (1/JDeltaG112Xe_a_010[i])*fDeltaG112Xe_alpha010[i];
          RatioD11Xe_baseline[i] = (1/JDeltaD11Xe_baseline[i])*fDeltaD11Xe_Baseline[i];
          RatioG112Xe_baseline[i] = (1/JDeltaG112Xe_baseline[i])*fDeltaG112Xe_Baseline[i];
-  }
+  }/*
   for(int i = 0; i < 2; i++){//first 2 bins of alpha 0.10 are empty!
   RatioD11Xe_a_010[i] = 0; 
   //RatioD11Xe_a_010Err[i] = 0;
   RatioG112Xe_a_010[i] = 0; 
   //RatioG112Xe_a_010Err[i] = 0;
-  }
+  }*/
 
   //error calulation for difference of the total correlated variables
   Double_t RatioD11Xe_a_010Err[7] = {};
