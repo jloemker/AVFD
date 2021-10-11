@@ -34,7 +34,12 @@ void drawCorrelatorsFromAVFD() {
   }
   TList *CME_baseline = (TList*) File_baseline->Get("CMEList;1");
   TH1F* DeltaG112Xe_baseline = (TH1F*) CME_baseline -> FindObject("DeltaG112");
+  TH1F* SSG112Xe_baseline = (TH1F*) CME_baseline -> FindObject("fCMEHist_0_C112_SS");
+  TH1F* OSG112Xe_baseline = (TH1F*) CME_baseline -> FindObject("fCMEHist_1_C112_OS"); 
   TH1F* DeltaD11Xe_baseline = (TH1F*) CME_baseline -> FindObject("DeltaD11"); 
+  TH1F* SSD11Xe_baseline = (TH1F*) CME_baseline -> FindObject("fDnnHist_0_D11_SS");
+  TH1F* OSD11Xe_baseline = (TH1F*) CME_baseline -> FindObject("fDnnHist_1_D11_OS");
+
  //======================alpha 0.10
   TFile* File_a_010 = TFile::Open("/data/alice/jlomker/AVFD/result/dirID-1/AnalysisResult_a-0.1_5.44TeV.root", "READ");
   if((!File_a_010)||(!File_a_010->IsOpen())){
@@ -43,7 +48,11 @@ void drawCorrelatorsFromAVFD() {
   }
   TList *CME_a_010 = (TList*) File_a_010->Get("CMEList;1");
   TH1F* DeltaG112Xe_a_010 = (TH1F*) CME_a_010 -> FindObject("DeltaG112");
+  TH1F* SSG112Xe_a_010 = (TH1F*) CME_a_010 -> FindObject("fCMEHist_0_C112_SS");
+  TH1F* OSG112Xe_a_010 = (TH1F*) CME_a_010 -> FindObject("fCMEHist_1_C112_OS");
   TH1F* DeltaD11Xe_a_010 = (TH1F*) CME_a_010 -> FindObject("DeltaD11");
+  TH1F* SSD11Xe_a_010 = (TH1F*) CME_a_010 -> FindObject("fDnnHist_0_D11_SS");
+  TH1F* OSD11Xe_a_010 = (TH1F*) CME_a_010 -> FindObject("fDnnHist_1_D11_OS");
 
  //declaring arrays for parameter fit
   TF1* fDeltaLCCPb5[7]; // [0]*x + [1]
@@ -256,12 +265,28 @@ void drawCorrelatorsFromAVFD() {
   Double_t JDeltaG112Xe_a_010Err[7];
   Double_t JDeltaD11Xe_a_010[7];
   Double_t JDeltaD11Xe_a_010Err[7];
-
   Double_t JDeltaG112Xe_baseline[7];
   Double_t JDeltaG112Xe_baselineErr[7];
   Double_t JDeltaD11Xe_baseline[7];
   Double_t JDeltaD11Xe_baselineErr[7];
 
+  Double_t jSSG112Xe_a_010[7];
+  Double_t jSSG112Xe_a_010Err[7];
+  Double_t jSSD11Xe_a_010[7];
+  Double_t jSSD11Xe_a_010Err[7];
+  Double_t jOSG112Xe_a_010[7];
+  Double_t jOSG112Xe_a_010Err[7];
+  Double_t jOSD11Xe_a_010[7];
+  Double_t jOSD11Xe_a_010Err[7];
+
+  Double_t jSSG112Xe_baseline[7];
+  Double_t jSSG112Xe_baselineErr[7];
+  Double_t jSSD11Xe_baseline[7];
+  Double_t jSSD11Xe_baselineErr[7];
+  Double_t jOSG112Xe_baseline[7];
+  Double_t jOSG112Xe_baselineErr[7];
+  Double_t jOSD11Xe_baseline[7];
+  Double_t jOSD11Xe_baselineErr[7];
 
   for(int i = 0; i < 8; i++){
 	 JDeltaG112Xe_a_010[i] = DeltaG112Xe_a_010 -> GetBinContent(i);
@@ -273,8 +298,26 @@ void drawCorrelatorsFromAVFD() {
          JDeltaG112Xe_baselineErr[i] = DeltaG112Xe_baseline -> GetBinError(i);
          JDeltaD11Xe_baseline[i] = DeltaD11Xe_baseline -> GetBinContent(i);
          JDeltaD11Xe_baselineErr[i] = DeltaD11Xe_baseline -> GetBinError(i);
-	cout << JDeltaG112Xe_a_010[i]<<endl;
- }
+	//cout << JDeltaG112Xe_a_010[i]<<endl;
+	 jSSG112Xe_a_010[i] = SSG112Xe_a_010 -> GetBinContent(i);
+         jSSG112Xe_a_010Err[i] = SSG112Xe_a_010 -> GetBinError(i);
+         jSSD11Xe_a_010[i] = SSD11Xe_a_010 -> GetBinContent(i);
+         jSSD11Xe_a_010Err[i] = SSD11Xe_a_010 -> GetBinError(i);
+         jOSG112Xe_a_010[i] = OSG112Xe_a_010 -> GetBinContent(i);
+         jOSG112Xe_a_010Err[i] =OSG112Xe_a_010 -> GetBinError(i);
+         jOSD11Xe_a_010[i] = OSD11Xe_a_010 -> GetBinContent(i);
+         jOSD11Xe_a_010Err[i] = OSD11Xe_a_010 -> GetBinError(i);
+
+         jSSG112Xe_baseline[i] = SSG112Xe_baseline -> GetBinContent(i);
+         jSSG112Xe_baselineErr[i] = SSG112Xe_baseline -> GetBinError(i);
+         jSSD11Xe_baseline[i] = SSD11Xe_baseline -> GetBinContent(i);
+         jSSD11Xe_baselineErr[i] = SSD11Xe_baseline -> GetBinError(i);
+         jOSG112Xe_baseline[i] = OSG112Xe_baseline -> GetBinContent(i);
+         jOSG112Xe_baselineErr[i] =OSG112Xe_baseline -> GetBinError(i);
+         jOSD11Xe_baseline[i] = OSD11Xe_baseline -> GetBinContent(i);
+         jOSD11Xe_baselineErr[i] = OSD11Xe_baseline -> GetBinError(i);
+ 
+}
 //1) the differences J - f
   Double_t DiffD11Xe_a_010[7];
   Double_t DiffG112Xe_a_010[7];
@@ -349,6 +392,16 @@ void drawCorrelatorsFromAVFD() {
   grDelta1AVFD0->SetFillStyle(1);
 
 //here I have to pass the extracted values from above to the TGraphErrors -  have only 5 centrality bins!
+  TGraphErrors* JSSD11Xe_a_010 = new TGraphErrors(7, gCentralityAVFD, jSSD11Xe_a_010, gCentralityAVFDError, jSSD11Xe_a_010Err);
+  TGraphErrors* JOSD11Xe_a_010 = new TGraphErrors(7, gCentralityAVFD, jOSD11Xe_a_010, gCentralityAVFDError, jOSD11Xe_a_010Err);
+  TGraphErrors* JSSG112Xe_a_010 = new TGraphErrors(7, gCentralityAVFD, jSSG112Xe_a_010, gCentralityAVFDError, jSSG112Xe_a_010Err);
+  TGraphErrors* JOSG112Xe_a_010 = new TGraphErrors(7, gCentralityAVFD, jOSG112Xe_a_010, gCentralityAVFDError, jOSG112Xe_a_010Err);
+
+  TGraphErrors* JSSD11Xe_baseline = new TGraphErrors(7, gCentralityAVFD, jSSD11Xe_baseline, gCentralityAVFDError, jSSD11Xe_baselineErr);
+  TGraphErrors* JOSD11Xe_baseline = new TGraphErrors(7, gCentralityAVFD, jOSD11Xe_baseline, gCentralityAVFDError, jOSD11Xe_baselineErr);
+  TGraphErrors* JSSG112Xe_baseline = new TGraphErrors(7, gCentralityAVFD, jSSG112Xe_baseline, gCentralityAVFDError, jSSG112Xe_baselineErr);
+  TGraphErrors* JOSG112Xe_baseline = new TGraphErrors(7, gCentralityAVFD, jOSG112Xe_baseline, gCentralityAVFDError, jOSG112Xe_baselineErr);
+
   TGraphErrors* JGraphDiffDeltaD11Xe_a_010 = new TGraphErrors(7,gCentralityAVFD, DiffD11Xe_a_010, gCentralityAVFDError, DiffD11Xe_a_010Err);
   TGraphErrors* JGraphDiffDeltaG112Xe_a_010 = new TGraphErrors(7, gCentralityAVFD, DiffG112Xe_a_010, gCentralityAVFDError, DiffG112Xe_a_010Err);
   TGraphErrors* JGraphRatioDeltaD11Xe_a_010 = new TGraphErrors(7, gCentralityAVFD, RatioD11Xe_a_010, gCentralityAVFDError, RatioD11Xe_a_010Err); 
@@ -604,6 +657,30 @@ void drawCorrelatorsFromAVFD() {
   JGraphRatioDeltaD11Xe_a_010->GetYaxis()->SetTitle("#Delta#delta_{11}(PSJ/J)");
   JGraphRatioDeltaD11Xe_a_010->SetFillColor(kRed+2);
   JGraphRatioDeltaD11Xe_a_010->SetFillStyle(1000);
+// SS and OS
+  JOSG112Xe_a_010->SetLineColor(kRed+2);
+  JOSG112Xe_a_010->SetLineWidth(2);
+  JOSG112Xe_a_010->GetYaxis()->SetTitle("OS #gamma_{1,1}");
+  JOSG112Xe_a_010->SetFillColor(kRed+2);
+  JOSG112Xe_a_010->SetFillStyle(1);
+  JOSD11Xe_a_010->SetLineColor(kRed+2);
+  JOSD11Xe_a_010->SetLineWidth(2);
+  JOSD11Xe_a_010->GetYaxis()->SetTitle("OS #delta_{1}");
+  JOSD11Xe_a_010->SetFillColor(kRed+2);
+  JOSD11Xe_a_010->SetFillStyle(1000);
+
+  JSSG112Xe_a_010->SetLineColor(kRed+2);
+  JSSG112Xe_a_010->SetLineWidth(2);
+  JSSG112Xe_a_010->GetYaxis()->SetTitle("SS #gamma_{1,1}");
+  JSSG112Xe_a_010->SetFillColor(kRed+2);
+  JSSG112Xe_a_010->SetFillStyle(1);
+  JSSD11Xe_a_010->SetLineColor(kRed+2);
+  JSSD11Xe_a_010->SetLineWidth(2);
+  JSSD11Xe_a_010->GetYaxis()->SetTitle("SS #delta_{1}");
+  JSSD11Xe_a_010->SetFillColor(kRed+2);
+  JSSD11Xe_a_010->SetFillStyle(1000);
+
+
   //=================Baseline======================
   JGraphDiffDeltaG112Xe_baseline->SetLineColor(kGreen+2);
   JGraphDiffDeltaG112Xe_baseline->SetLineWidth(2);
@@ -626,6 +703,28 @@ void drawCorrelatorsFromAVFD() {
   JGraphRatioDeltaD11Xe_baseline->GetYaxis()->SetTitle("#Delta#delta_{11}(PSJ/J)");
   JGraphRatioDeltaD11Xe_baseline->SetFillColor(kGreen+2);
   JGraphRatioDeltaD11Xe_baseline->SetFillStyle(1000);
+// SS and OS
+  JOSG112Xe_baseline->SetLineColor(kGreen+2);
+  JOSG112Xe_baseline->SetLineWidth(2);
+  JOSG112Xe_baseline->GetYaxis()->SetTitle("OS #gamma_{1,1}");
+  JOSG112Xe_baseline->SetFillColor(kGreen+2);
+  JOSG112Xe_baseline->SetFillStyle(1);
+  JOSD11Xe_baseline->SetLineColor(kGreen+2);
+  JOSD11Xe_baseline->SetLineWidth(2);
+  JOSD11Xe_baseline->GetYaxis()->SetTitle("OS #delta_{1}");
+  JOSD11Xe_baseline->SetFillColor(kGreen+2);
+  JOSD11Xe_baseline->SetFillStyle(1000);
+
+  JSSG112Xe_baseline->SetLineColor(kGreen+2);
+  JSSG112Xe_baseline->SetLineWidth(2);
+  JSSG112Xe_baseline->GetYaxis()->SetTitle("SS #gamma_{1,1}");
+  JSSG112Xe_baseline->SetFillColor(kGreen+2);
+  JSSG112Xe_baseline->SetFillStyle(1);
+  JSSD11Xe_baseline->SetLineColor(kGreen+2);
+  JSSD11Xe_baseline->SetLineWidth(2);
+  JSSD11Xe_baseline->GetYaxis()->SetTitle("SS #delta_{1}");
+  JSSD11Xe_baseline->SetFillColor(kGreen+2);
+  JSSD11Xe_baseline->SetFillStyle(1000);
 
 
 
@@ -964,6 +1063,39 @@ void drawCorrelatorsFromAVFD() {
   legend8->AddEntry(JGraphRatioDeltaG112Xe_a_010,"Xe-Xe n_{5}/s=0.1-LCC=0%","F");
   legend8->AddEntry(JGraphRatioDeltaG112Xe_baseline,"Xe-Xe baseline","F");
 
+  TLegend *legend9 =new TLegend(0.20,0.66,0.45,0.8);
+  legend9->SetBorderSize(0);
+  legend9->SetFillColor(0);
+  legend9->SetTextFont(42);
+  legend9->SetTextSize(0.035);
+  legend9->AddEntry(JSSD11Xe_a_010,"SS: Xe-Xe n_{5}/s=0.1-LCC=0%","F");
+  legend9->AddEntry(JSSD11Xe_baseline,"SS: Xe-Xe baseline","F");
+
+  TLegend *legend10 =new TLegend(0.20,0.66,0.45,0.8);
+  legend10->SetBorderSize(0);
+  legend10->SetFillColor(0);
+  legend10->SetTextFont(42);
+  legend10->SetTextSize(0.035);
+  legend10->AddEntry(JOSD11Xe_a_010,"OS: Xe-Xe n_{5}/s=0.1-LCC=0%","F");
+  legend10->AddEntry(JOSD11Xe_baseline,"OS: Xe-Xe baseline","F");
+
+  TLegend *legend11 =new TLegend(0.20,0.66,0.45,0.8);
+  legend11->SetBorderSize(0);
+  legend11->SetFillColor(0);
+  legend11->SetTextFont(42);
+  legend11->SetTextSize(0.035);
+  legend11->AddEntry(JSSG112Xe_a_010,"SS: Xe-Xe n_{5}/s=0.1-LCC=0%","F");
+  legend11->AddEntry(JSSG112Xe_baseline,"SS: Xe-Xe baseline","F");
+
+  TLegend *legend12 =new TLegend(0.20,0.66,0.45,0.8);
+  legend12->SetBorderSize(0);
+  legend12->SetFillColor(0);
+  legend12->SetTextFont(42);
+  legend12->SetTextSize(0.035);
+  legend12->AddEntry(JOSG112Xe_a_010,"OS: Xe-Xe n_{5}/s=0.1-LCC=0%","F");
+  legend12->AddEntry(JOSG112Xe_baseline,"OS: Xe-Xe baseline","F");
+
+
   TF1 *f1 = new TF1("f1","0",0,1000);
   f1->SetLineColor(1); 
   f1->SetLineStyle(1); 
@@ -1202,6 +1334,9 @@ void drawCorrelatorsFromAVFD() {
   //c2->SaveAs("graphs/deltaDeltaAVFD.eps");
   //c2->SaveAs("graphs/deltaDeltaAVFD.png");
 
+
+
+/*
   //____________________Delta gamma_______________________//
   TCanvas *c3 = new TCanvas("c3","Centrality dependence: Delta gamma",200,200,700,800);
   c3->SetFillColor(10); 	
@@ -1333,5 +1468,94 @@ void drawCorrelatorsFromAVFD() {
 
   //c4->SaveAs("/graphs/deltaDeltaAVFDVsNch.eps");
   //c4->SaveAs("/graphs/deltaDeltaAVFDVsNch.png");
+*/  
+  //==============delta SS vs OS===========//
+  TCanvas *c5 = new TCanvas("c5","SS vs OS: delta",0,0,700,800);
+  c5->SetFillColor(10);
+  c5->SetHighLightColor(10);
+  c5->Divide(1,2,0.99,0.0,10);
 
+  //=============== SS =============//
+  
+  c5->cd(1)->SetLeftMargin(0.19);
+  c5->cd(1)->SetRightMargin(0.01);
+  c5->cd(1)->SetTopMargin(0.083);
+  gEmpty0->GetYaxis()->SetLabelSize(0.075);
+  gEmpty0->GetXaxis()->SetLabelSize(0.075);
+  gEmpty0->GetYaxis()->SetTitleSize(0.095);
+  gEmpty0->GetYaxis()->SetTitleOffset(0.9);
+  gEmpty0->GetXaxis()->SetTitleSize(0.075);
+  gEmpty0->GetYaxis()->SetNdivisions(4);
+  gEmpty0->GetXaxis()->SetNdivisions(7);
+  gEmpty0->GetXaxis()->SetRangeUser(0,70);
+  gEmpty0->GetYaxis()->SetTitle("SS #delta_{1}");
+  gEmpty0->DrawCopy();
+  f1->Draw("same");
+  JSSD11Xe_baseline->Draw("P3");
+  JSSD11Xe_a_010->Draw("P3");
+  legend9->Draw();
+  //
+  //============== OS ===============//
+  c5->cd(2)->SetLeftMargin(0.19);
+  c5->cd(2)->SetRightMargin(0.01);
+  c5->cd(2)->SetBottomMargin(0.183);
+  gEmpty0->GetYaxis()->SetTitleOffset(0.9);
+  gEmpty0->GetYaxis()->SetLabelSize(0.07);
+  gEmpty0->GetXaxis()->SetLabelSize(0.07);
+  gEmpty0->GetYaxis()->SetTitleSize(0.09);
+  gEmpty0->GetXaxis()->SetTitleSize(0.075);
+  gEmpty0->GetYaxis()->SetNdivisions(5);
+  gEmpty0->GetXaxis()->SetNdivisions(7);
+  gEmpty0->GetXaxis()->SetRangeUser(0,70);
+  gEmpty0->GetXaxis()->SetTitle("centrality, %");
+ // gEmpty0->GetYaxis()->SetRangeUser(-0.0048,0.0013); // delta D11
+  gEmpty0->GetYaxis()->SetTitle("OS #delta_{1}");
+  gEmpty0->DrawCopy();
+  f1->Draw("same");
+  JOSD11Xe_baseline->Draw("P3");  
+  JOSD11Xe_a_010->Draw("P3");
+  legend10->Draw();
+
+  //==============delta SS vs OS===========//
+  TCanvas *c6 = new TCanvas("c6","SS vs OS: gamma",0,0,700,800);
+  c6->SetFillColor(10);
+  c6->SetHighLightColor(10);
+  c6->Divide(1,2,0.99,0.0,10);
+  //=============== SS =============//              
+  c6->cd(1)->SetLeftMargin(0.19);
+  c6->cd(1)->SetRightMargin(0.01);
+  c6->cd(1)->SetTopMargin(0.083);
+  gEmpty0->GetYaxis()->SetLabelSize(0.075);
+  gEmpty0->GetXaxis()->SetLabelSize(0.075);
+  gEmpty0->GetYaxis()->SetTitleSize(0.095);   
+  gEmpty0->GetYaxis()->SetTitleOffset(0.9);
+  gEmpty0->GetXaxis()->SetTitleSize(0.075);
+  gEmpty0->GetYaxis()->SetNdivisions(4);
+  gEmpty0->GetXaxis()->SetNdivisions(7);
+  gEmpty0->GetXaxis()->SetRangeUser(0,70);
+  gEmpty0->GetYaxis()->SetTitle("SS #gamma_{1,1}");
+  gEmpty0->DrawCopy();
+  f1->Draw("same");
+  JSSG112Xe_baseline->Draw("P3");
+  JSSG112Xe_a_010->Draw("P3");
+  legend11->Draw();
+  //============== OS ===============//
+  c6->cd(2)->SetLeftMargin(0.19);
+  c6->cd(2)->SetRightMargin(0.01);
+  c6->cd(2)->SetBottomMargin(0.183);
+  gEmpty0->GetYaxis()->SetTitleOffset(0.9);
+  gEmpty0->GetYaxis()->SetLabelSize(0.07);
+  gEmpty0->GetXaxis()->SetLabelSize(0.07);
+  gEmpty0->GetYaxis()->SetTitleSize(0.09);
+  gEmpty0->GetXaxis()->SetTitleSize(0.075);
+  gEmpty0->GetYaxis()->SetNdivisions(5);
+  gEmpty0->GetXaxis()->SetNdivisions(7);
+  gEmpty0->GetXaxis()->SetRangeUser(0,70);
+  gEmpty0->GetXaxis()->SetTitle("centrality, %");
+  gEmpty0->GetYaxis()->SetTitle("OS #gamma_{1,1}");
+  gEmpty0->DrawCopy();
+  f1->Draw("same");
+  JOSG112Xe_baseline->Draw("P3"); 
+  JOSG112Xe_a_010->Draw("P3");
+  legend12->Draw();
 }
