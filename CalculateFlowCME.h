@@ -144,6 +144,10 @@ class CalculateFlowCME
 	TH1D *fFlowGFIntCorHist[fkFlowGFNHarm][fkFlowGFNOrde]; //
 	TH1D *fFlowGFIntCumHist[fkFlowGFNHarm][fkFlowGFNOrde]; //
 	TH1D *fFlowGFIntFinalHist[fkFlowGFNHarm][fkFlowGFNOrde]; //
+        //TProfile *fFlowGFPosHist[fkFlowGFNHarm][fkFlowGFNOrde];
+        TH1D *fFlowGFPosHist[fkFlowGFNHarm][fkFlowGFNOrde];
+        //TProfile *fFlowGFNegHist[fkFlowGFNHarm][fkFlowGFNOrde];
+        TH1D *fFlowGFNegHist[fkFlowGFNHarm][fkFlowGFNOrde];        
 	
 	TProfile *fFlowGFIntCovPro[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
 	TH1D *fFlowGFIntCovHist[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
@@ -198,8 +202,26 @@ class CalculateFlowCME
 	TProfile *V2IntPro[nHar];
     TProfile *V2IntProQC[nHar];
     TProfile *V2PtDiffPro[nHar][10];
-    TH1F   *hRepn[nHar], *hImpn[nHar];
-    TH1F *hMpn;
+    TH1F *hRepn[nHar], *hImpn[nHar];//declarations for v1 caluclation(s)
+    TH1F *hReEtan[nHar], *hImEtan[nHar];
+    TH1F *hPosRepn[nHar], *hNegRepn[nHar];
+    TH1F *hPosReEtan[nHar], *hNegReEtan[nHar];
+    TH1F *hPosImpn[nHar], *hNegImpn[nHar];
+    TH1F *hPosImEtan[nHar], *hNegImEtan[nHar];
+	TH1F *hMpn;
+	//v1 caluclation   --- noot sure about the [nHar]....maybe no [] at all and just filling in .cxx l.~2227 via pt/eta loop ?
+	
+	TH1F *V1pt;
+ 	TH1F *Posv1pt;
+	TH1F *Negv1pt;
+	TH1F *Deltav1pt;
+	TH1F *v1eta[nHar];
+	TH1F *Posv1eta[nHar];
+	TH1F *Negv1eta[nHar];
+	TH1F *Deltav1eta[nHar];    
+	//TProfile *V1IntPro[nHar];
+	//TProfile *V1IntProQC[nHar];
+	//TProfile *V1PtDiffPro[nHar][10];
     
 	// CMW part
 	TList *fCMWList;
@@ -213,7 +235,7 @@ class CalculateFlowCME
 	TProfile *fHistEPResolutionAch[9];
 	TProfile *fHistv2AchChrgPosEtaNeg[2][9];
 	TProfile *fHistv2AchChrgPosEtaPos[2][9];
-	TProfile *fHistv2AchChrgNegEtaNeg[2][9];
+	TProfile *fHist2AchChrgNegEtaNeg[2][9];
 	TProfile *fHistv2AchChrgNegEtaPos[2][9];
 	TProfile *fHistv2AchChrgPosChrgNeg[2][9];
 	TProfile *fHistv2AchChrgNegChrgPos[2][9];
@@ -226,6 +248,10 @@ class CalculateFlowCME
     TProfile *fHistAveV2Neg;
     
     TProfile *fv2plusminus;
+	//for v1 calculation
+	//TProfile *fHistAveV1Pos;
+	//TProfile *HistAveV1Neg;
+	//TProfile *fv1plusminus;
 	
 	TH1D *fCMWThreeParticleCorrelator[2];
 	  
