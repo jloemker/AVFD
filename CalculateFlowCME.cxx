@@ -717,7 +717,7 @@ void CalculateFlowCME::UserCreateOutputObjects() {
 //________________pt______________________________
     V1pt = new TH1F("v1pt", "v1_pt", fPtDiffNBins, fCRCPtBins);
     fFlowFromBWList->Add(V1pt);
-    Posv1pt = new TH1F("posv1pt","posv1pt", fPtDiffNBins, fCRCPtBins);
+    Posv1pt = new TH1F("posv1pt","posv1_pt", fPtDiffNBins, fCRCPtBins);
     fFlowFromBWList->Add(Posv1pt);
     Negv1pt = new TH1F("negv1pt", "neg_v1pt", fPtDiffNBins, fCRCPtBins);
     fFlowFromBWList->Add(Negv1pt);
@@ -728,9 +728,9 @@ void CalculateFlowCME::UserCreateOutputObjects() {
 
     V1eta = new TH1F("v1eta", "v1_eta", fEtaDiffNBins, fCRCEtaBins);//Bins are wrong !!
     fFlowFromBWList->Add(V1eta);
-    Posv1eta = new TH1F("posv1pt","posv1pt", fEtaDiffNBins, fCRCEtaBins);
+    Posv1eta = new TH1F("posv1eta","posv1_eta", fEtaDiffNBins, fCRCEtaBins);
     fFlowFromBWList->Add(Posv1eta);
-    Negv1eta = new TH1F("negv1pt", "neg_v1pt", fEtaDiffNBins, fCRCEtaBins);
+    Negv1eta = new TH1F("negv1eta", "neg_v1eta", fEtaDiffNBins, fCRCEtaBins);
     fFlowFromBWList->Add(Negv1eta);
     Deltav1eta = new TH1F("deltav1eta","delta_v1eta", fEtaDiffNBins, fCRCEtaBins);
     fFlowFromBWList->Add(Deltav1eta); 
