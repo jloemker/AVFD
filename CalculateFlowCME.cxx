@@ -429,10 +429,11 @@ void CalculateFlowCME::UserCreateOutputObjects() {
 		fCRCPtBins[r] = PtBins[r];
 	}
 //To get eta for the loop
-	fEtaDiffNBins = 51;
-        fCRCEtaBins = new Double_t[52];
-	for(Int_t i=0; i<52; i++){
+	fEtaDiffNBins = 50;
+        fCRCEtaBins = new Double_t[51];
+	for(Int_t i=0; i<51; i++){
 		fCRCEtaBins[i] = etabinEdge[i];
+//cout << "fill fCRCEtaBins: " << fCRCEtaBins[i] << endl;
 	}
 
 	for (Int_t c=0;c<fQVecPower;c++) {
@@ -722,10 +723,11 @@ void CalculateFlowCME::UserCreateOutputObjects() {
     Negv1pt = new TH1F("negv1pt", "neg_v1pt", fPtDiffNBins, fCRCPtBins);
     fFlowFromBWList->Add(Negv1pt);
     Deltav1pt = new TH1F("deltav1pt","delta_v1pt", fPtDiffNBins, fCRCPtBins);
-    fFlowFromBWList->Add(Deltav1pt);}
+    fFlowFromBWList->Add(Deltav1pt);
 
 //_______________Eta___ ----but how to get the fEtaDiffNBins or whatever ?!
 
+//cout << fEtaDiffNBins << " and " << fCRCEtaBins << " for pt" << fCRCPtBins << endl;
     V1eta = new TH1F("v1eta", "v1_eta", fEtaDiffNBins, fCRCEtaBins);//Bins are wrong !!
     fFlowFromBWList->Add(V1eta);
     Posv1eta = new TH1F("posv1eta","posv1_eta", fEtaDiffNBins, fCRCEtaBins);
@@ -734,7 +736,8 @@ void CalculateFlowCME::UserCreateOutputObjects() {
     fFlowFromBWList->Add(Negv1eta);
     Deltav1eta = new TH1F("deltav1eta","delta_v1eta", fEtaDiffNBins, fCRCEtaBins);
     fFlowFromBWList->Add(Deltav1eta); 
- 	 }
+    }
+  }
   //CME hists
   //--------- individual Q-vector terms -----------
   for(Int_t i=0; i<nQVector/2; i++) {
