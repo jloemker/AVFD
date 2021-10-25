@@ -91,6 +91,8 @@ class CalculateFlowCME
 	Double_t wEta = 1; // In MC, set to 1 for now.
 	Double_t wTrack = 1; // In MC, set to 1 for now.
 	Double_t *fCRCPtBins;
+//for v1(eta)
+	Double_t *fCRCEtaBins;
 	Bool_t doQA = kFALSE;
 	Double_t trkWgt = 1;
 	
@@ -131,7 +133,7 @@ class CalculateFlowCME
 	TH1D *fAntiProtonsPhiSpectra;
 	// Flow GF part
 	TList *fFlowGFList;
-	const static Int_t fkFlowGFNHarm = 4;
+	const static Int_t fkFlowGFNHarm = 4;//Sould stay 4 - nHar TH1F is independent from the other caluculations and has 4 entries -> to avoid "increment" errors !
 	const static Int_t fkFlowGFNOrde = 4;
 	const static Int_t fFlowGFCenBin = 10;
 	const static Int_t fkGFPtB = 8;
@@ -140,14 +142,10 @@ class CalculateFlowCME
 	TMatrixD *fReQGFPt[fkGFPtB]; // fReQ[m][k] = sum_{i=1}^{M} w_{i}^{k} cos(m*phi_{i})
 	TMatrixD *fImQGFPt[fkGFPtB]; // fImQ[m][k] = sum_{i=1}^{M} w_{i}^{k} sin(m*phi_{i})
 	
-	TProfile *fFlowGFIntCorPro[fkFlowGFNHarm][fkFlowGFNOrde]; //
+	TProfile *fFlowGFIntCorPro[fkFlowGFNHarm][fkFlowGFNOrde]; //+1 to account for the additional h in v1 calculation
 	TH1D *fFlowGFIntCorHist[fkFlowGFNHarm][fkFlowGFNOrde]; //
 	TH1D *fFlowGFIntCumHist[fkFlowGFNHarm][fkFlowGFNOrde]; //
-	TH1D *fFlowGFIntFinalHist[fkFlowGFNHarm][fkFlowGFNOrde]; //
-        //TProfile *fFlowGFPosHist[fkFlowGFNHarm][fkFlowGFNOrde];
-        TH1D *fFlowGFPosHist[fkFlowGFNHarm][fkFlowGFNOrde];
-        //TProfile *fFlowGFNegHist[fkFlowGFNHarm][fkFlowGFNOrde];
-        TH1D *fFlowGFNegHist[fkFlowGFNHarm][fkFlowGFNOrde];        
+	TH1D *fFlowGFIntFinalHist[fkFlowGFNHarm][fkFlowGFNOrde]; //        
 	
 	TProfile *fFlowGFIntCovPro[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
 	TH1D *fFlowGFIntCovHist[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
@@ -167,7 +165,8 @@ class CalculateFlowCME
 	const static Int_t fFlowNHarmMax = 14; // WARNING: MIN (2*fFlowNHarm+2)
 	const static Int_t fQVecPower = 5;
 	Int_t fPtDiffNBins; //
-	
+//for v1(eta)	
+	Int_t fEtaDiffNBins;
 	TH1D *fPOIPtDiffQRe[fQVecPower][fFlowNHarmMax]; // real part
 	TH1D *fPOIPtDiffQIm[fQVecPower][fFlowNHarmMax]; // imaginary part
 	TH1D *fPOIPtDiffMul[fQVecPower][fFlowNHarmMax]; // imaginary part
@@ -198,7 +197,7 @@ class CalculateFlowCME
 	const static Int_t fFlowFromBWCenBin = 10;
 	Double_t ReQn[fFlowFromBWCenBin] = {0.}, ImQn[fFlowFromBWCenBin] = {0.};
     
-    const static Int_t nHar = 3;
+    const static Int_t nHar = 4;//was 3, but to inclde v1 and to still account for the others - I think this messes up things ... - still doesn't matter for v1
 	TProfile *V2IntPro[nHar];
     TProfile *V2IntProQC[nHar];
     TProfile *V2PtDiffPro[nHar][10];
@@ -215,10 +214,10 @@ class CalculateFlowCME
  	TH1F *Posv1pt;
 	TH1F *Negv1pt;
 	TH1F *Deltav1pt;
-	TH1F *v1eta[nHar];
-	TH1F *Posv1eta[nHar];
-	TH1F *Negv1eta[nHar];
-	TH1F *Deltav1eta[nHar];    
+	TH1F *V1eta;
+	TH1F *Posv1eta;
+	TH1F *Negv1eta;
+	TH1F *Deltav1eta;    
 	//TProfile *V1IntPro[nHar];
 	//TProfile *V1IntProQC[nHar];
 	//TProfile *V1PtDiffPro[nHar][10];
@@ -247,12 +246,7 @@ class CalculateFlowCME
 	TProfile *fHistAveV2NegAch;
     TProfile *fHistAveV2Neg;
     
-    TProfile *fv2plusminus;
-	//for v1 calculation
-	//TProfile *fHistAveV1Pos;
-	//TProfile *HistAveV1Neg;
-	//TProfile *fv1plusminus;
-	
+    TProfile *fv2plusminus;	
 	TH1D *fCMWThreeParticleCorrelator[2];
 	  
 	Double_t fSumTPCQn2xEtaNegWhole = 0;
