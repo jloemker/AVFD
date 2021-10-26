@@ -954,7 +954,7 @@ void CalculateFlowCME::Make(Event* anEvent) {
 			}
 		}
 		// ====== for calculateFlowfromBW ======= 
-		if(dCharge > 0) {//I should implement for +- charge, best via procedure below I think
+		if(dCharge > 0) {//here are concrete numbers
           ReQ1P += cos(dPhi);
           ImQ1P += sin(dPhi);
           ReQ2P += cos(2*dPhi);
@@ -976,13 +976,14 @@ void CalculateFlowCME::Make(Event* anEvent) {
 
           MQN++;
         }
-        //here I should add the v1 with u as unit vector that yields the (cos phi, sin phi)
+	//cout <<"after fill ReQ1n"<<ReQ1N<<endl;
+        //here I should add the v1 with u as unit vector that yields the (cos phi, sin phi) here are only ID's
         for(int h=0; h<nHar; h++) {
           hRepn[h]->Fill(dPt,cos((h+1.)*dPhi)); //for differential vn in respect to pt -> change to h+1 to get the v1 
-          hImpn[h]->Fill(dPt,sin((h+1.)*dPhi));      
+      	  hImpn[h]->Fill(dPt,sin((h+1.)*dPhi));      
 	  hReEtan[h]->Fill(dEta, cos((h+1.)*dPhi));// for differential vn in respect to eta
           hImEtan[h]->Fill(dEta, sin((h+1.)*dPhi));//All new ones need declaration and the new calculation to store the result in an array.
-
+//cout <<"at filling dEta:" << dEta << endl;
 	  if(dCharge > 0){
 	  hPosRepn[h]->Fill(dPt, cos((h+1.)*dPhi));
 	  hPosImpn[h]->Fill(dPt, sin((h+1.)*dPhi));
@@ -1001,7 +1002,7 @@ void CalculateFlowCME::Make(Event* anEvent) {
 		
 		hMpn->Fill(dPt);
 		MQ++;
-        
+   // cout << "after fill hReEtan" << hReEtan[0] << endl;
 		// ====== for calculateCMW ========		//fTPCQn2xWhole->Fill(dPt, trkWgt*TMath::Cos(gPsiN*dPhi)); // pt vs. cos(2phi)
 		//fTPCQn2yWhole->Fill(dPt, trkWgt*TMath::Sin(gPsiN*dPhi)); // pt vs. sin(2phi)
 		//fWgtWhole->Fill(dPt, trkWgt);
@@ -1227,7 +1228,8 @@ void CalculateFlowCME::ResetEventByEventQuantities()
     for(int h=0; h<nHar; h++) {
       ReQn[h] = 0;
       ImQn[h] = 0;
-      hRepn[h]->Reset();
+    // I thought this would be required - but resetting the hQvectors before v1 calculation is obviously a bad idea and it doesn't make a difference for the v1pt (etc). In case I need it later I will keep it until everzthing works fine !
+     /* hRepn[h]->Reset();
       hImpn[h]->Reset();
       hReEtan[h]->Reset();
       hImEtan[h]->Reset();
@@ -1239,7 +1241,7 @@ void CalculateFlowCME::ResetEventByEventQuantities()
       hNegReEtan[h]->Reset();
       hNegImpn[h]->Reset();
       hNegImEtan[h]->Reset(); 
-   
+  cout<<"reset"<< endl; 
 	V1pt->Reset();
 	Posv1pt->Reset();
 	Negv1pt->Reset();
@@ -1248,7 +1250,7 @@ void CalculateFlowCME::ResetEventByEventQuantities()
 	V1eta->Reset();
 	Posv1eta->Reset();
 	Negv1eta->Reset();
-	Deltav1eta->Reset(); 
+	Deltav1eta->Reset();*/ 
 }
     hMpn->Reset(); 
     MQ = 0;
@@ -2244,6 +2246,7 @@ void CalculateFlowCME::FinalizeFlowGF()
         Double_t NegRepnErr = hNegRepn[h]->GetBinError(pt);
         Double_t PosImpnErr = hPosImpn[h]->GetBinError(pt);
         Double_t NegImpnErr = hNegImpn[h]->GetBinError(pt);
+//cout <<"at setting content"<< Repn << Impn << PosRepn << NegRepn << PosImpn << NegImpn << endl;  
 //declaration and initialaziation for v1 variables
         Double_t v1pt = 0.;
         Double_t posv1pt = 0.;
@@ -2255,19 +2258,15 @@ void CalculateFlowCME::FinalizeFlowGF()
         Double_t negv1ptError = 0.;
         Double_t deltav1ptError = 0.;
 //calculation of v1 via scalar product method
-        v1pt = (Repn + Impn)/sqrt(Repn*Impn);//actually cos(phi)*Q_X + sin(phi)*Q_y; -> but Q_x,y are cos(dPhi) -> I think this is right ... but someone should confirm this 
+        v1pt = (Repn + Impn)/sqrt(abs(Repn*Impn));//actually cos(phi)*Q_X + sin(phi)*Q_y; -> but Q_x,y are cos(dPhi) -> I think this is right ... but someone should confirm this 
         posv1pt = (PosRepn + PosImpn)/sqrt(abs(PosRepn*PosImpn));
         negv1pt = (NegRepn + NegImpn)/sqrt(abs(NegRepn*NegImpn));
         deltav1pt = posv1pt - negv1pt;//or (v+ - v-) /2
-	v1ptError = 0.;
-	posv1ptError = 0;
-	negv1ptError = 0.;
-	deltav1ptError = 0.;
 //fully correlated errors
-	v1ptError = ( pow(Impn,2)*pow(Repn-Impn,2)*pow(RepnErr,2) + pow(Repn,2)*pow(Impn-Repn,2)*pow(ImpnErr,2) - Repn*Impn*(pow(Repn,2)-pow(Impn,2))*RepnErr*ImpnErr )/(4*pow(Impn*Repn,3));
-	posv1ptError = ( pow(PosImpn,2)*pow(PosRepn-PosImpn,2)*pow(PosRepnErr,2) + pow(PosRepn,2)*pow(PosImpn-PosRepn,2)*pow(PosImpnErr,2) - PosRepn*PosImpn*(pow(PosRepn,2)-pow(PosImpn,2))*PosRepnErr*PosImpnErr )/(4*pow(PosImpn*PosRepn,3));
-	negv1ptError = ( pow(NegImpn,2)*pow(NegRepn-NegImpn,2)*pow(NegRepnErr,2) + pow(NegRepn,2)*pow(NegImpn-NegRepn,2)*pow(NegImpnErr,2) - NegRepn*NegImpn*(pow(NegRepn,2)-pow(NegImpn,2))*NegRepnErr*NegImpnErr )/(4*pow(NegImpn*NegRepn,3));
-	deltav1ptError = pow(posv1ptError,2) + pow(negv1ptError,2) - 2*(posv1ptError*negv1ptError);
+	v1ptError = sqrt(abs( (pow(Impn,2)*pow(Repn-Impn,2)*pow(RepnErr,2) + pow(Repn,2)*pow(Impn-Repn,2)*pow(ImpnErr,2) - Repn*Impn*(pow(Repn,2)-pow(Impn,2))*RepnErr*ImpnErr )/(4*pow(Impn*Repn,3))));
+	posv1ptError = sqrt(abs( (pow(PosImpn,2)*pow(PosRepn-PosImpn,2)*pow(PosRepnErr,2) + pow(PosRepn,2)*pow(PosImpn-PosRepn,2)*pow(PosImpnErr,2) - PosRepn*PosImpn*(pow(PosRepn,2)-pow(PosImpn,2))*PosRepnErr*PosImpnErr )/(4*pow(PosImpn*PosRepn,3))));
+	negv1ptError = sqrt(abs( (pow(NegImpn,2)*pow(NegRepn-NegImpn,2)*pow(NegRepnErr,2) + pow(NegRepn,2)*pow(NegImpn-NegRepn,2)*pow(NegImpnErr,2) - NegRepn*NegImpn*(pow(NegRepn,2)-pow(NegImpn,2))*NegRepnErr*NegImpnErr )/(4*pow(NegImpn*NegRepn,3))));
+	deltav1ptError = sqrt(abs( pow(posv1ptError,2) + pow(negv1ptError,2) - 2*(posv1ptError*negv1ptError)));
 	V1pt->SetBinContent(pt,v1pt);
 	Posv1pt->SetBinContent(pt, posv1pt); 
         Negv1pt->SetBinContent(pt, negv1pt);
@@ -2279,8 +2278,11 @@ void CalculateFlowCME::FinalizeFlowGF()
 	Deltav1pt->SetBinError(pt, deltav1ptError);
 	}
 
-	for(Int_t eta=0; eta<fEtaDiffNBins; eta++){//fEtaDiffNBins = 52 -> eta is here the index and not the value ! eta (-3.5, 3.5) in 52 steps ->double check with dEta from hRe filling!
+	for(Int_t eta=1; eta<fEtaDiffNBins; eta++){//fEtaDiffNBins = 52 -> eta is here the index and not the value ! eta (-3.5, 3.5) in 52 steps ->Either I take the few bins where ReEtan & Co have values or I add an if case before the calculation to void the floatng point bla bla error
    	Int_t h = 0;
+//cout<<"eta for loop:"<<eta<<endl;
+//	Double_t num = hReEtan[h]->GetNbinsX();
+//cout<<"NBINS"<< num <<endl;
         Double_t ReEtan = hReEtan[h]->GetBinContent(eta);
         Double_t ImEtan = hImEtan[h]->GetBinContent(eta);
         Double_t PosReEtan = hPosReEtan[h]->GetBinContent(eta);
@@ -2288,42 +2290,39 @@ void CalculateFlowCME::FinalizeFlowGF()
         Double_t PosImEtan = hPosImEtan[h]->GetBinContent(eta);
         Double_t NegImEtan = hNegImEtan[h]->GetBinContent(eta);
 
-//change for eta 
-//
         Double_t ReEtanErr = hReEtan[h]->GetBinError(eta);
 	Double_t ImEtanErr = hImEtan[h]->GetBinError(eta);
         Double_t PosReEtanErr = hPosReEtan[h]->GetBinError(eta);
         Double_t NegReEtanErr = hNegReEtan[h]->GetBinError(eta);
         Double_t PosImEtanErr = hPosImEtan[h]->GetBinError(eta);
         Double_t NegImEtanErr = hNegImEtan[h]->GetBinError(eta);
-
+	if(ReEtan == 0){continue;}
+//cout<< "error" << ReEtanErr << PosReEtanErr<<endl;
+//cout<<"ReEtan"<< ReEtan<< " ImEtan"<< ImEtan<< PosReEtan << NegReEtan<< PosImEtan << NegImEtan <<endl;
+//All 0 if one is 0 -> to be save for all the other centralities ad ranges that follow in full analysis I will choos the if ... should ask this thursday
         Double_t v1eta = 0.;
         Double_t posv1eta = 0.;
         Double_t negv1eta = 0.;
         Double_t deltav1eta = 0.;
-//declare v1 errors before calculating them
+
         Double_t v1etaError = 0.;
         Double_t posv1etaError = 0.;
         Double_t negv1etaError = 0.;
         Double_t deltav1etaError = 0.;
 
-        v1eta = (ReEtan + ImEtan)/sqrt(ReEtan*ImEtan);//actually cos(phi)*Q_X + sin(phi)*Q_y; -> but Q_x,y are cos(dPhi) -> I think this is right ... but someone should confirm this 
+        v1eta = (ReEtan + ImEtan)/sqrt(abs(ReEtan*ImEtan));//actually cos(phi)*Q_X + sin(phi)*Q_y; -> but Q_x,y are cos(dPhi) -> I think this is right ... but someone should confirm this 
         posv1eta = (PosReEtan + PosImEtan)/sqrt(abs(PosReEtan*PosImEtan));
         negv1eta = (NegReEtan + NegImEtan)/sqrt(abs(NegReEtan*NegImEtan));
         deltav1eta = posv1eta - negv1eta;//or (v+ - v-) /2
-
-//Calculate Errors for v1--check correlations for the error calculation before...this means check the v1 calculation!
-	v1etaError = 0.;
-	posv1etaError = 0;
-	negv1etaError = 0.;
-	deltav1etaError = 0.;
-
-	v1etaError = ( pow(ImEtan,2)*pow(ReEtan-ImEtan,2)*pow(ReEtanErr,2) + pow(ReEtan,2)*pow(ImEtan-ReEtan,2)*pow(ImEtanErr,2) - ReEtan*ImEtan*(pow(ReEtan,2)-pow(ImEtan,2))*ReEtanErr*ImEtanErr )/(4*pow(ImEtan*ReEtan,3));
-	posv1etaError = ( pow(PosImEtan,2)*pow(PosReEtan-PosImEtan,2)*pow(PosReEtanErr,2) + pow(PosReEtan,2)*pow(PosImEtan-PosReEtan,2)*pow(PosImEtanErr,2) - PosReEtan*PosImEtan*(pow(PosReEtan,2)-pow(PosImEtan,2))*PosReEtanErr*PosImEtanErr )/(4*pow(PosImEtan*PosReEtan,3));
-	negv1etaError = ( pow(NegImEtan,2)*pow(NegReEtan-NegImEtan,2)*pow(NegReEtanErr,2) + pow(NegReEtan,2)*pow(NegImEtan-NegReEtan,2)*pow(NegImEtanErr,2) - NegReEtan*NegImEtan*(pow(NegReEtan,2)-pow(NegImEtan,2))*NegReEtanErr*NegImEtanErr )/(4*pow(NegImEtan*NegReEtan,3));
-	deltav1etaError = pow(posv1etaError,2) + pow(negv1etaError,2) - 2*(posv1etaError*negv1etaError);  //Filling histograms for v1 ------can I not just get rid of the [h] and just calculate it for each pt -obviously, but what about the eta problem 
+//cout<<"errors"<<endl;
+	v1etaError = sqrt( abs((pow(ImEtan,2)*pow(ReEtan-ImEtan,2)*pow(ReEtanErr,2) + pow(ReEtan,2)*pow(ImEtan-ReEtan,2)*pow(ImEtanErr,2) - ReEtan*ImEtan*(pow(ReEtan,2)-pow(ImEtan,2))*ReEtanErr*ImEtanErr )/(4*pow(ImEtan*ReEtan,3))));
+	posv1etaError = sqrt( abs((pow(PosImEtan,2)*pow(PosReEtan-PosImEtan,2)*pow(PosReEtanErr,2) + pow(PosReEtan,2)*pow(PosImEtan-PosReEtan,2)*pow(PosImEtanErr,2) - PosReEtan*PosImEtan*(pow(PosReEtan,2)-pow(PosImEtan,2))*PosReEtanErr*PosImEtanErr )/(4*pow(PosImEtan*PosReEtan,3))));
+	negv1etaError = sqrt(abs( (pow(NegImEtan,2)*pow(NegReEtan-NegImEtan,2)*pow(NegReEtanErr,2) + pow(NegReEtan,2)*pow(NegImEtan-NegReEtan,2)*pow(NegImEtanErr,2) - NegReEtan*NegImEtan*(pow(NegReEtan,2)-pow(NegImEtan,2))*NegReEtanErr*NegImEtanErr )/(4*pow(NegImEtan*NegReEtan,3))));
+	deltav1etaError = sqrt(abs( pow(posv1etaError,2) + pow(negv1etaError,2) - 2*(posv1etaError*negv1etaError)));  //Filling histograms for v1 ------can I not just get rid of the [h] and just calculate it for each pt -obviously, but what about the eta problem 
+cout<<"error on final hist" << v1etaError<<endl; 
 	 V1eta->SetBinContent(eta,v1eta);
 	 Posv1eta->SetBinContent(eta, posv1eta);
+	 Negv1eta->SetBinContent(eta, negv1eta);
          Deltav1eta->SetBinContent(eta, deltav1eta);
 //Adding errors to histogram
          V1eta->SetBinError(eta,v1etaError);
@@ -2331,8 +2330,6 @@ void CalculateFlowCME::FinalizeFlowGF()
   	 Negv1eta->SetBinError(eta, negv1etaError);
 	Deltav1eta->SetBinError(eta, deltav1etaError);
 	}
-
-
 
   // MIXED HARMONICS ***********************************************************
 
