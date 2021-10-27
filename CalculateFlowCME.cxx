@@ -2231,7 +2231,9 @@ void CalculateFlowCME::FinalizeFlowGF()
      }
   }
 //Calculation for v1 in pt for the one and only harmonic - can add the v3 later here as well ...
-  for(Int_t pt=1; pt<=fFlowGFIntCorHist[0][0]->GetNbinsX(); pt++) {
+ // for(Int_t pt=1; pt<=fFlowGFIntCorHist[0][0]->GetNbinsX(); pt++) {//this would produce plots with centrality on x
+    for(Int_t pt=1; pt<fPtDiffNBins; pt++){
+//cout<<"pt: "<< pt <<endl;
 	Int_t h = 0; 
         Double_t Repn = hRepn[h]->GetBinContent(pt);
         Double_t Impn = hImpn[h]->GetBinContent(pt);
@@ -2239,13 +2241,14 @@ void CalculateFlowCME::FinalizeFlowGF()
         Double_t NegRepn = hNegRepn[h]->GetBinContent(pt);
         Double_t PosImpn = hPosImpn[h]->GetBinContent(pt);
         Double_t NegImpn = hNegImpn[h]->GetBinContent(pt);
-
+//cout<<"Repn"<< Repn<<endl;
 	Double_t RepnErr = hRepn[h]->GetBinError(pt);
         Double_t ImpnErr = hImpn[h]->GetBinError(pt);
         Double_t PosRepnErr = hPosRepn[h]->GetBinError(pt);
         Double_t NegRepnErr = hNegRepn[h]->GetBinError(pt);
         Double_t PosImpnErr = hPosImpn[h]->GetBinError(pt);
         Double_t NegImpnErr = hNegImpn[h]->GetBinError(pt);
+	if(Repn == 0){continue;}
 //cout <<"at setting content"<< Repn << Impn << PosRepn << NegRepn << PosImpn << NegImpn << endl;  
 //declaration and initialaziation for v1 variables
         Double_t v1pt = 0.;
@@ -2266,7 +2269,7 @@ void CalculateFlowCME::FinalizeFlowGF()
 	v1ptError = sqrt(abs( (pow(Impn,2)*pow(Repn-Impn,2)*pow(RepnErr,2) + pow(Repn,2)*pow(Impn-Repn,2)*pow(ImpnErr,2) - Repn*Impn*(pow(Repn,2)-pow(Impn,2))*RepnErr*ImpnErr )/(4*pow(Impn*Repn,3))));
 	posv1ptError = sqrt(abs( (pow(PosImpn,2)*pow(PosRepn-PosImpn,2)*pow(PosRepnErr,2) + pow(PosRepn,2)*pow(PosImpn-PosRepn,2)*pow(PosImpnErr,2) - PosRepn*PosImpn*(pow(PosRepn,2)-pow(PosImpn,2))*PosRepnErr*PosImpnErr )/(4*pow(PosImpn*PosRepn,3))));
 	negv1ptError = sqrt(abs( (pow(NegImpn,2)*pow(NegRepn-NegImpn,2)*pow(NegRepnErr,2) + pow(NegRepn,2)*pow(NegImpn-NegRepn,2)*pow(NegImpnErr,2) - NegRepn*NegImpn*(pow(NegRepn,2)-pow(NegImpn,2))*NegRepnErr*NegImpnErr )/(4*pow(NegImpn*NegRepn,3))));
-	deltav1ptError = sqrt(abs( pow(posv1ptError,2) + pow(negv1ptError,2) - 2*(posv1ptError*negv1ptError)));
+	deltav1ptError = sqrt(abs( pow(posv1ptError,2) + pow(negv1ptError,2) - 2*(posv1ptError*negv1ptError)));//are they fuly correlated ?
 	V1pt->SetBinContent(pt,v1pt);
 	Posv1pt->SetBinContent(pt, posv1pt); 
         Negv1pt->SetBinContent(pt, negv1pt);
