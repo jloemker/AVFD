@@ -225,12 +225,18 @@ void CalculateFlowCME::InitializeArraysForFlowFromBW()
 {
   for(int h=0; h<nHar; h++) {
     V2IntPro[h] = NULL;
+    V2IntDelta[h] = NULL;
     V2IntProQC[h] = NULL;
-    //V1IntPro[h] = NULL;
-    //V1IntProQC[h] = NULL;
   for(int i=0; i<10; i++) {
       V2PtDiffPro[h][i] = NULL;
-      //V1PtDiffPro[h][i] = NULL;
+	V2PtDiffPos[h][i] = NULL;
+	V2PtDiffNeg[h][i] = NULL;
+	V2PtDiffDelta[h][i] = NULL;
+
+	V2EtaDiffPro[h][i] = NULL;
+	V2EtaDiffPos[h][i] = NULL;
+	V2EtaDiffNeg[h][i] = NULL;
+	V2EtaDiffDelta[h][i] = NULL;
 	 }
   }
   
@@ -247,7 +253,7 @@ void CalculateFlowCME::InitializeArraysForFlowFromBW()
     hNegImpn[h] = NULL;
     hNegReEtan[h] = NULL;
     hNegImEtan[h] = NULL;
-	V1pt = NULL;
+/*	V1pt = NULL;
 	Posv1pt = NULL;
 	Negv1pt = NULL;
 	Deltav1pt = NULL; 
@@ -255,10 +261,16 @@ void CalculateFlowCME::InitializeArraysForFlowFromBW()
 	V1eta = NULL;
 	Posv1eta = NULL;
 	Negv1eta = NULL;
-	Deltav1eta = NULL; 
+	Deltav1eta = NULL;*/ 
 }
   
   hMpn = NULL;
+  hPosMpn = NULL;
+  hNegMpn = NULL;
+
+  hMen = NULL;
+  hPosMen = NULL;
+  hNegMen = NULL;
 }
 
 //=====================================================================================================
@@ -660,23 +672,60 @@ void CalculateFlowCME::UserCreateOutputObjects() {
   fEvPlTPC = new TH1D("fEvPlTPC", "EvPlTPC distribution", 200, -3, 3);
   fCMWQAList->Add(fEvPlTPC);
 
-  //Flow from BW hists
+  //Flow from BW hists - do it again just like here for pt and repeat for eta !
   for(int h=0; h<nHar; h++) {
-    V2IntPro[h] = new TProfile(Form("V%dIntPro",h+2),Form("V%dIntPro",h+2),10,0,100,"s");
+    V2IntPro[h] = new TProfile(Form("V%dIntPro",h+1),Form("V%dIntPro",h+1),10,0,100,"s");
     V2IntPro[h]->Sumw2();
     fFlowFromBWList->Add(V2IntPro[h]);
-    V2IntProQC[h] = new TProfile(Form("V%dIntProQC",h+2),Form("V%dIntProQC",h+2),10,0,100,"s");
+    V2IntDelta[h] = new TProfile(Form("V%dIntDelta", h+1), Form("V%dIntDelta",h+1),10,0,100,"s");
+    V2IntDelta[h]->Sumw2();
+    fFlowFromBWList->Add(V2IntDelta[h]);
+    V2IntProQC[h] = new TProfile(Form("V%dIntProQC",h+1),Form("V%dIntProQC",h+1),10,0,100,"s");
     V2IntProQC[h]->Sumw2();
     fFlowFromBWList->Add(V2IntProQC[h]);
     for(int i=0; i<10; i++) { // i index is the centrality
-      V2PtDiffPro[h][i] = new TProfile(Form("V%dPtDiffPro_Cent%d",h+2,i),Form("V%dPtDiffPro_Cent%d",h+2,i),fPtDiffNBins,fCRCPtBins,"s");
+      V2PtDiffPro[h][i] = new TProfile(Form("V%dPtDiffPro_Cent%d",h+1,i),Form("V%dPtDiffPro_Cent%d",h+1,i),fPtDiffNBins,fCRCPtBins,"s");
       V2PtDiffPro[h][i]->Sumw2();
-      fFlowFromBWList->Add(V2PtDiffPro[h][i]);  
+      fFlowFromBWList->Add(V2PtDiffPro[h][i]);
+	V2PtDiffPos[h][i] = new TProfile(Form("V%dPtDiffPos_Cent%d",h+1,i), Form("V%dPtDiffPos_Cent%d", h+1,i), fPtDiffNBins, fCRCPtBins);
+	V2PtDiffPos[h][i]->Sumw2();
+	fFlowFromBWList->Add(V2PtDiffPos[h][i]);
+        V2PtDiffNeg[h][i] = new TProfile(Form("V%dPtDiffNeg_Cent%d",h+1,i), Form("V%dPtDiffNeg_Cent%d", h+1,i), fPtDiffNBins, fCRCPtBins);
+        V2PtDiffNeg[h][i]->Sumw2();
+        fFlowFromBWList->Add(V2PtDiffNeg[h][i]);
+        V2PtDiffDelta[h][i] = new TProfile(Form("V%dPtDiffDelta_Cent%d",h+1,i), Form("V%dPtDiffDelta_Cent%d", h+1,i), fPtDiffNBins, fCRCPtBins);
+        V2PtDiffDelta[h][i]->Sumw2();
+        fFlowFromBWList->Add(V2PtDiffDelta[h][i]);
+
+	V2EtaDiffPro[h][i] = new TProfile(Form("V%dEtaDiffPro_Cent%d", h+1,i), Form("V%dEtaDiffPro_Cent%d", h+1,i), fEtaDiffNBins, fCRCEtaBins);
+        V2EtaDiffPro[h][i]->Sumw2();
+        fFlowFromBWList->Add(V2EtaDiffPro[h][i]); 
+        V2EtaDiffPos[h][i] = new TProfile(Form("V%dEtaDiffPos_Cent%d", h+1,i), Form("V%dEtaDiffPos_Cent%d", h+1,i), fEtaDiffNBins, fCRCEtaBins);
+        V2EtaDiffPos[h][i]->Sumw2();
+        fFlowFromBWList->Add(V2EtaDiffPos[h][i]); 
+        V2EtaDiffNeg[h][i] = new TProfile(Form("V%dEtaDiffNeg_Cent%d", h+1,i), Form("V%dEtaDiffNeg_Cent%d", h+1,i), fEtaDiffNBins, fCRCEtaBins);
+        V2EtaDiffNeg[h][i]->Sumw2();
+        fFlowFromBWList->Add(V2EtaDiffNeg[h][i]);
+        V2EtaDiffDelta[h][i] = new TProfile(Form("V%dEtaDiffDelta_Cent%d", h+1,i), Form("V%dEtaDiffDelta_Cent%d", h+1,i), fEtaDiffNBins, fCRCEtaBins);
+        V2EtaDiffDelta[h][i]->Sumw2();
+        fFlowFromBWList->Add(V2EtaDiffDelta[h][i]);
     }
   }
 
   hMpn = new TH1F("hMpn","M(p,n)", fPtDiffNBins,fCRCPtBins);
   fFlowFromBWList->Add(hMpn);
+  hPosMpn = new TH1F("hPosMpn", "PosM(p,n)",fPtDiffNBins, fCRCPtBins);
+  fFlowFromBWList->Add(hPosMpn);
+  hNegMpn = new TH1F("hNegMpn", "NegM(p,n)",fPtDiffNBins, fCRCPtBins);
+  fFlowFromBWList->Add(hNegMpn);
+ 
+  hMen = new TH1F("hMen", "M(p,n)_{eta}", fEtaDiffNBins, fCRCEtaBins);
+  fFlowFromBWList->Add(hMen);
+  hPosMen = new TH1F("hPosMen", "PosM(p,n)_{eta}", fEtaDiffNBins, fCRCEtaBins);
+  fFlowFromBWList->Add(hPosMen);
+  hNegMen = new TH1F("hNegMen", "NegM(p,n)_{eta}", fEtaDiffNBins, fCRCEtaBins);
+  fFlowFromBWList->Add(hNegMen);
+
 
  //---------Q-Vector Histograms----in BW---------// 
   for(int h=0; h<nHar; h++) {
@@ -977,30 +1026,39 @@ void CalculateFlowCME::Make(Event* anEvent) {
           MQN++;
         }
 	//cout <<"after fill ReQ1n"<<ReQ1N<<endl;
-        //here I should add the v1 with u as unit vector that yields the (cos phi, sin phi) here are only ID's
         for(int h=0; h<nHar; h++) {
           hRepn[h]->Fill(dPt,cos((h+1.)*dPhi)); //for differential vn in respect to pt -> change to h+1 to get the v1 
       	  hImpn[h]->Fill(dPt,sin((h+1.)*dPhi));      
 	  hReEtan[h]->Fill(dEta, cos((h+1.)*dPhi));// for differential vn in respect to eta
-          hImEtan[h]->Fill(dEta, sin((h+1.)*dPhi));//All new ones need declaration and the new calculation to store the result in an array.
-//cout <<"at filling dEta:" << dEta << endl;
+          hImEtan[h]->Fill(dEta, sin((h+1.)*dPhi));
 	  if(dCharge > 0){
 	  hPosRepn[h]->Fill(dPt, cos((h+1.)*dPhi));
 	  hPosImpn[h]->Fill(dPt, sin((h+1.)*dPhi));
 	  hPosReEtan[h]->Fill(dEta, cos((h+1.)*dPhi));
 	  hPosImEtan[h]->Fill(dEta, sin((h+1.)*dPhi));
+	  hPosMpn->Fill(dPt);
+	  hPosMen->Fill(dEta);
+	  PosReQn[h] += cos((h+1)*dPhi);//for integrated delta v1
+	  PosImQn[h] += sin((h+1)*dPhi);
+	  PMQ++;
 	  }
 	  if(dCharge < 0){
 	  hNegRepn[h]->Fill(dPt, cos((h+1.)*dPhi));
 	  hNegImpn[h]->Fill(dPt, sin((h+1.)*dPhi));
 	  hNegReEtan[h]->Fill(dEta, cos((h+1)*dPhi));
 	  hNegImEtan[h]->Fill(dEta, sin((h+1.)*dPhi));
+	  hNegMpn->Fill(dPt);
+	  hNegMen->Fill(dEta);
+	  NegReQn[h] += cos((h+1)*dPhi);//for integrated delta v1
+	  NegImQn[h] += sin((h+1)*dPhi);
+	  NMQ++;
 	  }
-          ReQn[h] += cos((h+1.)*dPhi);         //for integrated vn
+          ReQn[h] += cos((h+1.)*dPhi);//for integrated vn
           ImQn[h] += sin((h+1.)*dPhi);
 		}
 		
 		hMpn->Fill(dPt);
+		hMen->Fill(dEta);
 		MQ++;
    // cout << "after fill hReEtan" << hReEtan[0] << endl;
 		// ====== for calculateCMW ========		//fTPCQn2xWhole->Fill(dPt, trkWgt*TMath::Cos(gPsiN*dPhi)); // pt vs. cos(2phi)
@@ -1228,6 +1286,10 @@ void CalculateFlowCME::ResetEventByEventQuantities()
     for(int h=0; h<nHar; h++) {
       ReQn[h] = 0;
       ImQn[h] = 0;
+	PosReQn[h] = 0;
+	PosImQn[h] = 0;
+	NegReQn[h] = 0;
+	NegImQn[h] = 0;
     // I thought this would be required - but resetting the hQvectors before v1 calculation is obviously a bad idea and it doesn't make a difference for the v1pt (etc). In case I need it later I will keep it until everzthing works fine !
      /* hRepn[h]->Reset();
       hImpn[h]->Reset();
@@ -1252,7 +1314,12 @@ void CalculateFlowCME::ResetEventByEventQuantities()
 	Negv1eta->Reset();
 	Deltav1eta->Reset();*/ 
 }
-    hMpn->Reset(); 
+    hMpn->Reset();
+    hPosMpn->Reset();
+    hNegMpn->Reset(); 
+    hMen->Reset();
+    hPosMen->Reset();
+    hNegMen->Reset();
     MQ = 0;
     
     //CMW
@@ -1324,22 +1391,120 @@ void CalculateFlowCME::Terminate()
 void CalculateFlowCME::CalculateFlowFromBW()//evtl adding the cos(phi)*Qvector here ?
 {
 	Double_t EvPlTPC = TMath::ATan2(fSumTPCQn2yEtaNegWhole+fSumTPCQn2yEtaPosWhole,fSumTPCQn2xEtaNegWhole+fSumTPCQn2xEtaPosWhole)/2.;
-	Double_t pRe = 0, pIm = 0, mp = 0, pt = 0;
+	Double_t pRe = 0, pIm = 0, mp = 0, posmp = 0, negmp = 0, ep = 0, posep = 0, negep = 0, pt = 0, eta=0;
+	Double_t v1plus = 0, v1minus = 0, v1plusErr = 0, v1minusErr = 0, delta = 0, deltaErr = 0;
 	for(int h=0; h<nHar; h++) {
-      for (Int_t k=1; k<=hRepn[h]->GetNbinsX(); k++) {
+//for pt diff
+      for (Int_t k=1; k<=hRepn[h]->GetNbinsX(); k++) {//another loop for pos and neg with already existing hists
         pRe = hRepn[h]->GetBinContent(k);
         pIm = hImpn[h]->GetBinContent(k);
         mp = hMpn->GetBinContent(k);
         pt = hMpn->GetBinCenter(k);
         if(mp>0) {
-          V2PtDiffPro[h][fCenBin]->Fill(pt,(pRe*cos((h+2.)*EvPlTPC)+pIm*sin((h+2.)*EvPlTPC))/mp);
+          V2PtDiffPro[h][fCenBin]->Fill(pt,(pRe*cos((h+1.)*EvPlTPC)+pIm*sin((h+1.)*EvPlTPC))/mp);
         }
-      }
-      if(MQ>0) {
+       
+      if(MQ>0) {//WHAT IS MQ ?? -> here for VInt & CO
 
-        V2IntPro[h]->Fill(fCentralityEBE,(ReQn[h]*cos((h+2.)*EvPlTPC)+ImQn[h]*sin((h+2.)*EvPlTPC))/MQ);
+        V2IntPro[h]->Fill(fCentralityEBE,(ReQn[h]*cos((h+1.)*EvPlTPC)+ImQn[h]*sin((h+1.)*EvPlTPC))/MQ);
         V2IntProQC[h]->Fill(fCentralityEBE,(ReQn[h]*ReQn[h]+ImQn[h]*ImQn[h]-MQ)/(MQ*(MQ-1.)),MQ*(MQ-1.));
-      }
+        }
+       }
+//integrated delta v1
+      if(PMQ>0 && NMQ>0){
+	v1plus = (PosReQn[h]*cos((h+1.)*EvPlTPC)+PosImQn[h]*sin((h+1.)*EvPlTPC))/PMQ;
+	v1minus = (NegReQn[h]*cos((h+1.)*EvPlTPC)+NegImQn[h]*sin((h+1.)*EvPlTPC))/MQ; 
+	delta = v1plus - v1minus;//or devided by 2 ??
+	V2IntDelta[h]->Fill(fCentralityEBE, delta);//absolutely no clue how to deal with uncertainties here !
+	}
+//differential 
+//for pos pt
+	for(Int_t k = 1; k<=hPosRepn[h]->GetNbinsX(); k++){
+	pRe = hPosRepn[h]->GetBinContent(k);
+	pIm = hPosImpn[h]->GetBinContent(k);
+	posmp = hPosMpn->GetBinContent(k);
+	pt = hPosMpn->GetBinCenter(k);
+	if(posmp>0){
+	V2PtDiffPos[h][fCenBin]->Fill(pt,(pRe*cos((h+1.)*EvPlTPC)+pIm*sin((h+1.)*EvPlTPC))/posmp); 
+	  }
+        }
+//for neg pt
+        for(Int_t k = 1; k<=hNegRepn[h]->GetNbinsX(); k++){                         
+        pRe = hNegRepn[h]->GetBinContent(k);
+        pIm = hNegImpn[h]->GetBinContent(k);
+        negmp = hNegMpn->GetBinContent(k);
+        pt = hNegMpn->GetBinCenter(k);                                              
+        if(negmp>0){
+        V2PtDiffNeg[h][fCenBin]->Fill(pt,(pRe*cos((h+1.)*EvPlTPC)+pIm*sin((h+1.)*EvPlTPC))/negmp);
+          }
+	}	
+//for delta pt...
+	for(Int_t k = 1; k<=hPosRepn[h]->GetNbinsX(); k++){
+	posmp = hPosMpn->GetBinContent(k);
+	negmp = hNegMpn->GetBinContent(k);
+	if(posmp>0 && negmp>0){
+	//cout<<"content in del pt"<<endl
+	v1plus = V2PtDiffPos[h][fCenBin]->GetBinContent(k);
+	v1minus = V2PtDiffNeg[h][fCenBin]->GetBinContent(k);
+	delta = v1plus - v1minus;
+	pt = hPosMpn->GetBinCenter(k);
+	V2PtDiffDelta[h][fCenBin]->Fill(pt, delta);
+	v1plusErr = V2PtDiffPos[h][fCenBin]->GetBinError(pt);
+	v1minusErr = V2PtDiffNeg[h][fCenBin]->GetBinError(pt);
+	deltaErr = sqrt(abs( pow(v1plusErr,2) + pow(v1minusErr,2) -2*v1minus*v1plus));//aren't thez independent ??
+	V2PtDiffDelta[h][fCenBin]->SetBinError(pt, deltaErr);
+	  }
+	}
+//for eta diff
+	for(Int_t k=1; k<=hReEtan[h]->GetNbinsX(); k++){
+	pRe = hReEtan[h]->GetBinContent(k);
+	pIm = hImEtan[h]->GetBinContent(k);
+        ep = hMen->GetBinContent(k);
+        eta = hMen->GetBinCenter(k);
+//	cout << "ep"<< ep<< endl;
+        if(ep>0){//Not sure about this 
+        V2EtaDiffPro[h][fCenBin]->Fill(eta,(pRe*cos((h+1.)*EvPlTPC)+ pIm*sin((h+1.)*EvPlTPC))/ep);
+         }
+	}
+//for pos eta
+        for(Int_t k=1; k<=hPosReEtan[h]->GetNbinsX(); k++){
+        pRe = hPosReEtan[h]->GetBinContent(k);
+        pIm = hPosImEtan[h]->GetBinContent(k);
+        posep = hPosMen->GetBinContent(k);
+        eta = hPosMen->GetBinCenter(k);
+       // cout << "ep"<< ep<< endl;
+        if(posep>0){//Not sure about this if
+        V2EtaDiffPos[h][fCenBin]->Fill(eta,(pRe*cos((h+1.)*EvPlTPC)+ pIm*sin((h+1.)*EvPlTPC))/posep);
+         }
+        }
+//for neg eta
+        for(Int_t k=1; k<=hNegReEtan[h]->GetNbinsX(); k++){
+        pRe = hNegReEtan[h]->GetBinContent(k);
+        pIm = hNegImEtan[h]->GetBinContent(k);
+        negep = hNegMen->GetBinContent(k);
+        eta = hMen->GetBinCenter(k);
+        //cout << "ep"<< ep<< endl;
+        if(negep>0){//Not sure about this if
+        V2EtaDiffNeg[h][fCenBin]->Fill(eta,(pRe*cos((h+1.)*EvPlTPC)+ pIm*sin((h+1.)*EvPlTPC))/negep);
+         }
+        }
+//for delta eta
+        for(Int_t k = 1; k<=hPosReEtan[h]->GetNbinsX(); k++){
+        posmp = hPosMen->GetBinContent(k);
+        negmp = hNegMen->GetBinContent(k);
+        if(posmp>0 && negmp>0){
+        v1plus = V2EtaDiffPos[h][fCenBin]->GetBinContent(k);
+        v1minus = V2EtaDiffNeg[h][fCenBin]->GetBinContent(k);
+	eta = hPosMen->GetBinCenter(k);
+        delta = v1plus -v1minus;
+//cout<<"eta"<<eta<<"v1plus"<<v1plus<<"v1minus"<<v1minus<<"delta eta"<<delta<<endl;
+        V2EtaDiffDelta[h][fCenBin]->Fill(eta, delta);
+        v1plusErr = V2EtaDiffPos[h][fCenBin]->GetBinError(eta);
+        v1minusErr = V2EtaDiffNeg[h][fCenBin]->GetBinError(eta);
+        deltaErr = sqrt(abs( pow(v1plusErr,2) + pow(v1minusErr,2) -2*v1minus*v1plus));//aren't they independent ??
+        V2EtaDiffDelta[h][fCenBin]->SetBinError(eta, deltaErr);
+          }
+	}
     } 
 }
 //=====================================================================================================
@@ -2230,7 +2395,8 @@ void CalculateFlowCME::FinalizeFlowGF()
       }
      }
   }
-//Calculation for v1 in pt for the one and only harmonic - can add the v3 later here as well ...
+//First try - I will clear my mess after I got results ...
+/*Calculation for v1 in pt for the one and only harmonic - can add the v3 later here as well ...
  // for(Int_t pt=1; pt<=fFlowGFIntCorHist[0][0]->GetNbinsX(); pt++) {//this would produce plots with centrality on x
     for(Int_t pt=1; pt<fPtDiffNBins; pt++){
 //cout<<"pt: "<< pt <<endl;
@@ -2252,33 +2418,37 @@ void CalculateFlowCME::FinalizeFlowGF()
 //cout <<"at setting content"<< Repn << Impn << PosRepn << NegRepn << PosImpn << NegImpn << endl;  
 //declaration and initialaziation for v1 variables
         Double_t v1pt = 0.;
-        Double_t posv1pt = 0.;
-        Double_t negv1pt = 0.;
+        Double_t v1plus = 0.;
+        Double_t v1minus = 0.;
         Double_t deltav1pt = 0.;
 
         Double_t v1ptError = 0.;
-        Double_t posv1ptError = 0.;
-        Double_t negv1ptError = 0.;
-        Double_t deltav1ptError = 0.;
+        Double_t v1plusErr = 0.;
+        Double_t v1minusErr = 0.;
+        Double_t deltaErr = 0.;
 //calculation of v1 via scalar product method
-        v1pt = (Repn + Impn)/sqrt(abs(Repn*Impn));//actually cos(phi)*Q_X + sin(phi)*Q_y; -> but Q_x,y are cos(dPhi) -> I think this is right ... but someone should confirm this 
-        posv1pt = (PosRepn + PosImpn)/sqrt(abs(PosRepn*PosImpn));
-        negv1pt = (NegRepn + NegImpn)/sqrt(abs(NegRepn*NegImpn));
-        deltav1pt = posv1pt - negv1pt;//or (v+ - v-) /2
-//fully correlated errors
+        v1plus = V2PtDiffPos[0][2]->GetBinContent(pt);//actually cos(phi)*Q_X + sin(phi)*Q_y; -> but Q_x,y are cos(dPhi) -> I think this is right ... but someone should confirm this 
+        v1minus = V2PtDiffNeg[0][2]->GetBinContent(pt);
+	deltav1pt = v1plus - v1minus;
+        v1plusErr = V2PtDiffPos[h][2]->GetBinError(pt);
+        v1minusErr = V2PtDiffNeg[h][2]->GetBinError(pt);
+	deltaErr = sqrt(abs( pow(v1plusErr,2) + pow(v1minusErr,2) -2*v1minus*v1plus));
+
+	//deltav1ptErr =
+
 	v1ptError = sqrt(abs( (pow(Impn,2)*pow(Repn-Impn,2)*pow(RepnErr,2) + pow(Repn,2)*pow(Impn-Repn,2)*pow(ImpnErr,2) - Repn*Impn*(pow(Repn,2)-pow(Impn,2))*RepnErr*ImpnErr )/(4*pow(Impn*Repn,3))));
 	posv1ptError = sqrt(abs( (pow(PosImpn,2)*pow(PosRepn-PosImpn,2)*pow(PosRepnErr,2) + pow(PosRepn,2)*pow(PosImpn-PosRepn,2)*pow(PosImpnErr,2) - PosRepn*PosImpn*(pow(PosRepn,2)-pow(PosImpn,2))*PosRepnErr*PosImpnErr )/(4*pow(PosImpn*PosRepn,3))));
 	negv1ptError = sqrt(abs( (pow(NegImpn,2)*pow(NegRepn-NegImpn,2)*pow(NegRepnErr,2) + pow(NegRepn,2)*pow(NegImpn-NegRepn,2)*pow(NegImpnErr,2) - NegRepn*NegImpn*(pow(NegRepn,2)-pow(NegImpn,2))*NegRepnErr*NegImpnErr )/(4*pow(NegImpn*NegRepn,3))));
-	deltav1ptError = sqrt(abs( pow(posv1ptError,2) + pow(negv1ptError,2) - 2*(posv1ptError*negv1ptError)));//are they fuly correlated ?
-	V1pt->SetBinContent(pt,v1pt);
-	Posv1pt->SetBinContent(pt, posv1pt); 
-        Negv1pt->SetBinContent(pt, negv1pt);
+	deltav1ptError = sqrt(abs( pow(posv1ptError,2) + pow(negv1ptError,2) - 2*(posv1ptError*negv1ptError)));
+	//V1pt->SetBinContent(pt,v1pt);
+	//Posv1pt->SetBinContent(pt, posv1pt); 
+        //Negv1pt->SetBinContent(pt, negv1pt);
 	Deltav1pt->SetBinContent(pt,deltav1pt);
 //Adding errors to histogram
-	V1pt->SetBinError(pt,v1ptError);
-	Posv1pt->SetBinError(pt, posv1ptError);
-	Negv1pt->SetBinError(pt, negv1ptError);
-	Deltav1pt->SetBinError(pt, deltav1ptError);
+//	V1pt->SetBinError(pt,v1ptError);
+//	Posv1pt->SetBinError(pt, posv1ptError);
+//	Negv1pt->SetBinError(pt, negv1ptError);
+	Deltav1pt->SetBinError(pt, deltaErr);
 	}
 
 	for(Int_t eta=1; eta<fEtaDiffNBins; eta++){//fEtaDiffNBins = 52 -> eta is here the index and not the value ! eta (-3.5, 3.5) in 52 steps ->Either I take the few bins where ReEtan & Co have values or I add an if case before the calculation to void the floatng point bla bla error
@@ -2322,7 +2492,7 @@ void CalculateFlowCME::FinalizeFlowGF()
 	posv1etaError = sqrt( abs((pow(PosImEtan,2)*pow(PosReEtan-PosImEtan,2)*pow(PosReEtanErr,2) + pow(PosReEtan,2)*pow(PosImEtan-PosReEtan,2)*pow(PosImEtanErr,2) - PosReEtan*PosImEtan*(pow(PosReEtan,2)-pow(PosImEtan,2))*PosReEtanErr*PosImEtanErr )/(4*pow(PosImEtan*PosReEtan,3))));
 	negv1etaError = sqrt(abs( (pow(NegImEtan,2)*pow(NegReEtan-NegImEtan,2)*pow(NegReEtanErr,2) + pow(NegReEtan,2)*pow(NegImEtan-NegReEtan,2)*pow(NegImEtanErr,2) - NegReEtan*NegImEtan*(pow(NegReEtan,2)-pow(NegImEtan,2))*NegReEtanErr*NegImEtanErr )/(4*pow(NegImEtan*NegReEtan,3))));
 	deltav1etaError = sqrt(abs( pow(posv1etaError,2) + pow(negv1etaError,2) - 2*(posv1etaError*negv1etaError)));  //Filling histograms for v1 ------can I not just get rid of the [h] and just calculate it for each pt -obviously, but what about the eta problem 
-cout<<"error on final hist" << v1etaError<<endl; 
+//cout<<"error on final hist" << v1etaError<<endl; 
 	 V1eta->SetBinContent(eta,v1eta);
 	 Posv1eta->SetBinContent(eta, posv1eta);
 	 Negv1eta->SetBinContent(eta, negv1eta);
@@ -2333,7 +2503,7 @@ cout<<"error on final hist" << v1etaError<<endl;
   	 Negv1eta->SetBinError(eta, negv1etaError);
 	Deltav1eta->SetBinError(eta, deltav1etaError);
 	}
-
+*/
   // MIXED HARMONICS ***********************************************************
 
   for (Int_t h=0; h<fkFlowGFNHarm; h++) {

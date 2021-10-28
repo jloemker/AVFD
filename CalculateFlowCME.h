@@ -196,11 +196,22 @@ class CalculateFlowCME
 	TList *fFlowFromBWList;
 	const static Int_t fFlowFromBWCenBin = 10;
 	Double_t ReQn[fFlowFromBWCenBin] = {0.}, ImQn[fFlowFromBWCenBin] = {0.};
-    
+        //for integrated deltav1
+        Double_t PosReQn[fFlowFromBWCenBin] = {0.}, PosImQn[fFlowFromBWCenBin] = {0.};
+	Double_t NegReQn[fFlowFromBWCenBin] = {0.}, NegImQn[fFlowFromBWCenBin] = {0.};   
     const static Int_t nHar = 4;//was 3, but to inclde v1 and to still account for the others - I think this messes up things ... - still doesn't matter for v1
 	TProfile *V2IntPro[nHar];
+	TProfile *V2IntDelta[nHar];
     TProfile *V2IntProQC[nHar];
     TProfile *V2PtDiffPro[nHar][10];
+	TProfile *V2PtDiffPos[nHar][10];
+	TProfile *V2PtDiffNeg[nHar][10];
+	TProfile *V2PtDiffDelta[nHar][10];
+//and for eta
+	TProfile *V2EtaDiffPro[nHar][10];
+        TProfile *V2EtaDiffPos[nHar][10];       
+        TProfile *V2EtaDiffNeg[nHar][10];                          
+        TProfile *V2EtaDiffDelta[nHar][10];
     TH1F *hRepn[nHar], *hImpn[nHar];//declarations for v1 caluclation(s)
     TH1F *hReEtan[nHar], *hImEtan[nHar];
     TH1F *hPosRepn[nHar], *hNegRepn[nHar];
@@ -208,6 +219,12 @@ class CalculateFlowCME
     TH1F *hPosImpn[nHar], *hNegImpn[nHar];
     TH1F *hPosImEtan[nHar], *hNegImEtan[nHar];
 	TH1F *hMpn;
+	TH1F *hPosMpn;
+	TH1F *hNegMpn;
+
+	TH1F *hMen;
+	TH1F *hPosMen;
+	TH1F *hNegMen;
 	//v1 caluclation   --- noot sure about the [nHar]....maybe no [] at all and just filling in .cxx l.~2227 via pt/eta loop ?
 	
 	TH1F *V1pt;
@@ -283,7 +300,7 @@ class CalculateFlowCME
     Double_t ReQ2P=0, ImQ2P=0, ReQ2N=0, ImQ2N=0;
     Double_t ReQ3P=0, ImQ3P=0, ReQ3N=0, ImQ3N=0;
     Double_t ReQ4P=0, ImQ4P=0, ReQ4N=0, ImQ4N=0;
-    Double_t MQP=0, MQN=0, MQ=0;
+    Double_t MQP=0, MQN=0, MQ=0, PMQ = 0, NMQ = 0;
 
 	//--------- individual Q-vector terms -----------
 	const static Int_t nQVector = 8;
