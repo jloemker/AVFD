@@ -91,8 +91,9 @@ class CalculateFlowCME
 	Double_t wEta = 1; // In MC, set to 1 for now.
 	Double_t wTrack = 1; // In MC, set to 1 for now.
 	Double_t *fCRCPtBins;
-	//for weight in v1pt differential
+	//for weight in v1pt and v1eta differential
 	Double_t fPtWeight = 1;
+	Double_t fEtaWeight = 1;
 //for v1(eta)
 	Double_t *fCRCEtaBins;
 	Bool_t doQA = kFALSE;
@@ -156,6 +157,14 @@ class CalculateFlowCME
 
 	TProfile *fFlowGFPtDifCovPro[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde];
 	TH1D *fFlowGFPtDifCovHist[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde];
+	//for diffeential eta____________________
+	TProfile *fFlowGFEtaDifCorPro[fkFlowGFNHarm][fkFlowGFNOrde];//initialized with Etadiff bins       
+        TH1D *fFlowGFEtaDifCorHist[fkFlowGFNHarm][fkFlowGFNOrde];
+        TH1D *fFlowGFEtaDifCumHist[fkFlowGFNHarm][fkFlowGFNOrde];
+        TH1D *fFlowGFEtaDifFinalHist[fkFlowGFNHarm][fkFlowGFNOrde];
+
+        TProfile *fFlowGFEtaDifCovPro[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde];
+        TH1D *fFlowGFEtaDifCovHist[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde];
 	//________________________________________
 	TProfile *fFlowGFIntCovPro[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
 	TH1D *fFlowGFIntCovHist[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
