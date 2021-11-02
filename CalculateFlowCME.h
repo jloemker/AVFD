@@ -91,6 +91,8 @@ class CalculateFlowCME
 	Double_t wEta = 1; // In MC, set to 1 for now.
 	Double_t wTrack = 1; // In MC, set to 1 for now.
 	Double_t *fCRCPtBins;
+	//for weight in v1pt differential
+	Double_t fPtWeight = 1;
 //for v1(eta)
 	Double_t *fCRCEtaBins;
 	Bool_t doQA = kFALSE;
@@ -133,7 +135,7 @@ class CalculateFlowCME
 	TH1D *fAntiProtonsPhiSpectra;
 	// Flow GF part
 	TList *fFlowGFList;
-	const static Int_t fkFlowGFNHarm = 4;//Sould stay 4 - nHar TH1F is independent from the other caluculations and has 4 entries -> to avoid "increment" errors !
+	const static Int_t fkFlowGFNHarm = 4;//Increased from 4 to 5 !
 	const static Int_t fkFlowGFNOrde = 4;
 	const static Int_t fFlowGFCenBin = 10;
 	const static Int_t fkGFPtB = 8;
@@ -142,11 +144,19 @@ class CalculateFlowCME
 	TMatrixD *fReQGFPt[fkGFPtB]; // fReQ[m][k] = sum_{i=1}^{M} w_{i}^{k} cos(m*phi_{i})
 	TMatrixD *fImQGFPt[fkGFPtB]; // fImQ[m][k] = sum_{i=1}^{M} w_{i}^{k} sin(m*phi_{i})
 	
-	TProfile *fFlowGFIntCorPro[fkFlowGFNHarm][fkFlowGFNOrde]; //+1 to account for the additional h in v1 calculation
+	TProfile *fFlowGFIntCorPro[fkFlowGFNHarm][fkFlowGFNOrde]; //initialized with centrality bins
 	TH1D *fFlowGFIntCorHist[fkFlowGFNHarm][fkFlowGFNOrde]; //
 	TH1D *fFlowGFIntCumHist[fkFlowGFNHarm][fkFlowGFNOrde]; //
-	TH1D *fFlowGFIntFinalHist[fkFlowGFNHarm][fkFlowGFNOrde]; //        
-	
+	TH1D *fFlowGFIntFinalHist[fkFlowGFNHarm][fkFlowGFNOrde]; // from pt integrated vn      
+	//for differential pt_____________________ 
+	TProfile *fFlowGFPtDifCorPro[fkFlowGFNHarm][fkFlowGFNOrde];//initialized with ptdiff bins	
+	TH1D *fFlowGFPtDifCorHist[fkFlowGFNHarm][fkFlowGFNOrde];
+	TH1D *fFlowGFPtDifCumHist[fkFlowGFNHarm][fkFlowGFNOrde];
+	TH1D *fFlowGFPtDifFinalHist[fkFlowGFNHarm][fkFlowGFNOrde];
+
+	TProfile *fFlowGFPtDifCovPro[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde];
+	TH1D *fFlowGFPtDifCovHist[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde];
+	//________________________________________
 	TProfile *fFlowGFIntCovPro[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
 	TH1D *fFlowGFIntCovHist[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
   
@@ -165,6 +175,7 @@ class CalculateFlowCME
 	const static Int_t fFlowNHarmMax = 14; // WARNING: MIN (2*fFlowNHarm+2)
 	const static Int_t fQVecPower = 5;
 	Int_t fPtDiffNBins; //
+	//Double_t PtBins[37];
 //for v1(eta)	
 	Int_t fEtaDiffNBins;
 	TH1D *fPOIPtDiffQRe[fQVecPower][fFlowNHarmMax]; // real part
@@ -218,6 +229,7 @@ class CalculateFlowCME
     TH1F *hPosReEtan[nHar], *hNegReEtan[nHar];
     TH1F *hPosImpn[nHar], *hNegImpn[nHar];
     TH1F *hPosImEtan[nHar], *hNegImEtan[nHar];
+//here are ins for pT an eta stored in MakeEvent
 	TH1F *hMpn;
 	TH1F *hPosMpn;
 	TH1F *hNegMpn;
@@ -225,12 +237,12 @@ class CalculateFlowCME
 	TH1F *hMen;
 	TH1F *hPosMen;
 	TH1F *hNegMen;
-	//v1 caluclation   --- noot sure about the [nHar]....maybe no [] at all and just filling in .cxx l.~2227 via pt/eta loop ?
-	
+	//v1 differential (vs pT/Eta) hists - maybe add the Integrated one for \Delta v1(Cent) too 
 	TH1F *V1pt;
  	TH1F *Posv1pt;
 	TH1F *Negv1pt;
 	TH1F *Deltav1pt;
+
 	TH1F *V1eta;
 	TH1F *Posv1eta;
 	TH1F *Negv1eta;
