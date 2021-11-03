@@ -91,6 +91,7 @@ class CalculateFlowCME
 	Double_t wEta = 1; // In MC, set to 1 for now.
 	Double_t wTrack = 1; // In MC, set to 1 for now.
 	Double_t *fCRCPtBins;
+	Double_t *PtB;
 	//for weight in v1pt and v1eta differential
 	Double_t fPtWeight = 1;
 	Double_t fEtaWeight = 1;

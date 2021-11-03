@@ -601,12 +601,16 @@ void CalculateFlowCME::UserCreateOutputObjects() {
     }
   }
 //I need v1pt, hPt[s] (and final hist) initalized...and pt
- // for(Int_t s = 0; s< fkGFPtB; s++){
-   //  hPt[s] = new TH1F("hPt","pt", fPtDiffNBins,fCRCPtBins);
-    // fFlowGFList->Add(hPt[s]);}
+//   for(Int_t s = 0; s< fkGFPtB; s++){
+//     hPt[s] = new TH1F("hPt","pt", fPtDiffNBins,fCRCPtBins);
+//     fFlowGFList->Add(hPt[s]);}
+
+  Double_t PtNBins = 8;
+  Double_t PtB[8] = {0,0.5,1,1.5,2,2.5,3,3.5};
+
   for(Int_t h = 0; h<fkFlowGFNHarm; h ++){
 	for(Int_t i = 0; i<fkFlowGFNOrde; i++){
-	   v1pt[h][i] = new TH1D(Form("hv1pt[%d][%d]",h,i),Form("v1pt[%d][%d]",h,i), fPtDiffNBins, fCRCPtBins);
+	   v1pt[h][i] = new TH1D(Form("hv1pt[%d][%d]",h,i),Form("v1pt[%d][%d]",h,i), 10,0.,3.5);
            v1pt[h][i]->Sumw2();
            fFlowGFList->Add(v1pt[h][i]);
        	  }
@@ -982,11 +986,14 @@ void CalculateFlowCME::Make(Event* anEvent) {
 			if(ptb==1 && (dPt<0.5 || dPt>1.)) continue;
 			if(ptb==2 && (dPt<1. || dPt>2.)) continue;
 			if(ptb==3 && dPt<2.) continue;
-			if(ptb==4 && (dPt<1. || dPt>2.5)) continue;
+			if(ptb==4 && (dPt<2. || dPt>2.5)) continue;
 			if(ptb==5 && dPt<2.5) continue;
-			if(ptb==6 && (dPt<1. || dPt>3.)) continue;
+			if(ptb==6 && (dPt<2.5 || dPt>3.)) continue;
 			if(ptb==7 && dPt<3.) continue;
 			hPt[ptb] = dPt;
+		//	PtNBins = 8;
+		//	Double_t PtB = {0,0.5,1,1.5,2,2.5,3,3.5};
+		//	cout<<dPt<<"and"<<endl;
 			//if(dCharge > 0){hPosPt->Fill(dPt);}
 			//if(dCharge < 0){hNegPt->Fill(dPt);}
 			for(Int_t m=0;m<21;m++) {
@@ -2365,42 +2372,7 @@ void CalculateFlowCME::FinalizeFlowGF()
           }
         } // end of for(Int_t pt=1; pt<=fFlowGFPtDifCovPro[h][i][k]->GetNbinsX(); pt++)
         fFlowGFPtDifCovPro[h][i][k]->GetXaxis()->SetRange(1,fFlowGFPtDifCovPro[h][i][k]->GetNbinsX());
-        fFlowGFPtDifCorPro[h][k]->GetXaxis()->SetRange(1,fFlowGFPtDifCorPro[h][k]->GetNbinsX());
-      } // end of for(Int_t k=0; k<fkFlowGFNOrde; k++)
-      fFlowGFPtDifCorPro[h][i]->GetXaxis()->SetRange(1,fFlowGFPtDifCorPro[h][i]->GetNbinsX());
-    }
-  }
-
-
-  for(Int_t h=0; h<fkFlowGFNHarm; h++) {
-    for(Int_t pt=0; pt<=fFlowGFPtDifCorHist[h][0]->GetNbinsX(); pt++) {
- // Correlations: 
-//	Double_t pt = fCRCPtBins[Pt]; 
-cout<<"pt"<<pt<<endl;
-      Double_t two = fFlowGFPtDifCorHist[h][0]->GetBinContent(pt); // <<2>>
-      Double_t four = fFlowGFPtDifCorHist[h][1]->GetBinContent(pt); // <<4>>
-      Double_t six = fFlowGFPtDifCorHist[h][2]->GetBinContent(pt); // <<6>>
-      Double_t eight = fFlowGFPtDifCorHist[h][3]->GetBinContent(pt); // <<8>>
- // Statistical errors of average 2-, 4-, 6- and 8-particle azimuthal correlations:
-      Double_t twoError = fFlowGFPtDifCorHist[h][0]->GetBinError(pt); // statistical error of <2>
-      Double_t fourError = fFlowGFPtDifCorHist[h][1]->GetBinError(pt); // statistical error of <4>
-      Double_t sixError = fFlowGFPtDifCorHist[h][2]->GetBinError(pt); // statistical error of <6>
-      Double_t eightError = fFlowGFPtDifCorHist[h][3]->GetBinError(pt); // statistical error of <8> // Q-cumulants:
-      Double_t qc1 = 0.;
-      Double_t qc2 = 0.; // QC{2}
-      Double_t qc4 = 0.; // QC{4}
-      Double_t qc6 = 0.; // QC{6}
-      Double_t qc8 = 0.; // QC{8}
-      if(TMath::Abs(two) > 0.){qc2 = two;}
-      if(TMath::Abs(four) > 0.){qc4 = four-2.*pow(two,2.);}
-      if(TMath::Abs(six) > 0.){qc6 = six-9.*two*four+12.*pow(two,3.);}
-      if(TMath::Abs(eight) > 0.){qc8 = eight-16.*two*six-18.*pow(four,2.)+144.*pow(two,2.)*four-144.*pow(two,4.);} // Statistical errors of Q-cumulants:
-      Double_t qc2Error = 0.;
-      Double_t qc4Error = 0.;
-      Double_t qc6Error = 0.;
-      Double_t qc8Error = 0.; // Squared statistical errors of Q-cumulants:
-      Double_t qc2ErrorSquared = 0.;
-      Double_t qc4ErrorSquared = 0.;
+        fFlowGFPtDifCorPro[h][k]->GetXaxis()->SetRange(1,fFlowGFPtDifCorPro[h][k]->GetNSquared = 0.;
       Double_t qc6ErrorSquared = 0.;
       Double_t qc8ErrorSquared = 0.; // covariances:
       Double_t wCov24 = fFlowGFPtDifCovHist[h][0][1]->GetBinContent(pt);
@@ -2604,44 +2576,7 @@ cout<<"pt"<<pt<<endl;
       fFlowGFEtaDifCumHist[h][0]->SetBinError(eta,qc2Error);
       fFlowGFEtaDifCumHist[h][1]->SetBinContent(eta,qc4);
       fFlowGFEtaDifCumHist[h][1]->SetBinError(eta,qc4Error);
-      fFlowGFEtaDifCumHist[h][2]->SetBinContent(eta,qc6);
-      fFlowGFEtaDifCumHist[h][2]->SetBinError(eta,qc6Error);
-      fFlowGFEtaDifCumHist[h][3]->SetBinContent(eta,qc8);
-      fFlowGFEtaDifCumHist[h][3]->SetBinError(eta,qc8Error); // Reference flow estimates:
-      Double_t v2 = 0.; // v{2,QC}
-      Double_t v4 = 0.; // v{4,QC}
-      Double_t v6 = 0.; // v{6,QC}
-      Double_t v8 = 0.; // v{8,QC} // Reference flow statistical errors:
-      Double_t v2Error = 0.; // v{2,QC} stat. error
-      Double_t v4Error = 0.; // v{4,QC} stat. error
-      Double_t v6Error = 0.; // v{6,QC} stat. error
-      Double_t v8Error = 0.; // v{8,QC} stat. error // calculate flow
-      if(qc2>=0.){v2 = pow(qc2,0.5);}
-      if(qc4<=0.){v4 = pow(-1.*qc4,1./4.);}
-      if(qc6>=0.){v6 = pow((1./4.)*qc6,1./6.);}
-      if(qc8<=0.){v8 = pow((-1./33.)*qc8,1./8.);} // Calculate stat. error for reference flow estimates from stat. error of Q-cumulants:
-      if(qc2>0.){v2Error = (1./2.)*pow(qc2,-0.5)*qc2Error;}
-      if(qc4<0.){v4Error = (1./4.)*pow(-qc4,-3./4.)*qc4Error;}
-      if(qc6>0.){v6Error = (1./6.)*pow(2.,-1./3.)*pow(qc6,-5./6.)*qc6Error;}
-      if(qc8<0.){v8Error = (1./8.)*pow(33.,-1./8.)*pow(-qc8,-7./8.)*qc8Error;}  // Store the results:
-      if(qc2>0.) {
-        fFlowGFEtaDifFinalHist[h][0]->SetBinContent(Eta,v2);
-        fFlowGFEtaDifFinalHist[h][0]->SetBinError(Eta,v2Error);
-         }
-      if(qc4<0.) {
-        fFlowGFEtaDifFinalHist[h][1]->SetBinContent(Eta,v4);
-        fFlowGFEtaDifFinalHist[h][1]->SetBinError(Eta,v4Error);
-         }
-      if(qc6>0.) {
-        fFlowGFEtaDifFinalHist[h][2]->SetBinContent(Eta,v6);
-        fFlowGFEtaDifFinalHist[h][2]->SetBinError(Eta,v6Error);
-        }
-      if(qc8<0.) {
-        fFlowGFEtaDifFinalHist[h][3]->SetBinContent(Eta,v8);
-        fFlowGFEtaDifFinalHist[h][3]->SetBinError(Eta,v8Error);
-         }
-     }//here ends the eta loop
-  }
+      fFlowGFEtaDifCumHist[h][2]->SetBinContent(e
 
 //______________________________________________________________________________________
 */
@@ -2815,9 +2750,9 @@ cout<<"pt"<<pt<<endl;
 	if(qc2>0.){
 	//final hist to get the centrality dependent one with fill in (c,v2)
 	//here in pt dependence
-	cout<<pt<<"v2 "<<v2<<"c "<<c<<"h "<<h<<endl;
-	v1pt[h][0]->SetBinContent(c,v2);
-	v1pt[h][0]->SetBinError(c, v2Error);
+	cout<<"hPt[s] "<<pt<<" v2 "<<v2<<" c "<<c<<" h "<<h<<" s "<<s<<endl;
+	v1pt[h][0]->SetBinContent(pt,v2);
+	v1pt[h][0]->SetBinError(pt, v2Error);
 	}
 	
 	}//end of c<=fFlowGFIntCorHistPtB[s][h][0]->GetNBinsX()
