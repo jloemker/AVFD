@@ -150,7 +150,7 @@ void CalculateFlowCME::InitializeArraysForFlowQC()
  }
 	//final hist for differential \Delta v_1
  for(Int_t h = 0; h<fCRCMaxnCen; h++){
- 	for(Int_t j=0; j<fFlowQCNPro; j++){
+ 	for(Int_t j=0; j<fFlowNHarm; j++){
  		for(Int_t k=0; k<fFlowQCNCov; k++) {
 			fFlowQCFinalPtDifDeltaHist[h][j][k]; 
 		}
@@ -894,11 +894,15 @@ void CalculateFlowCME::Make(Event* anEvent) {
         }
 		// ====== for calculateFlowQC ========= // extra dimension for charge !
 		Int_t ch = 0;//to store all, and +- separately
-		if(dCharge>0){ch=1.;}
+		if(dCharge>0){ch=1.;}//this is not optmal 0 will never be fillew
 		if(dCharge<0){ch=2.;}
 		for (Int_t k=0; k<fQVecPower; k++) {
-			for (Int_t h=0;h<fFlowNHarmMax;h++) {
-				fPOIPtDiffQRe[ch][k][h]->Fill(dPt,pow(wPhiEta,k)*TMath::Cos((h+1.)*dPhi));
+			for (Int_t h=0;h<fFlowNHarmMax;h++) {//h=0 for n=1
+                                fPOIPtDiffQRe[0][k][h]->Fill(dPt,pow(wPhiEta,k)*TMath::Cos((h+1.)*dPhi));//for powers of the weight from 0th to xth *cos(n*dPhi) 
+                                fPOIPtDiffQIm[0][k][h]->Fill(dPt,pow(wPhiEta,k)*TMath::Sin((h+1.)*dPhi));
+                                fPOIPtDiffMul[0][k][h]->Fill(dPt,pow(wPhiEta,k));
+
+				fPOIPtDiffQRe[ch][k][h]->Fill(dPt,pow(wPhiEta,k)*TMath::Cos((h+1.)*dPhi));//for powers of the weight from 0th to xth *cos(n*dPhi) 
 				fPOIPtDiffQIm[ch][k][h]->Fill(dPt,pow(wPhiEta,k)*TMath::Sin((h+1.)*dPhi));
 				fPOIPtDiffMul[ch][k][h]->Fill(dPt,pow(wPhiEta,k));
 			}
@@ -1538,10 +1542,11 @@ void CalculateFlowCME::CalculateFlowQC()
 		QM0=0.; QM=0.; QM2=0.; QM3=0.; QM4=0.;
 		Q2f=kFALSE; Q4f=kFALSE;
 
-		for(Int_t pt=0; pt<fPtDiffNBins; pt++) {
-			QRe += fPOIPtDiffQRe[ch][1][hr+1]->GetBinContent(pt+1); // Cos((hr+2.)*dPhi)
-			QIm += fPOIPtDiffQIm[ch][1][hr+1]->GetBinContent(pt+1); // Sin((hr+2.)*dPhi)
-			Q2Re2 += fPOIPtDiffQRe[ch][2][2*hr+3]->GetBinContent(pt+1); // w^2*Cos((hr+2.)*dPhi)
+		for(Int_t pt=0; pt<fPtDiffNBins; pt++) {//now 2nd [] for the order of the weight-> the weight is set to 0 for now; hr = 0 for n=1 harmonic
+			QRe += fPOIPtDiffQRe[ch][1][hr]->GetBinContent(pt+1); // Cos((hr+1.)*dPhi)
+			QIm += fPOIPtDiffQIm[ch][1][hr]->GetBinContent(pt+1); // Sin((hr+1.)*dPhi)
+			//the next Q vectors are only for the cn4 calculation - 1. ask why the confusion with the [2*hr+3] vs note in the comment ... 
+			Q2Re2 += fPOIPtDiffQRe[ch][2][2*hr+3]->GetBinContent(pt+1); // w^2*Cos((hr+2.)*dPhi) // WTF is this vector doing ?? double check with shi tomorrow !! 
 			Q2Im2 += fPOIPtDiffQIm[ch][2][2*hr+3]->GetBinContent(pt+1); // w^2*Sin((hr+2.)*dPhi)
 			QRe3 += fPOIPtDiffQRe[ch][3][hr+1]->GetBinContent(pt+1); // w^3*Cos((hr+2.)*dPhi)
 			QIm3 += fPOIPtDiffQIm[ch][3][hr+1]->GetBinContent(pt+1); // w^3*Sin((hr+2.)*dPhi)
@@ -1594,12 +1599,13 @@ void CalculateFlowCME::CalculateFlowQC()
 		  FillPtBin = fPOIPtDiffQRe[ch][0][0]->GetBinCenter(pt+1);
 		  qpRe0=0.; qpIm0=0.; qpRe2=0.; qpIm2=0.; qp2Re=0.; qp2Im=0.; qpM0=0.; qpM=0.; qpM2=0.; qpM3=0.;
 
-		  qpRe0 = fPOIPtDiffQRe[ch][0][hr+1]->GetBinContent(pt+1);
-		  qpIm0 = fPOIPtDiffQIm[ch][0][hr+1]->GetBinContent(pt+1);
-		  qpRe2 = fPOIPtDiffQRe[ch][2][hr+1]->GetBinContent(pt+1);
+		  qpRe0 = fPOIPtDiffQRe[ch][0][hr]->GetBinContent(pt+1);//for consistency also changed from [hr+1] to hr to get the 0th weight*cos(n=1*dPhi)
+		  qpIm0 = fPOIPtDiffQIm[ch][0][hr]->GetBinContent(pt+1);
+		//this is only relevant if I include c4 and needs some more understanding of the theory ... upsi wupsi
+		  qpRe2 = fPOIPtDiffQRe[ch][2][hr+1]->GetBinContent(pt+1);//and this should be then [hr+1] -> hr
 		  qpIm2 = fPOIPtDiffQIm[ch][2][hr+1]->GetBinContent(pt+1);
-		  qp2Re = fPOIPtDiffQRe[ch][1][2*hr+3]->GetBinContent(pt+1);
-		  qp2Im = fPOIPtDiffQIm[ch][1][2*hr+3]->GetBinContent(pt+1);
+		  qp2Re = fPOIPtDiffQRe[ch][1][2*hr+3]->GetBinContent(pt+1);// would be next order previously: hr=0 -> n=2 and and second n=3
+		  qp2Im = fPOIPtDiffQIm[ch][1][2*hr+3]->GetBinContent(pt+1);// now hr=0 -> n=1 and second n=2 ->should be hr+1 
 
 		  qpM0 = fPOIPtDiffMul[ch][0][0]->GetBinContent(pt+1);
 		  qpM  = fPOIPtDiffMul[ch][1][0]->GetBinContent(pt+1);
@@ -1778,7 +1784,7 @@ void CalculateFlowCME::CalculateFlowQC()
        fFlowQCFinalPtDifHist[ch][h][hr][5]->SetBinContent(pt,Dn2);
        fFlowQCFinalPtDifHist[ch][h][hr][5]->SetBinError(pt,Dn2E);
 
-        if(Cn2) {
+        if(abs(Cn2)>0) {
           Double_t Flow2 = Dn2/sqrt(fabs(Cn2));
           Double_t Flow2E = 0.;
           // change vocabulary, to be changed
@@ -1787,12 +1793,13 @@ void CalculateFlowCME::CalculateFlowQC()
           Double_t twoReduced = qp2;
           Double_t twoReducedError = qp2E;
           Double_t wCovTwoTwoReduced = fFlowQCCorCovHist[ch][h][hr][0]->GetBinContent(pt);
-          Double_t v2PrimeErrorSquared = (1./4.)*pow(two,-3.)*(pow(twoReduced,2.)*pow(twoError,2.)
+          Double_t v2PrimeErrorSquared = abs((1./4.)*pow(two,-3.)*(pow(twoReduced,2.)*pow(twoError,2.)
                                 + 4.*pow(two,2.)*pow(twoReducedError,2.)
-                                - 4.*two*twoReduced*wCovTwoTwoReduced);
+                                - 4.*two*twoReduced*wCovTwoTwoReduced));//absolute value 
           if(v2PrimeErrorSquared>0.){Flow2E = pow(v2PrimeErrorSquared,0.5);}
 
           if(Flow2E>0.) {
+	    cout<<"pt "<<pt<<" FLow2 "<<Flow2<<endl;
             fFlowQCFinalPtDifHist[ch][h][hr][0]->SetBinContent(pt,Flow2);
             fFlowQCFinalPtDifHist[ch][h][hr][0]->SetBinError(pt,Flow2E);
           }
@@ -1852,6 +1859,35 @@ void CalculateFlowCME::CalculateFlowQC()
   } // end of for(Int_t hr=0; hr<fFlowNHarm; hr++)
 }//end of charge loop
 
+for(Int_t pt=1; pt<=fPtDiffNBins; pt++){
+	for(Int_t h = 0; h<fCRCnCen; h++){
+		for(Int_t hr=0; hr<fFlowNHarm; hr++){
+		//variables for calculation
+		Double_t vpos = 0.;
+		Double_t vneg = 0.;
+		Double_t deltav = 0.;
+		//statistical errors
+		Double_t vposError = 0.;
+		Double_t vnegError = 0.;
+		Double_t deltavError = 0.;
+ 		//getting values for the calculation - focus on v1
+		vpos = fFlowQCFinalPtDifHist[1][h][hr][0]->GetBinContent(pt);//[1] for pos charge [h] for centralities [h] for harmonic [hr=0] for differential flow v1 from QC 2 -> this means v2 is in here as well ! For hr=1 ...	
+		vneg = fFlowQCFinalPtDifHist[2][h][hr][0]->GetBinContent(pt);//for neg charge the last is actually from cov loop ! No clue what that means for me, but 0 stores the flow from cn2 and not cn4 
+		//getting errors for propagation as fully correlated variables
+		vposError = fFlowQCFinalPtDifHist[1][h][hr][0]->GetBinError(pt);
+		vnegError = fFlowQCFinalPtDifHist[2][h][hr][0]->GetBinError(pt);
+		//calculate delta v1
+		deltav = vpos - vneg;
+		cout<<"pt "<<pt<<" vpos "<<vpos<<" vneg "<<vneg<<" deltav "<<deltav<<endl;
+		//propagete error on v1
+		deltavError = sqrt(abs(pow(vposError,2)-pow(vnegError,2)));
+		//setting bin content
+		fFlowQCFinalPtDifDeltaHist[h][hr][0]->SetBinContent(pt,deltav);//centrality, harmonic, cov
+		fFlowQCFinalPtDifDeltaHist[h][hr][0]->SetBinError(pt, deltavError);
+		}//end of hr<fkFlowNHarm
+	}//end of h<fCRCnCen	
+}//end of pt<=fPtDiffNBins
+	
 //use diffrence of final pt hist + error propagation to get the \Delta v1 hist filled
 }
 
