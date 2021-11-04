@@ -95,8 +95,7 @@ class CalculateFlowCME
 	//for weight in v1pt and v1eta differential
 	Double_t fPtWeight = 1;
 	Double_t fEtaWeight = 1;
-//for v1(eta)
-	Double_t *fCRCEtaBins;
+	
 	Bool_t doQA = kFALSE;
 	Double_t trkWgt = 1;
 	
@@ -169,33 +168,37 @@ class CalculateFlowCME
 	const static Int_t fFlowNHarm = 6;
 	const static Int_t fFlowNHarmMax = 14; // WARNING: MIN (2*fFlowNHarm+2)
 	const static Int_t fQVecPower = 5;
+	const static Int_t charge = 3; //to get all, only + or - vectors for \Delta v_1
 	Int_t fPtDiffNBins; //
-//for v1(eta)	
+	//for v1(eta)	
 	Int_t fEtaDiffNBins;
-	TH1D *fPOIPtDiffQRe[fQVecPower][fFlowNHarmMax]; // real part
-	TH1D *fPOIPtDiffQIm[fQVecPower][fFlowNHarmMax]; // imaginary part
-	TH1D *fPOIPtDiffMul[fQVecPower][fFlowNHarmMax]; // imaginary part
+        Double_t *fCRCEtaBins;
+
+	TProfile *fPOIPtDiffQRe[charge][fQVecPower][fFlowNHarmMax]; // real part
+	TProfile *fPOIPtDiffQIm[charge][fQVecPower][fFlowNHarmMax]; // imaginary part
+	TProfile *fPOIPtDiffMul[charge][fQVecPower][fFlowNHarmMax]; // imaginary part
 
 	const static Int_t fkFlowQCnIntCorPro = 5;
-	TProfile *fFlowQCIntCorPro[fFlowNHarm][fkFlowQCnIntCorPro]; //
-	TH1D *fFlowQCIntCorHist[fFlowNHarm][fkFlowQCnIntCorPro]; //
-	TH1D *fFlowQCIntCumHist[fFlowNHarm][fkFlowQCnIntCorPro];
+	TProfile *fFlowQCIntCorPro[charge][fFlowNHarm][fkFlowQCnIntCorPro]; //
+	TH1D *fFlowQCIntCorHist[charge][fFlowNHarm][fkFlowQCnIntCorPro]; //
+	TH1D *fFlowQCIntCumHist[charge][fFlowNHarm][fkFlowQCnIntCorPro];
 
 	const static Int_t fFlowQCNPro = 4;
 	const static Int_t fCRCMaxnCen = 10;
 	const static Int_t fFlowQCNCov = 8;
-	TProfile *fFlowQCCorPro[fCRCMaxnCen][fFlowNHarm][fFlowQCNPro];
-	TProfile *fFlowQCCorCovPro[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];
-	TH1D *fFlowQCCorHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNPro]; // <<2'>>, [CRCBin][eg]
-	TH1D *fFlowQCCorCovHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; // histo for covariances
-	TH1D *fFlowQCFinalPtDifHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; //
+	TProfile *fFlowQCCorPro[charge][fCRCMaxnCen][fFlowNHarm][fFlowQCNPro];
+	TProfile *fFlowQCCorCovPro[charge][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];
+	TH1D *fFlowQCCorHist[charge][fCRCMaxnCen][fFlowNHarm][fFlowQCNPro]; // <<2'>>, [CRCBin][eg]
+	TH1D *fFlowQCCorCovHist[charge][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; // histo for covariances
+	TH1D *fFlowQCFinalPtDifHist[charge][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; //
+	TH1D *fFlowQCFinalPtDifDeltaHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];
 
 	Int_t fFlowQCCenBin;
 	
 	const static Int_t fFlowQCNRef = 14;
-	TProfile *fFlowQCRefCorPro[fFlowNHarm][fFlowQCNRef]; //
-	TH1D *fFlowQCRefCorHist[fFlowNHarm][fFlowQCNRef]; //
-	TH1D *fFlowQCRefCorFinal[fFlowNHarm][4]; //
+	TProfile *fFlowQCRefCorPro[charge][fFlowNHarm][fFlowQCNRef]; //
+	TH1D *fFlowQCRefCorHist[charge][fFlowNHarm][fFlowQCNRef]; //
+	TH1D *fFlowQCRefCorFinal[charge][fFlowNHarm][4]; //
 	
 	// Flow from BW
 	TList *fFlowFromBWList;
