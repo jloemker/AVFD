@@ -145,41 +145,12 @@ class CalculateFlowCME
 	TMatrixD *fImQGF; // fImQ[m][k] = sum_{i=1}^{M} w_{i}^{k} sin(m*phi_{i})
 	TMatrixD *fReQGFPt[fkGFPtB]; // fReQ[m][k] = sum_{i=1}^{M} w_{i}^{k} cos(m*phi_{i})
 	TMatrixD *fImQGFPt[fkGFPtB]; // fImQ[m][k] = sum_{i=1}^{M} w_{i}^{k} sin(m*phi_{i})
-	//for pos/neg and thus \Delta v1
-	TMatrixD *fReQGFPtPos[fkGFPtB]; // fReQ[m][k] = sum_{i=1}^{M} w_{i}^{k} cos(m*phi_{i})
-        TMatrixD *fImQGFPtPos[fkGFPtB]; // fImQ[m][k] = sum_{i=1}^{M} w_{i}^{k} sin(m*phi_{i})
-        TMatrixD *fReQGFPtNeg[fkGFPtB]; // fReQ[m][k] = sum_{i=1}^{M} w_{i}^{k} cos(m*phi_{i})
-        TMatrixD *fImQGFPtNeg[fkGFPtB]; // fImQ[m][k] = sum_{i=1}^{M} w_{i}^{k} sin(m*phi_{i})
 
 	TProfile *fFlowGFIntCorPro[fkFlowGFNHarm][fkFlowGFNOrde]; //initialized with centrality bins
 	TH1D *fFlowGFIntCorHist[fkFlowGFNHarm][fkFlowGFNOrde]; //
 	TH1D *fFlowGFIntCumHist[fkFlowGFNHarm][fkFlowGFNOrde]; //
 	TH1D *fFlowGFIntFinalHist[fkFlowGFNHarm][fkFlowGFNOrde]; // from pt integrated vn      
-	//for differential pt_____________________ 
-	TProfile *fFlowGFPtDifCorPro[fkFlowGFNHarm][fkFlowGFNOrde];//initialized with ptdiff bins	
-	TH1D *fFlowGFPtDifCorHist[fkFlowGFNHarm][fkFlowGFNOrde];
-	TH1D *fFlowGFPtDifCumHist[fkFlowGFNHarm][fkFlowGFNOrde];
-	TH1D *fFlowGFPtDifFinalHist[fkFlowGFNHarm][fkFlowGFNOrde];
-
-	TProfile *fFlowGFPtDifCovPro[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde];
-	TH1D *fFlowGFPtDifCovHist[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde];
-	
-	Double_t hPt[fkGFPtB];
-	TH1F *hPosPt;
-	TH1F *hNegPt;
-	//for diffeential eta____________________
-	TProfile *fFlowGFEtaDifCorPro[fkFlowGFNHarm][fkFlowGFNOrde];//initialized with Etadiff bins       
-        TH1D *fFlowGFEtaDifCorHist[fkFlowGFNHarm][fkFlowGFNOrde];
-        TH1D *fFlowGFEtaDifCumHist[fkFlowGFNHarm][fkFlowGFNOrde];
-        TH1D *fFlowGFEtaDifFinalHist[fkFlowGFNHarm][fkFlowGFNOrde];
-
-        TProfile *fFlowGFEtaDifCovPro[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde];
-        TH1D *fFlowGFEtaDifCovHist[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde];
-	
-	TH1F *hEta;
-	TH1F *hPosEta;
-	TH1F *hNegEta;
-	//________________________________________
+  
 	TProfile *fFlowGFIntCovPro[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
 	TH1D *fFlowGFIntCovHist[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
   
@@ -191,13 +162,6 @@ class CalculateFlowCME
 	TH1D *fFlowGFIntCorHistPtB[fkGFPtB][fkFlowGFNHarm][fkFlowGFNOrde]; //
 	TProfile *fFlowGFIntCovProPtB[fkGFPtB][fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
 	TH1D *fFlowGFIntCovHistPtB[fkGFPtB][fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
-	//TH1D *fFlowGFIntFinalHistPtB[fkFlowGFNHarm][fkFlowGFNOrde];
-	//here is the v1pt Histogram 
-	TH1D *v1pt[fkFlowGFNHarm][fkFlowGFNOrde];
-
-
-
-
 
 
 	// Flow QC part
@@ -206,7 +170,6 @@ class CalculateFlowCME
 	const static Int_t fFlowNHarmMax = 14; // WARNING: MIN (2*fFlowNHarm+2)
 	const static Int_t fQVecPower = 5;
 	Int_t fPtDiffNBins; //
-	//Double_t PtBins[37];
 //for v1(eta)	
 	Int_t fEtaDiffNBins;
 	TH1D *fPOIPtDiffQRe[fQVecPower][fFlowNHarmMax]; // real part
@@ -238,45 +201,13 @@ class CalculateFlowCME
 	TList *fFlowFromBWList;
 	const static Int_t fFlowFromBWCenBin = 10;
 	Double_t ReQn[fFlowFromBWCenBin] = {0.}, ImQn[fFlowFromBWCenBin] = {0.};
-        //for integrated deltav1
-        Double_t PosReQn[fFlowFromBWCenBin] = {0.}, PosImQn[fFlowFromBWCenBin] = {0.};
-	Double_t NegReQn[fFlowFromBWCenBin] = {0.}, NegImQn[fFlowFromBWCenBin] = {0.};   
     const static Int_t nHar = 4;//was 3, but to inclde v1 and to still account for the others - I think this messes up things ... - still doesn't matter for v1
 	TProfile *V2IntPro[nHar];
 	TProfile *V2IntDelta[nHar];
     TProfile *V2IntProQC[nHar];
     TProfile *V2PtDiffPro[nHar][10];
-	TProfile *V2PtDiffPos[nHar][10];
-	TProfile *V2PtDiffNeg[nHar][10];
-	TProfile *V2PtDiffDelta[nHar][10];
-//and for eta
-	TProfile *V2EtaDiffPro[nHar][10];
-        TProfile *V2EtaDiffPos[nHar][10];       
-        TProfile *V2EtaDiffNeg[nHar][10];                          
-        TProfile *V2EtaDiffDelta[nHar][10];
-    TH1F *hRepn[nHar], *hImpn[nHar];//declarations for v1 caluclation(s)
-    TH1F *hReEtan[nHar], *hImEtan[nHar];
-    TH1F *hPosRepn[nHar], *hNegRepn[nHar];
-    TH1F *hPosReEtan[nHar], *hNegReEtan[nHar];
-    TH1F *hPosImpn[nHar], *hNegImpn[nHar];
-    TH1F *hPosImEtan[nHar], *hNegImEtan[nHar];
-//here are ins for pT an eta stored in MakeEvent---old
+    TH1F *hRepn[nHar], *hImpn[nHar];
 	TH1F *hMpn;
-	TH1F *hPosMpn;
-	TH1F *hNegMpn;
-
-	TH1F *hMen;
-	TH1F *hPosMen;
-	TH1F *hNegMen;
-	//v1 differential (vs pT/Eta) hists - maybe add the Integrated one for \Delta v1(Cent)
- 	TH1F *Posv1pt;
-	TH1F *Negv1pt;
-	TH1F *Deltav1pt;
-
-	TH1F *V1eta;
-	TH1F *Posv1eta;
-	TH1F *Negv1eta;
-	TH1F *Deltav1eta;    
 
 	// CMW part
 	TList *fCMWList;
