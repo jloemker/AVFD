@@ -454,7 +454,7 @@ void CalculateFlowCME::UserCreateOutputObjects() {
 	Double_t xbins[12] = {0.,5.,10.,20.,30.,40.,50.,60.,70.,80.,90.,100.};
 	for(Int_t i=0; i<fFlowNHarm; i++) {
 		for(Int_t j=0; j<fFlowQCNRef; j++) {
-			fFlowQCRefCorPro[ch][i][j] = new TProfile(Form("fFlowQCRefCorPro[[%d]%d][%d]",ch,i,j),Form("fFlowQCRefCorPro[%d][%d][%d]",ch,i,j),11,xbins,"s");
+			fFlowQCRefCorPro[ch][i][j] = new TProfile(Form("fFlowQCRefCorPro[[%d]%d][%d]",ch,i,j),Form("fFlowQCRefCorPro[%d][%d][%d]",ch,i,j),11,xbins,"s");//11, xbins
 			fFlowQCRefCorPro[ch][i][j]->Sumw2();
 			fFlowQCList->Add(fFlowQCRefCorPro[ch][i][j]);
 			fFlowQCRefCorHist[ch][i][j] = new TH1D(Form("fFlowQCRefCorHist[%d][%d][%d]",ch,i,j),Form("fFlowQCRefCorHist[%d][%d][%d]",ch,i,j),11,xbins);
@@ -1124,7 +1124,7 @@ void CalculateFlowCME::Make(Event* anEvent) {
 	CalculateFlowGF();
 	CalculateFlowFromBW();
 	//CalculateCMW();
-	CalculateCME();
+	//CalculateCME();
 	ResetEventByEventQuantities();
 	
 }                               
@@ -1230,9 +1230,9 @@ void CalculateFlowCME::ResetEventByEventQuantities()
 void CalculateFlowCME::Terminate()
 {
 	//FinalizeFlowQC(); //only for the integrated results relevant ... diifpt from calculate function
-	FinalizeFlowGF();
+	//FinalizeFlowGF();
 	//FinalizeCMW();
-	FinalizeCME();
+	//FinalizeCME();
 }
 
 //=====================================================================================================
@@ -1516,8 +1516,7 @@ void CalculateFlowCME::CalculateFlowGF()//here is the relevant filling
 } // end of CalculateFlowCME::CalculateFlowGF()
 
 
-void CalculateFlowCME::CalculateFlowQC() 
-{//check result graph for pt, then ask if this makes sense, ask if keepint QC{4} is relevant..if not, clear the code- 2*hr+3 stuff you know
+void CalculateFlowCME::CalculateFlowQC(){ //check result graph for pt, then ask if this makes sense, ask if keepint QC{4} is relevant..if not, clear the code- 2*hr+3 stuff you know
 //think about additional loop to get the eta hists easier..perhaps add variable to loop over correct bins and just create another set of final hists in eta and pt range ? ... SOunds good to me !
 	Double_t FillPtBin = 0.;
 	Double_t IQC2[fFlowNHarm] = {0.};
@@ -1533,7 +1532,7 @@ void CalculateFlowCME::CalculateFlowQC()
 	Bool_t Q2f=kFALSE, Q4f=kFALSE, dQ2f=kFALSE, dQ4f=kFALSE;
 	Bool_t WeigMul = kTRUE; //(fCorrWeightTPC==kMultiplicity ? kTRUE : kFALSE);
  for(Int_t ch = 0; ch<charge; ch++){
-	for(Int_t hr=0; hr<fFlowNHarm; hr++) {
+	for(Int_t hr=0; hr<fFlowNHarm; hr++){
 		// ********************************************************************
 		// pT-integrated: {2}, {4} ********************************************
 		// ********************************************************************
@@ -1553,8 +1552,8 @@ void CalculateFlowCME::CalculateFlowQC()
 			QRe3 += fPOIPtDiffQRe[ch][3][hr+1]->GetBinContent(pt+1); // w^3*Cos((hr+2.)*dPhi)
 			QIm3 += fPOIPtDiffQIm[ch][3][hr+1]->GetBinContent(pt+1); // w^3*Sin((hr+2.)*dPhi)
 
-			QM0 += fPOIPtDiffMul[ch][0][0]->GetBinContent(pt+1); // w^0
-			QM  += fPOIPtDiffMul[ch][1][0]->GetBinContent(pt+1); // w^1
+			QM0 += fPOIPtDiffMul[ch][0][0]->GetBinContent(pt); // w^0
+			QM  += fPOIPtDiffMul[ch][1][0]->GetBinContent(pt); // w^1
 			QM2 += fPOIPtDiffMul[ch][2][0]->GetBinContent(pt+1); // w^2
 			QM3 += fPOIPtDiffMul[ch][3][0]->GetBinContent(pt+1); // w^3
 			QM4 += fPOIPtDiffMul[ch][4][0]->GetBinContent(pt+1); // w^4
@@ -1568,9 +1567,6 @@ void CalculateFlowCME::CalculateFlowQC()
 			fFlowQCIntCorPro[ch][hr][0]->Fill(fCentralityEBE,IQC2[hr],WQM2*fCenWeightEbE); // cent vs. <2>
 			fFlowQCRefCorPro[ch][hr][0]->Fill(fCentralityEBE,IQC2[hr],WQM2*fCenWeightEbE); // cent vs. <2>
 			Q2f = kTRUE;
-		}
-
-		IQM4 = QM*QM*QM*QM - 6.*QM2*QM*QM + 8.*QM3*QM + 3.*QM2*QM2 - 6.*QM4;
 		WQM4 = (WeigMul? IQM4 : 1.);
 		if(QM0>3) {
 			IQC4[hr] = ((QRe*QRe+QIm*QIm)*(QRe*QRe+QIm*QIm)
@@ -1584,7 +1580,7 @@ void CalculateFlowCME::CalculateFlowQC()
 			fFlowQCRefCorPro[ch][hr][1]->Fill(fCentralityEBE,IQC4[hr],WQM4*fCenWeightEbE);
 			Q4f = kTRUE;
 		}
-
+			fFlowQCRefCorPro[ch][hr][1]->Fill(fCentralityEBE,IQC4[hr],WQM4*fCenWeightEbE);
 		// product of correlations or covariances
 		if(Q2f && Q4f) {
 		  fFlowQCIntCorPro[ch][hr][2]->Fill(fCentralityEBE,IQC2[hr]*IQC4[hr],WQM2*WQM4*fCenWeightEbE);
@@ -1599,20 +1595,20 @@ void CalculateFlowCME::CalculateFlowQC()
 		// store pt-differential flow ****************************************
 		for(Int_t pt=0; pt<fPtDiffNBins; pt++) {
 
-		  FillPtBin = fPOIPtDiffQRe[ch][0][0]->GetBinCenter(pt+1);
+		  FillPtBin = fPOIPtDiffQRe[ch][0][0]->GetBinCenter(pt);
 		  qpRe0=0.; qpIm0=0.; qpRe2=0.; qpIm2=0.; qp2Re=0.; qp2Im=0.; qpM0=0.; qpM=0.; qpM2=0.; qpM3=0.;
 
-		  qpRe0 = fPOIPtDiffQRe[ch][0][hr]->GetBinContent(pt+1);//for consistency also changed from [hr+1] to hr to get the 0th weight*cos(n=1*dPhi)
-	//	cout<<qpRe0<<" qpRe0"<<endl; 
-		 qpIm0 = fPOIPtDiffQIm[ch][0][hr]->GetBinContent(pt+1);
+		  qpRe0 = fPOIPtDiffQRe[ch][0][hr]->GetBinContent(pt);//for consistency also changed from [hr+1] to hr to get the 0th weight*cos(n=1*dPhi)
+		//cout<<qpRe0<<" qpRe0"<<endl; 
+		 qpIm0 = fPOIPtDiffQIm[ch][0][hr]->GetBinContent(pt);//was pt+1
 		//this is only relevant if I include c4 and needs some more understanding of the theory ... upsi wupsi
 		  qpRe2 = fPOIPtDiffQRe[ch][2][hr+1]->GetBinContent(pt+1);//and this should be then [hr+1] -> hr
 		  qpIm2 = fPOIPtDiffQIm[ch][2][hr+1]->GetBinContent(pt+1);
 		  qp2Re = fPOIPtDiffQRe[ch][1][2*hr+3]->GetBinContent(pt+1);// would be next order previously: hr=0 -> n=2 and and second n=3
 		  qp2Im = fPOIPtDiffQIm[ch][1][2*hr+3]->GetBinContent(pt+1);// now hr=0 -> n=1 and second n=2 ->should be hr+1 
 
-		  qpM0 = fPOIPtDiffMul[ch][0][0]->GetBinContent(pt+1);
-		  qpM  = fPOIPtDiffMul[ch][1][0]->GetBinContent(pt+1);
+		  qpM0 = fPOIPtDiffMul[ch][0][0]->GetBinContent(pt);
+		  qpM  = fPOIPtDiffMul[ch][1][0]->GetBinContent(pt);
 		  qpM2 = fPOIPtDiffMul[ch][2][0]->GetBinContent(pt+1);
 		  qpM3 = fPOIPtDiffMul[ch][3][0]->GetBinContent(pt+1);
 
@@ -1627,7 +1623,7 @@ void CalculateFlowCME::CalculateFlowQC()
 			dQC2 = (qpRe0*QRe+qpIm0*QIm-qpM)/dQM2;
 			fFlowQCCorPro[ch][fCenBin][hr][1]->Fill(FillPtBin,dQC2,WdQM2*fCenWeightEbE);
 			dQ2f = kTRUE;
-	//	cout<<dQC2<<" dQC2"<<endl;
+		//cout<<dQC2<<" dQC2"<<endl;
 		  }
 
 		  dQM4 = qpM0*(QM*QM*QM-3.*QM*QM2+2.*QM3)-3.*(qpM*(QM*QM-QM2)+2.*(qpM3-qpM2*QM));
@@ -1666,7 +1662,9 @@ void CalculateFlowCME::CalculateFlowQC()
     // Pt-DIFFERENTIAL
   for(Int_t hr=0; hr<fFlowNHarm; hr++) {
     for(Int_t j=0; j<fFlowQCNRef; j++) {
-      for(Int_t pt=1;pt<=fFlowQCRefCorPro[ch][hr][j]->GetNbinsX();pt++) {
+      for(Int_t pt=0;pt<fFlowQCRefCorPro[ch][hr][j]->GetNbinsX();pt++) {// from 1 to 11 !
+//	for(Int_t pt = 0; pt<fPtDiffNBins; pt ++){
+//	cout<<"pt ref"<<pt<<endl;
         Double_t stats[6]={0.};
         fFlowQCRefCorPro[ch][hr][j]->GetXaxis()->SetRange(pt,pt);
         fFlowQCRefCorPro[ch][hr][j]->GetStats(stats);
@@ -1700,10 +1698,10 @@ void CalculateFlowCME::CalculateFlowQC()
       // STORE IN HISTOGRAMS
 
       for(Int_t j=0; j<fFlowQCNPro; j++) {
-        for(Int_t pt=1;pt<=fPtDiffNBins;pt++) {
-
+        for(Int_t pt=0;pt<fPtDiffNBins;pt++) {
+//	cout<<"pt qc cor"<< pt<< endl;
           Double_t stats[6]={0.};
-          fFlowQCCorPro[ch][h][hr][j]->GetXaxis()->SetRange(pt,pt);
+          fFlowQCCorPro[ch][h][hr][j]->GetXaxis()->SetRange(pt,pt);//filled for j=1 and 2
           fFlowQCCorPro[ch][h][hr][j]->GetStats(stats);
           Double_t SumWeig   = stats[0];
           Double_t SumWeigSq  = stats[1];
@@ -1722,8 +1720,9 @@ void CalculateFlowCME::CalculateFlowQC()
             Double_t CorrErr = termA*spread*termB; // final error (unbiased estimator for standard deviation)
             if(CorrErr) {
               fFlowQCCorHist[ch][h][hr][j]->SetBinContent(pt,Corr);
-              fFlowQCCorHist[ch][h][hr][j]->SetBinError(pt,CorrErr);
-            }
+              fFlowQCCorHist[ch][h][hr][j]->SetBinError(pt,CorrErr);//filled for j=1 and 2
+    //cout<<"corHist"<<Corr<<"pt"<<pt<<"j"<<j<<"hr"<<hr<<"h"<<h<<endl;
+		}
           }
 
         } // end of for(Int_t pt=1;pt<=fPtDiffNBins;pt++)
@@ -1732,12 +1731,12 @@ void CalculateFlowCME::CalculateFlowQC()
       
       // reference flow
       // 2- and 4-particle cumulants
-      Double_t QC2    = fFlowQCRefCorHist[ch][hr][0]->GetBinContent(h+1);
-      Double_t QC2E = fFlowQCRefCorHist[ch][hr][0]->GetBinError(h+1);
+      Double_t QC2    = fFlowQCRefCorHist[ch][hr][0]->GetBinContent(h);//h+1 to h
+      Double_t QC2E = fFlowQCRefCorHist[ch][hr][0]->GetBinError(h);
       Double_t QC4    = fFlowQCRefCorHist[ch][hr][1]->GetBinContent(h+1);
       Double_t QC4E = fFlowQCRefCorHist[ch][hr][1]->GetBinError(h+1);
       Double_t Cn2 = QC2;
-//cout<<"Cn2 "<<Cn2<<endl;
+//cout<<"Cn2 "<<Cn2<<"centr"<<h<<endl;
       Double_t Cn2E = QC2E;
       Double_t wCov24 = fFlowQCRefCorHist[ch][hr][13]->GetBinContent(h+1);
       Double_t Cn4 = QC4-2.*QC2*QC2;
@@ -1757,8 +1756,8 @@ void CalculateFlowCME::CalculateFlowQC()
       Double_t sinP1nPhi1M1nPhi2M1nPhi3 = fFlowQCRefCorHist[ch][hr][7]->GetBinContent(h+1);  //sin(n*(phi1-phi2-phi3))
       Double_t cosP1nPhi1M1nPhi2M1nPhi3 = fFlowQCRefCorHist[ch][hr][8]->GetBinContent(h+1); //cos(n*(phi1-phi2-phi3))
       
-      fFlowQCRefCorFinal[ch][hr][0]->SetBinContent(h+1,Cn2);
-      fFlowQCRefCorFinal[ch][hr][0]->SetBinError(h+1,Cn2E);
+      fFlowQCRefCorFinal[ch][hr][0]->SetBinContent(h,Cn2);// h+1 -> h
+      fFlowQCRefCorFinal[ch][hr][0]->SetBinError(h,Cn2E);
 
       if(Cn4Esq>0.) {
         Double_t Cn4E = pow(Cn4Esq,0.5);
@@ -1771,20 +1770,16 @@ void CalculateFlowCME::CalculateFlowQC()
           fFlowQCRefCorFinal[ch][hr][1]->SetBinError(h+1,Flow4E);
         }
       }
-      
+if(abs(Cn2)>0.){      
       // pt-differential
-      for(Int_t pt=1; pt<=fPtDiffNBins; pt++) {
-	//Adding Cn again for same loop
-      Double_t QC2    = fFlowQCRefCorHist[ch][hr][0]->GetBinContent(pt);
-      Double_t QC2E = fFlowQCRefCorHist[ch][hr][0]->GetBinError(pt);
-      Double_t Cn2 = QC2;
-      Double_t Cn2E = QC2E;
-        Double_t qp2    = fFlowQCCorHist[ch][h][hr][1]->GetBinContent(pt);
-        Double_t qp2E = fFlowQCCorHist[ch][h][hr][1]->GetBinError(pt);
+      for(Int_t pt=0; pt<fPtDiffNBins; pt++) {
+        Double_t qp2    = fFlowQCCorHist[ch][h+1][hr][1]->GetBinContent(pt);// this h+1 was live safing ->figure out why !
+        Double_t qp2E = fFlowQCCorHist[ch][h+1][hr][1]->GetBinError(pt);
         Double_t qp4    = fFlowQCCorHist[ch][h][hr][2]->GetBinContent(pt);
         Double_t qp4E = fFlowQCCorHist[ch][h][hr][2]->GetBinError(pt);
         Double_t Dn2 = qp2;
-//cout<<"Dn2 "<<Dn2<<" Cn2"<<Cn2<<endl;
+
+//cout<<"pt"<<pt<<"Dn2 "<<qp2<<"h"<<h<<"hr"<<hr<<endl;
         Double_t Dn2E = qp2E;
         Double_t Dn4 = qp4-2.*qp2*QC2;
         Double_t wCovTwoFourReduced = fFlowQCCorCovHist[ch][h][hr][1]->GetBinContent(pt);
@@ -1794,11 +1789,11 @@ void CalculateFlowCME::CalculateFlowQC()
 
        fFlowQCFinalPtDifHist[ch][h][hr][5]->SetBinContent(pt,Dn2);
        fFlowQCFinalPtDifHist[ch][h][hr][5]->SetBinError(pt,Dn2E);
-
+//cout<<"Cn2"<<Cn2<<"Dn2"<<Dn2<<"pt"<<pt<<endl;
         if(Cn2 != 0&& Dn2 != 0) {
           Double_t Flow2 = Dn2/sqrt(fabs(Cn2));
           Double_t Flow2E = 0.;
-//	cout<<"flow 2"<<Flow2<<endl;
+	//cout<<"pt"<< pt<<"flow 2"<<Flow2<<endl;
           // change vocabulary, to be changed
           Double_t two = QC2;
           Double_t twoError = QC2E;
@@ -1812,7 +1807,7 @@ void CalculateFlowCME::CalculateFlowQC()
 	  if(v2PrimeErrorSquared>0.){Flow2E = pow(v2PrimeErrorSquared,0.5);}
 
           if(Flow2E>0.) {
-	  //  cout<<"pt "<<pt<<" FLow2 "<<Flow2<<endl;
+	   // cout<<"pt "<<pt<<" FLow2 "<<Flow2<<endl;
             fFlowQCFinalPtDifHist[ch][h][hr][0]->SetBinContent(pt,Flow2);
             fFlowQCFinalPtDifHist[ch][h][hr][0]->SetBinError(pt,Flow2E);
           }
@@ -1870,9 +1865,10 @@ void CalculateFlowCME::CalculateFlowQC()
       } // end of for(Int_t pt=1; pt<=fPtDiffNBins; pt++) {
     } // end of for (Int_t h=0; h<fCRCnCen; h++) {
   } // end of for(Int_t hr=0; hr<fFlowNHarm; hr++)
+}//if
 }//end of charge loop
 
-for(Int_t pt=1; pt<=fPtDiffNBins; pt++){
+for(Int_t pt=0; pt<fPtDiffNBins; pt++){
 	for(Int_t h = 0; h<fCRCnCen; h++){
 		for(Int_t hr=0; hr<fFlowNHarm; hr++){
 		//variables for calculation
@@ -1891,20 +1887,18 @@ for(Int_t pt=1; pt<=fPtDiffNBins; pt++){
 		vnegError = fFlowQCFinalPtDifHist[2][h][hr][0]->GetBinError(pt);
 		//calculate delta v1
 		deltav = vpos - vneg;
-		if(abs(deltav)>0.){
-	//	cout<<"pt "<<pt<<" vpos "<<vpos<<" vneg "<<vneg<<" deltav "<<deltav<<endl;}
+		//if(abs(deltav)>0.){
+	//cout<<"pt "<<pt<<" vpos "<<vpos<<" vneg "<<vneg<<" deltav "<<deltav<<endl;}
 		//propagete error on v1
 		deltavError = sqrt(abs(pow(vposError,2)-pow(vnegError,2)));
 		//setting bin content
 		fFlowQCFinalPtDifDeltaHist[h][hr][0]->SetBinContent(pt,deltav);//centrality, harmonic, cov
 		fFlowQCFinalPtDifDeltaHist[h][hr][0]->SetBinError(pt, deltavError);
+		}
 		}//end of hr<fkFlowNHarm
 	}//end of h<fCRCnCen	
 }//end of pt<=fPtDiffNBins
-	
-//use diffrence of final pt hist + error propagation to get the \Delta v1 hist filled
 }
-
 //=======================================================================================================================
 
 void CalculateFlowCME::FinalizeCME()

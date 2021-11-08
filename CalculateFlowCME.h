@@ -198,8 +198,7 @@ class CalculateFlowCME
 	const static Int_t fFlowQCNRef = 14;
 	TProfile *fFlowQCRefCorPro[charge][fFlowNHarm][fFlowQCNRef]; //
 	TH1D *fFlowQCRefCorHist[charge][fFlowNHarm][fFlowQCNRef]; //
-	TH1D *fFlowQCRefCorFinal[charge][fFlowNHarm][4]; //
-	
+	TH1D *fFlowQCRefCorFinal[charge][fFlowNHarm][4]; //	
 	// Flow from BW
 	TList *fFlowFromBWList;
 	const static Int_t fFlowFromBWCenBin = 10;
