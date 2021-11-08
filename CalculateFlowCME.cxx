@@ -1543,11 +1543,11 @@ void CalculateFlowCME::CalculateFlowQC(){ //check result graph for pt, then ask 
 		Q2f=kFALSE; Q4f=kFALSE;
 
 		for(Int_t pt=0; pt<fPtDiffNBins; pt++) {//now 2nd [] for the order of the weight-> the weight is set to 0 for now; hr = 0 for n=1 harmonic
-			QRe += fPOIPtDiffQRe[ch][1][hr]->GetBinContent(pt+1); // Cos((hr+1.)*dPhi)
-			QIm += fPOIPtDiffQIm[ch][1][hr]->GetBinContent(pt+1); // Sin((hr+1.)*dPhi)
+			QRe += fPOIPtDiffQRe[ch][1][hr]->GetBinContent(pt); // Cos((hr+1.)*dPhi)
+			QIm += fPOIPtDiffQIm[ch][1][hr]->GetBinContent(pt); // Sin((hr+1.)*dPhi)
 			QM0 += fPOIPtDiffMul[ch][0][0]->GetBinContent(pt); // w^0
 			QM  += fPOIPtDiffMul[ch][1][0]->GetBinContent(pt); // w^1
-			QM2 += fPOIPtDiffMul[ch][2][0]->GetBinContent(pt+1); // w^2
+			QM2 += fPOIPtDiffMul[ch][2][0]->GetBinContent(pt); // w^2
 		}
 
 		IQM2 = QM*QM-QM2;
@@ -1581,10 +1581,10 @@ void CalculateFlowCME::CalculateFlowQC(){ //check result graph for pt, then ask 
 
 		  dQM2 = qpM0*QM-qpM;
 		  WdQM2 = (WeigMul? dQM2 : 1.);
-
+	//cout<<"fCenBin"<<fCenBin<<endl;
 		  if(qpM0>0 && QM0>0) {
 			dQC2 = (qpRe0*QRe+qpIm0*QIm-qpM)/dQM2;
-			fFlowQCCorPro[ch][fCenBin][hr][1]->Fill(FillPtBin,dQC2,WdQM2*fCenWeightEbE);
+			fFlowQCCorPro[ch][fCenBin][hr][1]->Fill(FillPtBin,dQC2,WdQM2*fCenWeightEbE);//why is fCenBin set to 1 ?? this meeses things up 
 			dQ2f = kTRUE;
 		//cout<<dQC2<<" dQC2"<<endl;
 		  }
@@ -1680,7 +1680,7 @@ if(abs(Cn2)>0.){
       // pt-differential
       for(Int_t pt=0; pt<fPtDiffNBins; pt++) {
         Double_t qp2    = fFlowQCCorHist[ch][h+1][hr][1]->GetBinContent(pt);// this h+1 was live safing ->figure out why !
-        Double_t qp2E = fFlowQCCorHist[ch][h+1][hr][1]->GetBinError(pt);
+        Double_t qp2E = fFlowQCCorHist[ch][h+1][hr][1]->GetBinError(pt);//fCenBin was h
         Double_t Dn2 = qp2;
 //cout<<"pt"<<pt<<"Dn2 "<<qp2<<"h"<<h<<"hr"<<hr<<endl;
         Double_t Dn2E = qp2E;
@@ -1734,8 +1734,8 @@ for(Int_t pt=0; pt<fPtDiffNBins; pt++){
 		vnegError = fFlowQCFinalPtDifHist[2][h][hr][0]->GetBinError(pt);
 		//calculate delta v1
 		deltav = vpos - vneg;
-		if(abs(deltav)>0.){
-	//cout<<"pt "<<pt<<" vpos "<<vpos<<" vneg "<<vneg<<" deltav "<<deltav<<endl;}
+		if(abs(vpos)>0. && abs(vneg)>0.){
+//	cout<<"pt "<<pt<<" vpos "<<vpos<<" vneg "<<vneg<<" deltav "<<deltav<<endl;
 		//propagete error on v1
 		deltavError = sqrt(abs(pow(vposError,2)-pow(vnegError,2)));
 		//setting bin content
