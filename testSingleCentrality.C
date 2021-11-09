@@ -14,7 +14,7 @@
 using namespace std;
 
 void testSingleCentrality(){
-for(Int_t centID=2; centID < 3; centID++){
+for(Int_t centID=3; centID < 4; centID++){
 	//Int_t centID = 2;
 	Int_t dirID = 0;
 	std::cout << "Centrality ID: " << centID << "Directory ID: " << dirID <<std::endl;
