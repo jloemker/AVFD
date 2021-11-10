@@ -104,7 +104,7 @@ void CalculateFlowCME::InitializeArraysForQA()
 }
 	
 void CalculateFlowCME::InitializeArraysForFlowQC()
-{
+{//maybe soemthing like %s and then loop over Pt and Eta -> conainern with f%dDiffBins und so weiter...
  for(Int_t ch=0; ch < charge; ch++){
 	for (Int_t c=0;c<fQVecPower;c++) {
 		for (Int_t h=0;h<fFlowNHarmMax;h++) {
@@ -901,7 +901,6 @@ void CalculateFlowCME::Make(Event* anEvent) {
                                 fPOIPtDiffQRe[0][k][h]->Fill(dPt,pow(wPhiEta,k)*TMath::Cos((h+1.)*dPhi));//for powers of the weight from 0th to xth *cos(n*dPhi) 
                                 fPOIPtDiffQIm[0][k][h]->Fill(dPt,pow(wPhiEta,k)*TMath::Sin((h+1.)*dPhi));
                                 fPOIPtDiffMul[0][k][h]->Fill(dPt,pow(wPhiEta,k));
-
 				fPOIPtDiffQRe[ch][k][h]->Fill(dPt,pow(wPhiEta,k)*TMath::Cos((h+1.)*dPhi));//for powers of the weight from 0th to xth *cos(n*dPhi) 
 				fPOIPtDiffQIm[ch][k][h]->Fill(dPt,pow(wPhiEta,k)*TMath::Sin((h+1.)*dPhi));
 				fPOIPtDiffMul[ch][k][h]->Fill(dPt,pow(wPhiEta,k));
@@ -1656,12 +1655,12 @@ for (Int_t h=0; h<fCRCnCen; h++) {
       
       // reference flow
       // 2-particle cumulants
-      Double_t QC2    = fFlowQCRefCorHist[ch][hr][0]->GetBinContent(h);
+      Double_t QC2  = fFlowQCRefCorHist[ch][hr][0]->GetBinContent(h);
       Double_t QC2E = fFlowQCRefCorHist[ch][hr][0]->GetBinError(h);
       Double_t Cn2 = QC2;
       Double_t Cn2E = QC2E;
-      fFlowQCRefCorFinal[ch][hr][0]->SetBinContent(h+1,Cn2);
-      fFlowQCRefCorFinal[ch][hr][0]->SetBinError(h+1,Cn2E);
+      fFlowQCRefCorFinal[ch][hr][0]->SetBinContent(h,Cn2);
+      fFlowQCRefCorFinal[ch][hr][0]->SetBinError(h,Cn2E);
       if(abs(Cn2)>0.){      
       	// pt-differential
       	for(Int_t pt=1; pt<=fPtDiffNBins; pt++) {
@@ -1674,6 +1673,7 @@ for (Int_t h=0; h<fCRCnCen; h++) {
        		if(Dn2 != 0) {
           		Double_t Flow2 = Dn2/sqrt(fabs(Cn2));
           		Double_t Flow2E = 0.;
+			Double_t two = QC2;
           		Double_t twoError = QC2E;
           		Double_t twoReduced = qp2;
           		Double_t twoReducedError = qp2E;
@@ -1714,7 +1714,7 @@ for(Int_t pt=1; pt<=fPtDiffNBins; pt++){
 		//calculate delta v1
 		deltav = vpos - vneg;
 		if(abs(vpos)>0.&&abs(vneg)>0.){
-		//cout<<"works!"<<endl;
+		cout<<"works!"<<endl;
 		//propagete error on v1
 		deltavError = sqrt(abs(pow(vposError,2)-pow(vnegError,2)));
 		//setting bin content
