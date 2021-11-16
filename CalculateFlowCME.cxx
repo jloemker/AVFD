@@ -110,6 +110,10 @@ void CalculateFlowCME::InitializeArraysForFlowQC()
 			fPOIPtDiffQRe[c][h] = NULL;
 			fPOIPtDiffQIm[c][h] = NULL;
 			fPOIPtDiffMul[c][h] = NULL;
+	                       
+			fPOIEtaDiffQRe[c][h] = NULL;
+                        fPOIEtaDiffQIm[c][h] = NULL;
+                        fPOIEtaDiffMul[c][h] = NULL;
 		}
 	}
 	
@@ -143,6 +147,7 @@ void CalculateFlowCME::InitializeArraysForFlowQC()
 				fFlowQCCorCovPro[h][i][k] = NULL;
 				fFlowQCCorCovHist[h][i][k] = NULL;
 				fFlowQCFinalPtDifHist[h][i][k] = NULL;
+				fFlowQCFinalEtaDifHist[h][i][k] = NULL;
 			}
 		}
 	}
@@ -405,6 +410,12 @@ void CalculateFlowCME::UserCreateOutputObjects() {
 		fCRCPtBins[r] = PtBins[r];
 	}
 
+	fEtaDiffNBins = 50;
+	fCRCEtaBins = new Double_t[51];
+	for(Int_t i=0; i<51; i++){
+	fCRCEtaBins[i] = etabinEdge[i];
+	}
+
 	for (Int_t c=0;c<fQVecPower;c++) {
 		for (Int_t h=0;h<fFlowNHarmMax;h++) {
 		    fPOIPtDiffQRe[c][h] = new TH1D(Form("fPOIPtDiffQRe[%d][%d]",c,h),Form("fPOIPtDiffQRe[%d][%d]",c,h),fPtDiffNBins,fCRCPtBins);
@@ -413,6 +424,14 @@ void CalculateFlowCME::UserCreateOutputObjects() {
 		    fFlowQCList->Add(fPOIPtDiffQIm[c][h]);
 		    fPOIPtDiffMul[c][h] = new TH1D(Form("fPOIPtDiffMul[%d][%d]",c,h),Form("fPOIPtDiffMul[%d][%d]",c,h),fPtDiffNBins,fCRCPtBins);
 		    fFlowQCList->Add(fPOIPtDiffMul[c][h]);
+
+                    fPOIEtaDiffQRe[c][h] = new TH1D(Form("fPOIEtaDiffQRe[%d][%d]",c,h),Form("fPOIEtaDiffQRe[%d][%d]",c,h),fEtaDiffNBins,fCRCEtaBins);
+                    fFlowQCList->Add(fPOIEtaDiffQRe[c][h]);
+                    fPOIEtaDiffQIm[c][h] = new TH1D(Form("fPOIEtaDiffQIm[%d][%d]",c,h),Form("fPOIEtaDiffQIm[%d][%d]",c,h),fEtaDiffNBins,fCRCEtaBins);
+                    fFlowQCList->Add(fPOIEtaDiffQIm[c][h]);
+                    fPOIEtaDiffMul[c][h] = new TH1D(Form("fPOIEtaDiffMul[%d][%d]",c,h),Form("fPOIEtaDiffMul[%d][%d]",c,h),fEtaDiffNBins,fCRCEtaBins);
+                    fFlowQCList->Add(fPOIEtaDiffMul[c][h]);
+
 		}
 	}
 
@@ -467,9 +486,14 @@ void CalculateFlowCME::UserCreateOutputObjects() {
 				fFlowQCCorCovHist[h][i][k] = new TH1D(Form("fFlowQCCorCovHist[%d][%d][%d]",h,i,k),Form("fFlowQCCorCovHist[%d][%d][%d]",h,i,k),fPtDiffNBins,fCRCPtBins);
 				fFlowQCCorCovHist[h][i][k]->Sumw2();
 				fFlowQCList->Add(fFlowQCCorCovHist[h][i][k]);
+				//Pt differential 
 				fFlowQCFinalPtDifHist[h][i][k] = new TH1D(Form("fFlowQCFinalPtDifHist[%d][%d][%d]",h,i,k),Form("fFlowQCFinalPtDifHist[%d][%d][%d]",h,i,k),fPtDiffNBins,fCRCPtBins);
 				fFlowQCFinalPtDifHist[h][i][k]->Sumw2();
 				fFlowQCList->Add(fFlowQCFinalPtDifHist[h][i][k]);
+				//Eta differential
+				fFlowQCFinalEtaDifHist[h][i][k] = new TH1D(Form("fFlowQCFinalEtaDifHist[%d][%d][%d]", h,i,k),Form("fFlowQCFinalEtaDifHist[%d][%d][%d]",h,i,k),fEtaDiffNBins, fCRCEtaBins);
+				fFlowQCFinalEtaDifHist[h][i][k]->Sumw2();
+				fFlowQCList->Add(fFlowQCFinalEtaDifHist[h][i][k]);
 			}
 		}
 	}
@@ -870,6 +894,10 @@ void CalculateFlowCME::Make(Event* anEvent) {
 				fPOIPtDiffQRe[k][h]->Fill(dPt,pow(wPhiEta,k)*TMath::Cos((h+1.)*dPhi));
 				fPOIPtDiffQIm[k][h]->Fill(dPt,pow(wPhiEta,k)*TMath::Sin((h+1.)*dPhi));
 				fPOIPtDiffMul[k][h]->Fill(dPt,pow(wPhiEta,k));
+
+                                fPOIEtaDiffQRe[k][h]->Fill(dEta,pow(wPhiEta,k)*TMath::Cos((h+1.)*dPhi));
+                                fPOIEtaDiffQIm[k][h]->Fill(dEta,pow(wPhiEta,k)*TMath::Sin((h+1.)*dPhi));
+                                fPOIEtaDiffMul[k][h]->Fill(dEta,pow(wPhiEta,k));
 			}
 		}
 	//}
@@ -1116,7 +1144,11 @@ void CalculateFlowCME::ResetEventByEventQuantities()
         if(fPOIPtDiffQRe[c][h]) fPOIPtDiffQRe[c][h]->Reset();
         if(fPOIPtDiffQIm[c][h]) fPOIPtDiffQIm[c][h]->Reset();
         if(fPOIPtDiffMul[c][h]) fPOIPtDiffMul[c][h]->Reset();
-      }
+      
+        if(fPOIEtaDiffQRe[c][h]) fPOIEtaDiffQRe[c][h]->Reset();
+        if(fPOIEtaDiffQIm[c][h]) fPOIEtaDiffQIm[c][h]->Reset();
+        if(fPOIEtaDiffMul[c][h]) fPOIEtaDiffMul[c][h]->Reset();
+	}
     }
     
     //FlowFromBW
@@ -1492,7 +1524,7 @@ void CalculateFlowCME::CalculateFlowQC()
 	Double_t WdQM2=0., WdQM4=0., WdQM2EG=0., WdQM2EGB=0.;
 	Double_t QRe=0., QIm=0., Q2Re2=0., Q2Im2=0., QRe3=0., QIm3=0., QM0=0., QM=0., QM2=0., QM3=0., QM4=0.;
 	Double_t qpRe0=0., qpIm0=0., qpRe2=0., qpIm2=0., qp2Re=0., qp2Im=0., qpM0=0., qpM=0., qpM2=0., qpM3=0.;
-    Double_t WqpM0=0., WqpAM=0.;
+    	Double_t WqpM0=0., WqpAM=0.;
 	Bool_t Q2f=kFALSE, Q4f=kFALSE, dQ2f=kFALSE, dQ4f=kFALSE;
 	Bool_t WeigMul = kTRUE; //(fCorrWeightTPC==kMultiplicity ? kTRUE : kFALSE);
 
@@ -1519,7 +1551,7 @@ void CalculateFlowCME::CalculateFlowQC()
 			QM2 += fPOIPtDiffMul[2][0]->GetBinContent(pt+1); // w^2
 			QM3 += fPOIPtDiffMul[3][0]->GetBinContent(pt+1); // w^3
 			QM4 += fPOIPtDiffMul[4][0]->GetBinContent(pt+1); // w^4
-		}
+		}		
 
 		IQM2 = QM*QM-QM2;
 		WQM2 = (WeigMul? IQM2 : 1.);
@@ -1624,9 +1656,9 @@ void CalculateFlowCME::CalculateFlowQC()
     // Pt-DIFFERENTIAL
   for(Int_t hr=0; hr<fFlowNHarm; hr++) {
     for(Int_t j=0; j<fFlowQCNRef; j++) {
-      for(Int_t pt=0;pt<=fFlowQCRefCorPro[hr][j]->GetNbinsX();pt++) {
+      for(Int_t cen=0;cen<=fFlowQCRefCorPro[hr][j]->GetNbinsX();cen++) {
         Double_t stats[6]={0.};
-        fFlowQCRefCorPro[hr][j]->GetXaxis()->SetRange(pt,pt);
+        fFlowQCRefCorPro[hr][j]->GetXaxis()->SetRange(cen,cen);
         fFlowQCRefCorPro[hr][j]->GetStats(stats);
         Double_t SumWeig   = stats[0];
         Double_t SumWeigSq  = stats[1];
@@ -1645,8 +1677,8 @@ void CalculateFlowCME::CalculateFlowQC()
           Double_t CorrErr = termA*spread*termB; // final error (unbiased estimator for standard deviation)
           if(CorrErr) {
 //cout<<"store in Ref"<<Corr<<endl;
-            fFlowQCRefCorHist[hr][j]->SetBinContent(pt,Corr);
-            fFlowQCRefCorHist[hr][j]->SetBinError(pt,CorrErr);
+            fFlowQCRefCorHist[hr][j]->SetBinContent(cen,Corr);
+            fFlowQCRefCorHist[hr][j]->SetBinError(cen,CorrErr);
           }
         }
       } // end of for(Int_t pt=1;pt<=100;pt++)
@@ -1822,7 +1854,7 @@ void CalculateFlowCME::CalculateFlowQC()
           }
         }
       } // end of for(Int_t pt=1; pt<=fPtDiffNBins; pt++) {
-    } // end of for (Int_t h=0; h<fCRCnCen; h++) {
+     } // end of for (Int_t h=0; h<fCRCnCen; h++) {
   } // end of for(Int_t hr=0; hr<fFlowNHarm; hr++)
 }
 

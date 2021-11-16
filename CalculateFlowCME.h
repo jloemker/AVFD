@@ -91,6 +91,7 @@ class CalculateFlowCME
 	Double_t wEta = 1; // In MC, set to 1 for now.
 	Double_t wTrack = 1; // In MC, set to 1 for now.
 	Double_t *fCRCPtBins;
+	Double_t *fCRCEtaBins;
 	Bool_t doQA = kFALSE;
 	Double_t trkWgt = 1;
 	
@@ -163,11 +164,15 @@ class CalculateFlowCME
 	const static Int_t fFlowNHarmMax = 14; // WARNING: MIN (2*fFlowNHarm+2)
 	const static Int_t fQVecPower = 5;
 	Int_t fPtDiffNBins; //
-	
+	Int_t fEtaDiffNBins;	
 	TH1D *fPOIPtDiffQRe[fQVecPower][fFlowNHarmMax]; // real part
 	TH1D *fPOIPtDiffQIm[fQVecPower][fFlowNHarmMax]; // imaginary part
 	TH1D *fPOIPtDiffMul[fQVecPower][fFlowNHarmMax]; // imaginary part
-
+							
+	TH1D *fPOIEtaDiffQRe[fQVecPower][fFlowNHarmMax];//again but for eta 
+	TH1D *fPOIEtaDiffQIm[fQVecPower][fFlowNHarmMax];
+	TH1D *fPOIEtaDiffMul[fQVecPower][fFlowNHarmMax];
+	
 	const static Int_t fkFlowQCnIntCorPro = 5;
 	TProfile *fFlowQCIntCorPro[fFlowNHarm][fkFlowQCnIntCorPro]; //
 	TH1D *fFlowQCIntCorHist[fFlowNHarm][fkFlowQCnIntCorPro]; //
@@ -181,7 +186,8 @@ class CalculateFlowCME
 	TH1D *fFlowQCCorHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNPro]; // <<2'>>, [CRCBin][eg]
 	TH1D *fFlowQCCorCovHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; // histo for covariances
 	TH1D *fFlowQCFinalPtDifHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; //
-
+	TH1D *fFlowQCFinalEtaDifHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];//hist for vn vs eta
+	
 	Int_t fFlowQCCenBin;
 	
 	const static Int_t fFlowQCNRef = 14;
