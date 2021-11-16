@@ -768,8 +768,10 @@ void CalculateFlowCME::Make(Event* anEvent) {
 		dPt = anEvent->getParticle(i).getPt();
 		dEta = anEvent->getParticle(i).getRapidity();  // in MC, the rapidity is stored rather than pesudorapidity (eta)
 		dCharge = anEvent->getParticle(i).getCharge();
+		//cout <<dCharge<<endl;
 //////////////cout <<"dPt"<<dPt<<" dEta "<<dEta<<"dCharge"<<dCharge<<endl;
-		//if (dCharge == 0) continue;
+		if (dCharge == 0) continue;
+		if (dCharge < 0) continue;
 		cw = (dCharge > 0. ? 0 : 1);
 		//to make sure that we only analyse one charge
 		//cout<<"cw: "<<cw<<" dCharge: "<<dCharge<<endl;
@@ -1505,8 +1507,8 @@ void CalculateFlowCME::CalculateFlowQC()
 		Q2f=kFALSE; Q4f=kFALSE;
 
 		for(Int_t pt=0; pt<fPtDiffNBins; pt++) {
-			QRe += fPOIPtDiffQRe[1][hr+1]->GetBinContent(pt+1); // Cos((hr+1.)*dPhi)
-			QIm += fPOIPtDiffQIm[1][hr+1]->GetBinContent(pt+1); // Sin((hr+1.)*dPhi)
+			QRe += fPOIPtDiffQRe[1][hr]->GetBinContent(pt+1); // Cos((hr+1.)*dPhi)
+			QIm += fPOIPtDiffQIm[1][hr]->GetBinContent(pt+1); // Sin((hr+1.)*dPhi)
 			Q2Re2 += fPOIPtDiffQRe[2][2*hr+3]->GetBinContent(pt+1); // w^2*Cos((hr+2.)*dPhi)
 			Q2Im2 += fPOIPtDiffQIm[2][2*hr+3]->GetBinContent(pt+1); // w^2*Sin((hr+2.)*dPhi)
 			QRe3 += fPOIPtDiffQRe[3][hr+1]->GetBinContent(pt+1); // w^3*Cos((hr+2.)*dPhi)
@@ -1560,8 +1562,8 @@ void CalculateFlowCME::CalculateFlowQC()
 		  FillPtBin = fPOIPtDiffQRe[0][0]->GetBinCenter(pt+1);
 		  qpRe0=0.; qpIm0=0.; qpRe2=0.; qpIm2=0.; qp2Re=0.; qp2Im=0.; qpM0=0.; qpM=0.; qpM2=0.; qpM3=0.;
 
-		  qpRe0 = fPOIPtDiffQRe[0][hr+1]->GetBinContent(pt+1);
-		  qpIm0 = fPOIPtDiffQIm[0][hr+1]->GetBinContent(pt+1);
+		  qpRe0 = fPOIPtDiffQRe[0][hr]->GetBinContent(pt+1);
+		  qpIm0 = fPOIPtDiffQIm[0][hr]->GetBinContent(pt+1);
 		  qpRe2 = fPOIPtDiffQRe[2][hr+1]->GetBinContent(pt+1);
 		  qpIm2 = fPOIPtDiffQIm[2][hr+1]->GetBinContent(pt+1);
 		  qp2Re = fPOIPtDiffQRe[1][2*hr+3]->GetBinContent(pt+1);

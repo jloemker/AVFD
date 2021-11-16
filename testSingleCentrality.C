@@ -104,7 +104,7 @@ for(Int_t centID=3; centID < 4; centID++){
 	TFile *ResultsFile;
 	// Here comes the output directory
 	//ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/AnalysisResults_baseline_5.44TeV_Cent%d_%d.root",dirID, val1, val2), "RECREATE");	  
-	ResultsFile = new TFile(Form("/project/alice/users/jlomker/AVFD/test/dirID-%d/AnalysisResults_Cent%d_%d.root", dirID, val1,val2), "RECREATE");
+	ResultsFile = new TFile(Form("/project/alice/users/jlomker/AVFD/test/dirID-%d/pos/v1/AnalysisResults_Cent%d_%d.root", dirID, val1,val2), "RECREATE");
 	ResultsFile->WriteObject(fQC->GetQAList(),"QAList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetFlowGFList(),"FlowGFList","SingleKey");

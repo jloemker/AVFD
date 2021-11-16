@@ -50,6 +50,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID){
 	//here comes the input directory	
 	//string directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality0-5/Baseline/job-%d/particle_distribution_final/%d.dat",ithJob,ithFile);
 		directory = Form("tree_5.44TeV_Cent%d_%d_%d.root", val1, val2, k);//submit script puts me into dirID/...
+		//directory = Form("/data/alice/jlomker/AVFD/Centrality-%d/dirID-0/tree_5.44TeV_Cent%d_%d_%d.root",centID, val1,val2,k);
 		TFile *f = TFile::Open(directory.c_str(), "READ");
 		
 		if (!f) {
@@ -101,7 +102,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID){
 	// Save list holding histogram with weights:
 	TFile *ResultsFile;
 	// Here comes the output directory
-	ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/AnalysisResults_baseline_5.44TeV_Cent%d_%d.root",dirID, val1, val2), "RECREATE");	  
+	ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/all/v1/AnalysisResults_5.44TeV_Cent%d_%d.root",dirID, val1, val2), "RECREATE");	  
 
 	ResultsFile->WriteObject(fQC->GetQAList(),"QAList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");

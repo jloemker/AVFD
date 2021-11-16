@@ -91,11 +91,6 @@ class CalculateFlowCME
 	Double_t wEta = 1; // In MC, set to 1 for now.
 	Double_t wTrack = 1; // In MC, set to 1 for now.
 	Double_t *fCRCPtBins;
-	Double_t *PtB;
-	//for weight in v1pt and v1eta differential
-	Double_t fPtWeight = 1;
-	Double_t fEtaWeight = 1;
-	
 	Bool_t doQA = kFALSE;
 	Double_t trkWgt = 1;
 	
@@ -136,7 +131,7 @@ class CalculateFlowCME
 	TH1D *fAntiProtonsPhiSpectra;
 	// Flow GF part
 	TList *fFlowGFList;
-	const static Int_t fkFlowGFNHarm = 4;//Increased from 4 to 5 !
+	const static Int_t fkFlowGFNHarm = 4;
 	const static Int_t fkFlowGFNOrde = 4;
 	const static Int_t fFlowGFCenBin = 10;
 	const static Int_t fkGFPtB = 8;
@@ -144,12 +139,12 @@ class CalculateFlowCME
 	TMatrixD *fImQGF; // fImQ[m][k] = sum_{i=1}^{M} w_{i}^{k} sin(m*phi_{i})
 	TMatrixD *fReQGFPt[fkGFPtB]; // fReQ[m][k] = sum_{i=1}^{M} w_{i}^{k} cos(m*phi_{i})
 	TMatrixD *fImQGFPt[fkGFPtB]; // fImQ[m][k] = sum_{i=1}^{M} w_{i}^{k} sin(m*phi_{i})
-
-	TProfile *fFlowGFIntCorPro[fkFlowGFNHarm][fkFlowGFNOrde]; //initialized with centrality bins
+	
+	TProfile *fFlowGFIntCorPro[fkFlowGFNHarm][fkFlowGFNOrde]; //
 	TH1D *fFlowGFIntCorHist[fkFlowGFNHarm][fkFlowGFNOrde]; //
 	TH1D *fFlowGFIntCumHist[fkFlowGFNHarm][fkFlowGFNOrde]; //
-	TH1D *fFlowGFIntFinalHist[fkFlowGFNHarm][fkFlowGFNOrde]; // from pt integrated vn      
-  
+	TH1D *fFlowGFIntFinalHist[fkFlowGFNHarm][fkFlowGFNOrde]; //
+	
 	TProfile *fFlowGFIntCovPro[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
 	TH1D *fFlowGFIntCovHist[fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
   
@@ -161,56 +156,51 @@ class CalculateFlowCME
 	TH1D *fFlowGFIntCorHistPtB[fkGFPtB][fkFlowGFNHarm][fkFlowGFNOrde]; //
 	TProfile *fFlowGFIntCovProPtB[fkGFPtB][fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
 	TH1D *fFlowGFIntCovHistPtB[fkGFPtB][fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
-
-
+	
 	// Flow QC part
 	TList *fFlowQCList;
 	const static Int_t fFlowNHarm = 6;
 	const static Int_t fFlowNHarmMax = 14; // WARNING: MIN (2*fFlowNHarm+2)
 	const static Int_t fQVecPower = 5;
-	const static Int_t charge = 3; //to get all, only + or - vectors for \Delta v_1
 	Int_t fPtDiffNBins; //
-	//for v1(eta)	
-	Int_t fEtaDiffNBins;
-        Double_t *fCRCEtaBins;
-
-	TProfile *fPOIPtDiffQRe[charge][fQVecPower][fFlowNHarmMax]; // real part
-	TProfile *fPOIPtDiffQIm[charge][fQVecPower][fFlowNHarmMax]; // imaginary part
-	TProfile *fPOIPtDiffMul[charge][fQVecPower][fFlowNHarmMax]; // imaginary part
+	
+	TH1D *fPOIPtDiffQRe[fQVecPower][fFlowNHarmMax]; // real part
+	TH1D *fPOIPtDiffQIm[fQVecPower][fFlowNHarmMax]; // imaginary part
+	TH1D *fPOIPtDiffMul[fQVecPower][fFlowNHarmMax]; // imaginary part
 
 	const static Int_t fkFlowQCnIntCorPro = 5;
-	TProfile *fFlowQCIntCorPro[charge][fFlowNHarm][fkFlowQCnIntCorPro]; //
-	TH1D *fFlowQCIntCorHist[charge][fFlowNHarm][fkFlowQCnIntCorPro]; //
-	TH1D *fFlowQCIntCumHist[charge][fFlowNHarm][fkFlowQCnIntCorPro];
+	TProfile *fFlowQCIntCorPro[fFlowNHarm][fkFlowQCnIntCorPro]; //
+	TH1D *fFlowQCIntCorHist[fFlowNHarm][fkFlowQCnIntCorPro]; //
+	TH1D *fFlowQCIntCumHist[fFlowNHarm][fkFlowQCnIntCorPro];
 
 	const static Int_t fFlowQCNPro = 4;
 	const static Int_t fCRCMaxnCen = 10;
 	const static Int_t fFlowQCNCov = 8;
-	TProfile *fFlowQCCorPro[charge][fCRCMaxnCen][fFlowNHarm][fFlowQCNPro];
-	TProfile *fFlowQCCorCovPro[charge][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];
-	TH1D *fFlowQCCorHist[charge][fCRCMaxnCen][fFlowNHarm][fFlowQCNPro]; // <<2'>>, [CRCBin][eg]
-	TH1D *fFlowQCCorCovHist[charge][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; // histo for covariances
-	TH1D *fFlowQCFinalPtDifHist[charge][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; //
-	TH1D *fFlowQCFinalPtDifDeltaHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];
+	TProfile *fFlowQCCorPro[fCRCMaxnCen][fFlowNHarm][fFlowQCNPro];
+	TProfile *fFlowQCCorCovPro[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];
+	TH1D *fFlowQCCorHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNPro]; // <<2'>>, [CRCBin][eg]
+	TH1D *fFlowQCCorCovHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; // histo for covariances
+	TH1D *fFlowQCFinalPtDifHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; //
 
 	Int_t fFlowQCCenBin;
 	
 	const static Int_t fFlowQCNRef = 14;
-	TProfile *fFlowQCRefCorPro[charge][fFlowNHarm][fFlowQCNRef]; //
-	TH1D *fFlowQCRefCorHist[charge][fFlowNHarm][fFlowQCNRef]; //
-	TH1D *fFlowQCRefCorFinal[charge][fFlowNHarm][4]; //	
+	TProfile *fFlowQCRefCorPro[fFlowNHarm][fFlowQCNRef]; //
+	TH1D *fFlowQCRefCorHist[fFlowNHarm][fFlowQCNRef]; //
+	TH1D *fFlowQCRefCorFinal[fFlowNHarm][4]; //
+	
 	// Flow from BW
 	TList *fFlowFromBWList;
 	const static Int_t fFlowFromBWCenBin = 10;
 	Double_t ReQn[fFlowFromBWCenBin] = {0.}, ImQn[fFlowFromBWCenBin] = {0.};
-    const static Int_t nHar = 4;//was 3, but to inclde v1 and to still account for the others - I think this messes up things ... - still doesn't matter for v1
+    
+    const static Int_t nHar = 3;
 	TProfile *V2IntPro[nHar];
-	TProfile *V2IntDelta[nHar];
     TProfile *V2IntProQC[nHar];
     TProfile *V2PtDiffPro[nHar][10];
-    TH1F *hRepn[nHar], *hImpn[nHar];
-	TH1F *hMpn;
-
+    TH1F   *hRepn[nHar], *hImpn[nHar];
+    TH1F *hMpn;
+    
 	// CMW part
 	TList *fCMWList;
 	Double_t fEtaGapNeg = -0.1;
@@ -223,7 +213,7 @@ class CalculateFlowCME
 	TProfile *fHistEPResolutionAch[9];
 	TProfile *fHistv2AchChrgPosEtaNeg[2][9];
 	TProfile *fHistv2AchChrgPosEtaPos[2][9];
-	TProfile *fHist2AchChrgNegEtaNeg[2][9];
+	TProfile *fHistv2AchChrgNegEtaNeg[2][9];
 	TProfile *fHistv2AchChrgNegEtaPos[2][9];
 	TProfile *fHistv2AchChrgPosChrgNeg[2][9];
 	TProfile *fHistv2AchChrgNegChrgPos[2][9];
@@ -235,7 +225,8 @@ class CalculateFlowCME
 	TProfile *fHistAveV2NegAch;
     TProfile *fHistAveV2Neg;
     
-    TProfile *fv2plusminus;	
+    TProfile *fv2plusminus;
+	
 	TH1D *fCMWThreeParticleCorrelator[2];
 	  
 	Double_t fSumTPCQn2xEtaNegWhole = 0;
@@ -272,7 +263,7 @@ class CalculateFlowCME
     Double_t ReQ2P=0, ImQ2P=0, ReQ2N=0, ImQ2N=0;
     Double_t ReQ3P=0, ImQ3P=0, ReQ3N=0, ImQ3N=0;
     Double_t ReQ4P=0, ImQ4P=0, ReQ4N=0, ImQ4N=0;
-    Double_t MQP=0, MQN=0, MQ=0, PMQ = 0, NMQ = 0;
+    Double_t MQP=0, MQN=0, MQ=0;
 
 	//--------- individual Q-vector terms -----------
 	const static Int_t nQVector = 8;

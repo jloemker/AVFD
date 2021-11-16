@@ -10,84 +10,185 @@
 void PlotMacro(){
 gStyle -> SetOptStat(0);
 //gROOT->SetBatch();
-TFile* File = new TFile("/project/alice/users/jlomker/AnalysisResult_a-0.1_5.44TeV.root");
+//small sets in project test dir with all or pos: /project/alice/users/jlomker/AVFD/test/dirID-0/all/AnalysisResults_Cent20_30.root
+//for large sets all/pos: /data/alice/jlomker/AVFD/result/dirID-0/all/AnalysisResults_Cent20_30.root
+//data/alice/jlomker/AVFD/result/dirID-0/pos
+//AnalysisResults_5.44TeV_Cent20_30.root
 
-//Getting the list(s) of files
-TList *QA = (TList*) File->Get("QAList;1");//Kinematics from POI`s
-TList *FlowQC = (TList*) File->Get("FlowQCList;1");//Matrices for calculations ?
-TList *FlowGF = (TList*) File->Get("FLowGFList;1");//Matrices for calculations ?
-TList *FlowFromBW = (TList*) File->Get("FlowFromBWList;1");//Flow harmonics v2 -> v4
-TList *CME = (TList*) File->Get("CMEList;1");//(SS/OS/Delta) delta, gamma 
-TList *CMW = (TList*) File->Get("CMWList;1");//Different methods for flow harmonics, eta, etc..
-TList *CMWQA = (TList*) File->Get("CMWQAList;1");//2 more (empty) directories
+//plot small sample 2 for all and pos on top of eachother:
+TFile* file_all = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/all/v1/AnalysisResults_Cent20_30.root");
+TFile* file_pos = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/pos/v1/AnalysisResults_Cent20_30.root");
+//Getting the list(s) of files for all
+TList *qa = (TList*) file_all->Get("QAList;1");//Kinematics from POI`s
+TList *flowQC = (TList*) file_all->Get("FlowQCList;1");//Matrices for calculations ?
+TList *cme = (TList*) file_all->Get("CMEList;1");//(SS/OS/Delta) delta, gamma 
+//for pos particles 
+TList *posFlowQC = (TList*) file_pos->Get("FlowQCList;1");//Matrices for calculations ?
 
-//Transverse momentum example
-//Extracting the histogram(s) from the list             
-TH1F *pT = (TH1F*) QA->FindObject("fPtChargedParticlesDistribution");
-//Define the Canvas for the plot
-TCanvas *c1 = new TCanvas("c1","pT",400,400);
-// Some things to make things more professional 
-pT ->GetYaxis()->SetTitle("Transverse momentum p_{T}");
-pT ->GetXaxis()->SetTitle("GeV");
-pT ->SetTitle("Charged particles");
-//pT->Draw();
-//c1->SaveAs("pT.pdf");
+TH1F *v2_all = (TH1F*) flowQC->FindObject("fFlowQCFinalPtDifHist[2][0][0]");
+TH1F *v2_pos = (TH1F*) posFlowQC->FindObject("fFlowQCFinalPtDifHist[2][0][0]");
 
+TH1F *v3_all = (TH1F*) flowQC->FindObject("fFlowQCFinalPtDifHist[2][1][0]");
+TH1F *v3_pos = (TH1F*) posFlowQC->FindObject("fFlowQCFinalPtDifHist[2][1][0]");
 
-//double canvas:
-TCanvas *duo = new TCanvas("duo","duo",200,300);
-duo->Divide(1,2,0,0);
-
-duo->cd(1);
-duo->cd(1)->SetTopMargin(0.1);
-duo->cd(1)->SetLeftMargin(0.2);
-duo->cd(1)->SetRightMargin(0.1);
-duo->cd(1)->Draw();
-
-TH1F *delDelta = (TH1F*) CME->FindObject("DeltaD11");
-delDelta->SetTitle("");
-//some beauty issues left - marker style and consistency with the legend ... 
-delDelta->SetLineColor(2);
-delDelta->SetLineStyle(1);
-delDelta->SetLineWidth(3);
-delDelta->GetYaxis()->SetRangeUser(-0.002,0.004);
-delDelta->GetYaxis()->SetNdivisions(3);
-delDelta->GetYaxis()->SetTitle("#Delta #delta_{1}");
-delDelta->GetYaxis()->SetTitleSize(0.05);
-delDelta->GetYaxis()->CenterTitle();
-delDelta->GetXaxis()->SetRangeUser(0,70);
-delDelta->GetXaxis()->SetTickLength(0);
-delDelta->GetXaxis()->SetLabelSize(0);
-delDelta->Draw();
-//Adding the legend -> some beauty issues left
-auto legend = new TLegend(0.3,0.35);
-legend->SetHeader("AVFD Xe-Xe, #sqrt{s_{NN}} = 4.55TeV","C");
-legend->AddEntry("delDelta", " n_{5}/s = 0.1 - LCC = 0");
-
-duo->cd(2);
-duo->cd(2)->SetLeftMargin(0.2);
-duo->cd(2)->SetBottomMargin(0.2);
-duo->cd(2)->SetRightMargin(0.1);
-duo->cd(2)->Draw();
-TH1F *delGamma = (TH1F*) CME->FindObject("DeltaG112");
-delGamma->SetTitle("");
-delGamma->SetLineColor(2);
-delGamma->SetLineStyle(1);
-delGamma->SetLineWidth(3);
-delGamma->GetYaxis()->SetRangeUser(0,0.0022);
-delGamma->GetYaxis()->SetNdivisions(3);
-delGamma->GetYaxis()->SetTitle("#Delta #gamma_{1,1}");
-delGamma->GetYaxis()->SetTitleSize(0.05);
-delGamma->GetYaxis()->CenterTitle();
-delGamma->GetXaxis()->SetRangeUser(0, 70);
-delGamma ->GetXaxis()->SetTitle("centrality, %");
-delGamma ->GetXaxis()->CenterTitle();
-delGamma ->GetXaxis()->SetTitleSize(0.05);
-delGamma ->Draw();
-
-legend->AddEntry("delGamma", "n_{5}/s = 0.1 - LCC = 0");
-legend->SetBorderSize(0);
+TCanvas *v2 = new TCanvas("v2","pT",400,400);
+v2_all ->GetYaxis()->SetTitle("differential flow v_{1}");
+v2_all ->GetXaxis()->SetTitle("p_{T} [GeV]");
+v2_all ->SetLineColor(kBlack);
+v2_all->GetXaxis()->SetRangeUser(0.,5.);
+v2_all->Draw();
+v2_pos ->GetYaxis()->SetTitle("differential flow v_{1}");
+v2_pos ->GetXaxis()->SetTitle("p_{T} [GeV]");
+v2_pos ->GetXaxis()->SetRangeUser(0.,5.);
+v2_pos->SetLineColor(kRed);
+v2_pos->Draw("same");
+auto legend = new TLegend();
+legend->SetHeader("Small sample Xe-Xe: 5.44TeV, 20-30%","C");
+legend->AddEntry(v2_all,"Charged particles", "l");
+legend->AddEntry(v2_pos,"Pos particles", "l");
 legend->Draw();
-duo->SaveAs("delD_delG.pdf");
+//v2 ->SaveAs("small_pos_vs_charged_v1.pdf");
+
+TCanvas *v3 = new TCanvas("v3","pT",400,400);
+v3_all ->GetYaxis()->SetTitle("differential flow v_{2}");
+v3_all ->GetXaxis()->SetTitle("p_{T} [GeV]");
+v3_all ->SetLineColor(kBlack);
+v3_all->GetXaxis()->SetRangeUser(0.,5.);
+v3_all->Draw();
+v3_pos ->GetYaxis()->SetTitle("differential flow v_{2}");
+v3_pos ->GetXaxis()->SetTitle("p_{T} [GeV]");
+v3_pos ->GetXaxis()->SetRangeUser(0.,5.);
+v3_pos->SetLineColor(kRed);
+v3_pos->Draw("same");
+auto legend2 = new TLegend(0.1,0.7,0.48,0.9);
+legend2->SetHeader("Small sample Xe-Xe: 5.44TeV, 20-30%","C");
+legend2->AddEntry(v3_all,"Charged particles", "l");
+legend2->AddEntry(v3_pos,"Pos particles", "l");
+legend2->Draw();
+//v3 ->SaveAs("small_pos_vs_charged_v2.pdf");
+
+//Plots for large sample
+TFile* File_all = new TFile("/data/alice/jlomker/AVFD/result/dirID-0/all/v1/AnalysisResults_5.44TeV_Cent20_30.root");
+TFile* File_pos = new TFile("/data/alice/jlomker/AVFD/result/dirID-0/pos/v1/AnalysisResults_5.44TeV_Cent20_30.root");
+TList *QA = (TList*) File_all->Get("QAList;1");//Kinematics from POI`s
+TList *FlowQC = (TList*) File_all->Get("FlowQCList;1");
+TList *PosFlowQC = (TList*) File_pos->Get("FlowQCList;1");
+
+TH1F *V2_all = (TH1F*) FlowQC->FindObject("fFlowQCFinalPtDifHist[2][0][0]");
+TH1F *V2_pos = (TH1F*) PosFlowQC->FindObject("fFlowQCFinalPtDifHist[2][0][0]");
+
+TH1F *V3_all = (TH1F*) FlowQC->FindObject("fFlowQCFinalPtDifHist[2][1][0]");
+TH1F *V3_pos = (TH1F*) PosFlowQC->FindObject("fFlowQCFinalPtDifHist[2][1][0]");
+
+TCanvas *V2 = new TCanvas("V2","pT",400,400);
+V2_all ->GetYaxis()->SetTitle("differential flow v_{1}");
+V2_all ->GetXaxis()->SetTitle("p_{T} [GeV]");
+V2_all ->SetLineColor(kBlack);
+V2_all->GetXaxis()->SetRangeUser(0.,5.);
+V2_all->Draw();
+V2_pos ->GetYaxis()->SetTitle("differential flow v_{1}");
+V2_pos ->GetXaxis()->SetTitle("p_{T} [GeV]");
+V2_pos ->GetXaxis()->SetRangeUser(0.,5.);
+V2_pos->SetLineColor(kRed);
+V2_pos->Draw("same");
+auto Legend = new TLegend();
+Legend->SetHeader("Large sample Xe-Xe: 5.44TeV, 20-30%","C");
+Legend->AddEntry(V2_all,"Charged particles", "l");
+Legend->AddEntry(V2_pos,"Pos particles", "l");
+Legend->Draw();
+V2 ->SaveAs("charged_vs_pos_v1.pdf");
+
+TCanvas *V3 = new TCanvas("V3","pT",400,400);
+V3_all ->GetYaxis()->SetTitle("differential flow v_{2}");
+V3_all ->GetXaxis()->SetTitle("p_{T} [GeV]");
+V3_all ->SetLineColor(kBlack);
+V3_all->GetXaxis()->SetRangeUser(0.,5.);
+V3_all->Draw();
+V3_pos ->GetYaxis()->SetTitle("differential flow v_{2}");
+V3_pos ->GetXaxis()->SetTitle("p_{T} [GeV]");
+V3_pos ->GetXaxis()->SetRangeUser(0.,5.);
+V3_pos->SetLineColor(kRed);
+V3_pos->Draw("same");
+auto Legend2 = new TLegend(0.1,0.7,0.48,0.9);
+Legend2->SetHeader("Large sample Xe-Xe: 5.44TeV, 20-30%","C");
+Legend2->AddEntry(V3_all,"Charged particles", "l");
+Legend2->AddEntry(V3_pos,"Pos particles", "l");
+Legend2->Draw();
+V3 ->SaveAs("charged_vs_pos_v2.pdf");
+
+//Comparison plots with real data
+//define TH1F here  How the hack can I get the values from the file ?!
+/*
+TFile *Published = new TFile("/project/alice/users/jlomker/AVFD/plots/published.root");
+TList *p = (TList*) Published->Get("Table 5");
+ 
+TH1F *h1 = (TH1F*) p->FindObject("");
+TH1F *h2 = (TH1F*) FlowQC->FindObject("fFlowQCFinalPtDifHist[2][0][0]");
+
+
+//define canvas
+TCanvas *c = new TCanvas("c", "canvas", 800, 800);
+//upper plot in pad1
+TPad *pad1 = new TPad("pad1", "pad1", 0, 0.3, 1, 1.0);
+pad1->SetBottomMargin(0); // Upper and lower plot are joined
+pad1->SetGridx();         // Vertical grid
+pad1->Draw();             // Draw the upper pad: pad1
+pad1->cd();               // pad1 becomes the current pad
+h1->SetStats(0);          // No statistics on upper plot
+h1->Draw();               // Draw h1
+h2->Draw("same");         // Draw h2 on top of h1
+
+h1->GetYaxis()->SetLabelSize(0.);
+TGaxis *axis = new TGaxis( -5, 20, -5, 220, 20,220,510,"");
+axis->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+axis->SetLabelSize(15);
+axis->Draw();
+//lower plot in pad
+c->cd();          // Go back to the main canvas before defining pad2
+TPad *pad2 = new TPad("pad2", "pad2", 0, 0.05, 1, 0.3);
+pad2->SetTopMargin(0);
+pad2->SetBottomMargin(0.2);
+pad2->SetGridx(); // vertical grid
+pad2->Draw();
+pad2->cd();       // pad2 becomes the current pad
+//define raito plot
+TH1F *h3 = (TH1F*)h1->Clone("h3");
+h3->SetLineColor(kBlack);
+h3->SetMinimum(0.8);  // Define Y ..
+h3->SetMaximum(1.35); // .. range
+h3->Sumw2();
+h3->SetStats(0);      // No statistics on lower plot
+h3->Divide(h2);
+h3->SetMarkerStyle(21);
+h3->Draw("ep");       // Draw the ratio plot
+//h1 settings
+h1->SetLineColor(kBlue+1);
+h1->SetLineWidth(2);
+// Y axis h1 plot settings
+h1->GetYaxis()->SetTitleSize(20);
+h1->GetYaxis()->SetTitleFont(43);
+h1->GetYaxis()->SetTitleOffset(1.55);
+//h2 setting
+h2->SetLineColor(kRed);
+h2->SetLineWidth(2);
+
+// Ratio plot (h3) settings
+h3->SetTitle(""); // Remove the ratio title 
+// Y axis ratio plot settings
+h3->GetYaxis()->SetTitle("ratio h1/h2 ");
+h3->GetYaxis()->SetNdivisions(505);
+h3->GetYaxis()->SetTitleSize(20);
+h3->GetYaxis()->SetTitleFont(43);
+h3->GetYaxis()->SetTitleOffset(1.55);
+h3->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+h3->GetYaxis()->SetLabelSize(15);
+// X axis ratio plot settings
+h3->GetXaxis()->SetTitleSize(20);
+h3->GetXaxis()->SetTitleFont(43);
+h3->GetXaxis()->SetTitleOffset(4.);
+h3->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+h3->GetXaxis()->SetLabelSize(15);
+
+c->SaveAs("ratio.pdf");*/
 }
 
