@@ -159,48 +159,49 @@ class CalculateFlowCME
 	TH1D *fFlowGFIntCovHistPtB[fkGFPtB][fkFlowGFNHarm][fkFlowGFNOrde][fkFlowGFNOrde]; //
 	
 	// Flow QC part
+	const static Int_t q = 2;//to separate pos and negatively charged particles
 	TList *fFlowQCList;
 	const static Int_t fFlowNHarm = 6;
 	const static Int_t fFlowNHarmMax = 14; // WARNING: MIN (2*fFlowNHarm+2)
 	const static Int_t fQVecPower = 5;
 	Int_t fPtDiffNBins; //
 	Int_t fEtaDiffNBins;	
-	TH1D *fPOIPtDiffQRe[fQVecPower][fFlowNHarmMax]; // real part
-	TH1D *fPOIPtDiffQIm[fQVecPower][fFlowNHarmMax]; // imaginary part
-	TH1D *fPOIPtDiffMul[fQVecPower][fFlowNHarmMax]; // imaginary part
+	TH1D *fPOIPtDiffQRe[q][fQVecPower][fFlowNHarmMax]; // real part
+	TH1D *fPOIPtDiffQIm[q][fQVecPower][fFlowNHarmMax]; // imaginary part
+	TH1D *fPOIPtDiffMul[q][fQVecPower][fFlowNHarmMax]; // imaginary part
 							
-	TH1D *fPOIEtaDiffQRe[fQVecPower][fFlowNHarmMax];//again but for eta 
-	TH1D *fPOIEtaDiffQIm[fQVecPower][fFlowNHarmMax];
-	TH1D *fPOIEtaDiffMul[fQVecPower][fFlowNHarmMax];
+	TH1D *fPOIEtaDiffQRe[q][fQVecPower][fFlowNHarmMax];//again but for eta 
+	TH1D *fPOIEtaDiffQIm[q][fQVecPower][fFlowNHarmMax];
+	TH1D *fPOIEtaDiffMul[q][fQVecPower][fFlowNHarmMax];
 	
 	const static Int_t fkFlowQCnIntCorPro = 5;
 	const static Int_t Nspectrum = 2;//to differentiate between pt = 0 and eta = 1 
-	TProfile *fFlowQCIntCorPro[fFlowNHarm][fkFlowQCnIntCorPro][Nspectrum]; //
-	TH1D *fFlowQCIntCorHist[fFlowNHarm][fkFlowQCnIntCorPro][Nspectrum]; //
-	TH1D *fFlowQCIntCumHist[fFlowNHarm][fkFlowQCnIntCorPro][Nspectrum];
+	TProfile *fFlowQCIntCorPro[q][fFlowNHarm][fkFlowQCnIntCorPro][Nspectrum]; //
+	TH1D *fFlowQCIntCorHist[q][fFlowNHarm][fkFlowQCnIntCorPro][Nspectrum]; //
+	TH1D *fFlowQCIntCumHist[q][fFlowNHarm][fkFlowQCnIntCorPro][Nspectrum];
 
 	const static Int_t fFlowQCNPro = 4;
 	const static Int_t fCRCMaxnCen = 10;
 	const static Int_t fFlowQCNCov = 8;
-	TProfile *fFlowQCCorPro[fCRCMaxnCen][fFlowNHarm][fFlowQCNPro];
-	TProfile *fFlowQCCorCovPro[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];
-	TH1D *fFlowQCCorHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNPro]; // <<2'>>, [CRCBin][eg]
-	TH1D *fFlowQCCorCovHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; // histo for covariances
+	TProfile *fFlowQCCorPro[q][fCRCMaxnCen][fFlowNHarm][fFlowQCNPro];
+	TProfile *fFlowQCCorCovPro[q][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];
+	TH1D *fFlowQCCorHist[q][fCRCMaxnCen][fFlowNHarm][fFlowQCNPro]; // <<2'>>, [CRCBin][eg]
+	TH1D *fFlowQCCorCovHist[q][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; // histo for covariances
 	//for eta
-        TProfile *fFlowQCCorEtaPro[fCRCMaxnCen][fFlowNHarm][fFlowQCNPro];
-        TProfile *fFlowQCCorCovEtaPro[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];
-        TH1D *fFlowQCCorEtaHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNPro]; // <<2'>>, [CRCBin][eg]
-        TH1D *fFlowQCCorCovEtaHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; // histo for covariances
+        TProfile *fFlowQCCorEtaPro[q][fCRCMaxnCen][fFlowNHarm][fFlowQCNPro];
+        TProfile *fFlowQCCorCovEtaPro[q][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];
+        TH1D *fFlowQCCorEtaHist[q][fCRCMaxnCen][fFlowNHarm][fFlowQCNPro]; // <<2'>>, [CRCBin][eg]
+        TH1D *fFlowQCCorCovEtaHist[q][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; // histo for covariances
 	//final differential flow
-	TH1D *fFlowQCFinalPtDifHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; //
-	TH1D *fFlowQCFinalEtaDifHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];//hist for vn vs eta
+	TH1D *fFlowQCFinalPtDifHist[q][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; //
+	TH1D *fFlowQCFinalEtaDifHist[q][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];//hist for vn vs eta
 	
 	Int_t fFlowQCCenBin;
 	
 	const static Int_t fFlowQCNRef = 14;
-	TProfile *fFlowQCRefCorPro[fFlowNHarm][fFlowQCNRef][Nspectrum]; //
-	TH1D *fFlowQCRefCorHist[fFlowNHarm][fFlowQCNRef][Nspectrum]; //
-	TH1D *fFlowQCRefCorFinal[fFlowNHarm][4][Nspectrum]; //
+	TProfile *fFlowQCRefCorPro[q][fFlowNHarm][fFlowQCNRef][Nspectrum]; //
+	TH1D *fFlowQCRefCorHist[q][fFlowNHarm][fFlowQCNRef][Nspectrum]; //
+	TH1D *fFlowQCRefCorFinal[q][fFlowNHarm][4][Nspectrum]; //
 	
 	// Flow from BW
 	TList *fFlowFromBWList;

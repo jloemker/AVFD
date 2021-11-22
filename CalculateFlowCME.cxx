@@ -823,7 +823,6 @@ void CalculateFlowCME::Make(Event* anEvent) {
 		//cout <<dCharge<<endl;
 //////////////cout <<"dPt"<<dPt<<" dEta "<<dEta<<"dCharge"<<dCharge<<endl;
 		if (dCharge == 0) continue;
-		if (dCharge < 0) continue;
 		cw = (dCharge > 0. ? 0 : 1);
 		//to make sure that we only analyse one charge
 		//cout<<"cw: "<<cw<<" dCharge: "<<dCharge<<endl;
@@ -917,16 +916,17 @@ void CalculateFlowCME::Make(Event* anEvent) {
 			}
         }
 		// ====== for calculateFlowQC =========
-	//if(dCharge > 0){
+	Int_t q = 0;// q = 0 for positively charged particles
+	if(dCharge < 0){q=1.;}
 		for (Int_t k=0; k<fQVecPower; k++) {
 			for (Int_t h=0;h<fFlowNHarmMax;h++) {
-				fPOIPtDiffQRe[k][h]->Fill(dPt,pow(wPhiEta,k)*TMath::Cos((h+1.)*dPhi));
-				fPOIPtDiffQIm[k][h]->Fill(dPt,pow(wPhiEta,k)*TMath::Sin((h+1.)*dPhi));
-				fPOIPtDiffMul[k][h]->Fill(dPt,pow(wPhiEta,k));
+				fPOIPtDiffQRe[q][k][h]->Fill(dPt,pow(wPhiEta,k)*TMath::Cos((h+1.)*dPhi));
+				fPOIPtDiffQIm[q][k][h]->Fill(dPt,pow(wPhiEta,k)*TMath::Sin((h+1.)*dPhi));
+				fPOIPtDiffMul[[q]k][h]->Fill(dPt,pow(wPhiEta,k));
 
-                                fPOIEtaDiffQRe[k][h]->Fill(dEta,pow(wPhiEta,k)*TMath::Cos((h+1.)*dPhi));
-                                fPOIEtaDiffQIm[k][h]->Fill(dEta,pow(wPhiEta,k)*TMath::Sin((h+1.)*dPhi));
-                                fPOIEtaDiffMul[k][h]->Fill(dEta,pow(wPhiEta,k));
+                                fPOIEtaDiffQRe[q][k][h]->Fill(dEta,pow(wPhiEta,k)*TMath::Cos((h+1.)*dPhi));
+                                fPOIEtaDiffQIm[q][k][h]->Fill(dEta,pow(wPhiEta,k)*TMath::Sin((h+1.)*dPhi));
+                                fPOIEtaDiffMul[q][k][h]->Fill(dEta,pow(wPhiEta,k));
 		//cout<<"dEta"<<dEta<<endl;
 			}
 		}
