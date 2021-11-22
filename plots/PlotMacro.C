@@ -17,7 +17,7 @@ gStyle -> SetOptStat(0);
 
 //plot small sample 2 for all and pos on top of eachother:
 TFile* file_all = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/all/v1/AnalysisResults_Cent20_30.root");
-TFile* file_pos = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/pos/eta_pt/AnalysisResults_Cent20_30.root");
+TFile* file_pos = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/pos/eta_pt/Analysis_pTrange_0_Cent20_30.root");
 //Getting the list(s) of files for all
 TList *qa = (TList*) file_all->Get("QAList;1");//Kinematics from POI`s
 TList *flowQC = (TList*) file_all->Get("FlowQCList;1");//Matrices for calculations ?
@@ -25,11 +25,11 @@ TList *cme = (TList*) file_all->Get("CMEList;1");//(SS/OS/Delta) delta, gamma
 //for pos particles 
 TList *posFlowQC = (TList*) file_pos->Get("FlowQCList;1");//Matrices for calculations ?
 
-TH1F *v2_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][0][0]");
-TH1F *v2_pos = (TH1F*) posFlowQC->FindObject("fFlowQCFinalEtaDifHist[2][0][0]");
+//TH1F *v2_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][0][0]");
+TH1F *v2_pos = (TH1F*) posFlowQC->FindObject("fFlowQCFinalEtaDifHist[0][2][0][0]");
 
-TH1F *v3_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][1][0]");
-TH1F *v3_pos = (TH1F*) posFlowQC->FindObject("fFlowQCFinalEtaDifHist[2][1][0]");
+//TH1F *v3_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][1][0]");
+TH1F *v3_pos = (TH1F*) posFlowQC->FindObject("fFlowQCFinalEtaDifHist[0][2][1][0]");
 
 TCanvas *v2 = new TCanvas("v2","pT",400,400);
 v2->SetLeftMargin(0.2);

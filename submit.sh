@@ -1,10 +1,11 @@
 ##!/bin/bash
 SCRIPT="runAnalysis.sh"
 dirID=0
+
 while [ $dirID -le 0 ]; do
 echo "Directory ID: $dirID"
 centID=3
-while [ $centID -le 3 ]; do
+#while [ $centID -le 3 ]; do
 pTiD=0
 while [ $pTiD -le 2 ]; do
 echo "Opening the script for centrality ID: $centID and pT ID: $pTiD"
@@ -55,9 +56,9 @@ let pTiD++
 
 done
 
-let centID++
+#let centID++
 
-done
+#done
 
 let dirID++
 
