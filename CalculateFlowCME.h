@@ -41,7 +41,7 @@ class CalculateFlowCME
     void InitializeArraysForCME();
     virtual void ResetEventByEventQuantities();
     
-    virtual void CalculateFlowQC();
+    virtual void CalculateFlowQC(bool Eta, bool Pt);
     virtual void FinalizeFlowQC();
     virtual void CalculateFlowGF();
     virtual void FinalizeFlowGF();
@@ -185,6 +185,12 @@ class CalculateFlowCME
 	TProfile *fFlowQCCorCovPro[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];
 	TH1D *fFlowQCCorHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNPro]; // <<2'>>, [CRCBin][eg]
 	TH1D *fFlowQCCorCovHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; // histo for covariances
+	//for eta
+        TProfile *fFlowQCCorEtaPro[fCRCMaxnCen][fFlowNHarm][fFlowQCNPro];
+        TProfile *fFlowQCCorCovEtaPro[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];
+        TH1D *fFlowQCCorEtaHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNPro]; // <<2'>>, [CRCBin][eg]
+        TH1D *fFlowQCCorCovEtaHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; // histo for covariances
+	//final differential flow
 	TH1D *fFlowQCFinalPtDifHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; //
 	TH1D *fFlowQCFinalEtaDifHist[fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];//hist for vn vs eta
 	

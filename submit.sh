@@ -7,9 +7,10 @@ centID=3
 while [ $centID -le 3 ]; do
 echo "Opening the script for centrality ID: $centID"
 #make the script to submit
-    (echo "#!/bin/bash"
+    (#echo "#!/bin/bash"
 echo "source /cvmfs/alice.cern.ch/etc/login.sh"
 echo "eval $(alienv printenv VO_ALICE@AliPhysics::vAN-20210923_ROOT6-1)"
+#echo "eval $(alienv printenv VO_ALICE@ROOT::v6-24-06-1)"
 #echo "which aliroot || exit 1"
 echo "mkdir -p /data/alice/jlomker/AVFD/Centrality-$centID/dirID-$dirID"
 echo "cd /data/alice/jlomker/AVFD/Centrality-$centID/dirID-$dirID"
