@@ -174,9 +174,10 @@ class CalculateFlowCME
 	TH1D *fPOIEtaDiffMul[fQVecPower][fFlowNHarmMax];
 	
 	const static Int_t fkFlowQCnIntCorPro = 5;
-	TProfile *fFlowQCIntCorPro[fFlowNHarm][fkFlowQCnIntCorPro]; //
-	TH1D *fFlowQCIntCorHist[fFlowNHarm][fkFlowQCnIntCorPro]; //
-	TH1D *fFlowQCIntCumHist[fFlowNHarm][fkFlowQCnIntCorPro];
+	const static Int_t Nspectrum = 2;//to differentiate between pt = 0 and eta = 1 
+	TProfile *fFlowQCIntCorPro[fFlowNHarm][fkFlowQCnIntCorPro][Nspectrum]; //
+	TH1D *fFlowQCIntCorHist[fFlowNHarm][fkFlowQCnIntCorPro][Nspectrum]; //
+	TH1D *fFlowQCIntCumHist[fFlowNHarm][fkFlowQCnIntCorPro][Nspectrum];
 
 	const static Int_t fFlowQCNPro = 4;
 	const static Int_t fCRCMaxnCen = 10;
@@ -197,9 +198,9 @@ class CalculateFlowCME
 	Int_t fFlowQCCenBin;
 	
 	const static Int_t fFlowQCNRef = 14;
-	TProfile *fFlowQCRefCorPro[fFlowNHarm][fFlowQCNRef]; //
-	TH1D *fFlowQCRefCorHist[fFlowNHarm][fFlowQCNRef]; //
-	TH1D *fFlowQCRefCorFinal[fFlowNHarm][4]; //
+	TProfile *fFlowQCRefCorPro[fFlowNHarm][fFlowQCNRef][Nspectrum]; //
+	TH1D *fFlowQCRefCorHist[fFlowNHarm][fFlowQCNRef][Nspectrum]; //
+	TH1D *fFlowQCRefCorFinal[fFlowNHarm][4][Nspectrum]; //
 	
 	// Flow from BW
 	TList *fFlowFromBWList;

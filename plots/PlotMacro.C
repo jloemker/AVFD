@@ -50,7 +50,7 @@ legend->SetHeader("Small sample Xe-Xe: 5.44TeV, 20-30%","C");
 //legend->AddEntry(v2_all,"Charged particles", "l");
 legend->AddEntry(v2_pos,"Pos particles", "l");
 legend->Draw();
-v2 ->SaveAs("small_eta_v1.pdf");
+v2 ->SaveAs("test_eta_v1.pdf");
 
 TCanvas *v3 = new TCanvas("v3","pT",400,400);
 v3->SetLeftMargin(0.2);
@@ -72,7 +72,7 @@ legend2->SetHeader("Small sample Xe-Xe: 5.44TeV, 20-30%","C");
 //legend2->AddEntry(v3_all,"Charged particles", "l");
 legend2->AddEntry(v3_pos,"Pos particles", "l");
 legend2->Draw();
-v3 ->SaveAs("small_eta_v2.pdf");
+v3 ->SaveAs("test_small_eta_v2.pdf");
 
 //Plots for large sample
 TFile* File_all = new TFile("/data/alice/jlomker/AVFD/result/dirID-0/all/v1/AnalysisResults_5.44TeV_Cent20_30.root");
