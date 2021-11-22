@@ -13,7 +13,7 @@
 #include "CalculateFlowCME.h"
 using namespace std;
 
-void testSingleCentrality(){
+void testSingleCentrality(Int_t pT){
 for(Int_t centID=3; centID < 4; centID++){
 	//Int_t centID = 2;
 	Int_t dirID = 0;
@@ -26,6 +26,17 @@ for(Int_t centID=3; centID < 4; centID++){
         val1 = (centID)*5;
         val2 = (centID+1)*5;
         }
+
+	Double_t pTmin = 0.2;
+        Double_t pTmax = 5.0;
+        if(pT == 1){//for small and low pT range
+        	pTmin = 0.2;
+        	pTmax = 1;
+        }
+        if(pT == 2){//for small high pT range
+        	pTmin = 3.0;
+        	pTmax = 5.0;
+        }
 	//should be according to the number of files per centrality
 	const Int_t nSplit = 1;
 	//TFile *f[nCentBin][nSplit];
@@ -35,8 +46,8 @@ for(Int_t centID=3; centID < 4; centID++){
 	//fQC->SetminPtCut(0.2);
 	//fQC->SetminNtrackCut(500);
 	//fQC->SetmaxEtaCut(0.8);
-	fQC->SetmaxPtCut(5);
-	fQC->SetminPtCut(0.2);
+	fQC->SetmaxPtCut(pTmax);
+	fQC->SetminPtCut(pTmin);
 	fQC->SetminNtrackCut(500);
 	fQC->SetmaxEtaCut(0.8);
 	fQC->SetdoQA(kTRUE);
@@ -104,7 +115,7 @@ for(Int_t centID=3; centID < 4; centID++){
 	TFile *ResultsFile;
 	// Here comes the output directory
 	//ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/AnalysisResults_baseline_5.44TeV_Cent%d_%d.root",dirID, val1, val2), "RECREATE");	  
-	ResultsFile = new TFile(Form("/project/alice/users/jlomker/AVFD/test/dirID-%d/pos/eta_pt/AnalysisResults_Cent%d_%d.root", dirID, val1,val2), "RECREATE");
+	ResultsFile = new TFile(Form("/project/alice/users/jlomker/AVFD/test/dirID-%d/pos/eta_pt/Analysis_pTrange_%d_Cent%d_%d.root", dirID, pT, val1,val2), "RECREATE");
 	ResultsFile->WriteObject(fQC->GetQAList(),"QAList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetFlowGFList(),"FlowGFList","SingleKey");

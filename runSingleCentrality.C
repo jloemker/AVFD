@@ -13,7 +13,7 @@
 #include "CalculateFlowCME.h"
 using namespace std;
 
-void runSingleCentrality(Int_t centID, Int_t dirID){
+void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT){
 //for(Int_t centID = 0; centID < 8; centID++){ 
 	std::cout << "Centrality ID: " << centID << "Directory ID: " << dirID <<std::endl;
         //Int_t centID = {0,1,2,3,4,5,6,7}; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70
@@ -24,6 +24,16 @@ void runSingleCentrality(Int_t centID, Int_t dirID){
         val1 = (centID)*5;
         val2 = (centID+1)*5;
         }
+	Double_t pTmin = 0.2;//to pick the pT range
+	Double_t pTmax = 5.0;
+	if(pT == 1){//for small and low pT range
+	pTmin = 0.2;
+	pTmax = 1;
+	}
+	if(pT == 2){//for small high pT range
+	pTmin = 3.0;
+	pTmax = 5.0;
+	}
 	//should be according to the number of files per centrality
 	const Int_t nSplit = 10;
 	//TFile *f[nCentBin][nSplit];
@@ -33,8 +43,8 @@ void runSingleCentrality(Int_t centID, Int_t dirID){
 	//fQC->SetminPtCut(0.2);
 	//fQC->SetminNtrackCut(500);
 	//fQC->SetmaxEtaCut(0.8);
-	fQC->SetmaxPtCut(5);
-	fQC->SetminPtCut(0.2);
+	fQC->SetmaxPtCut(pTmax);
+	fQC->SetminPtCut(pTmin);
 	fQC->SetminNtrackCut(500);
 	fQC->SetmaxEtaCut(0.8);
 	fQC->SetdoQA(kTRUE);
@@ -102,7 +112,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID){
 	// Save list holding histogram with weights:
 	TFile *ResultsFile;
 	// Here comes the output directory
-	ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/pos/eta_pt/AnalysisResults_5.44TeV_Cent%d_%d.root",dirID, val1, val2), "RECREATE");	  
+	ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/pos/eta_pt/Results_5.44TeV_pTrange_%d_Cent%d_%d.root",dirID, pT, val1, val2), "RECREATE");	  
 
 	ResultsFile->WriteObject(fQC->GetQAList(),"QAList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");

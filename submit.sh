@@ -5,7 +5,9 @@ while [ $dirID -le 0 ]; do
 echo "Directory ID: $dirID"
 centID=3
 while [ $centID -le 3 ]; do
-echo "Opening the script for centrality ID: $centID"
+pTiD=0
+while [ $pTiD -le 2 ]; do
+echo "Opening the script for centrality ID: $centID and pT ID: $pTiD"
 #make the script to submit
     (#echo "#!/bin/bash"
 echo "source /cvmfs/alice.cern.ch/etc/login.sh"
@@ -43,11 +45,15 @@ echo "if [ ! -f runSingleCentrality.C ]"
 echo " then "
 echo "ln -s /project/alice/users/jlomker/AVFD/runSingleCentrality.C ."
 echo "fi"
-echo "exec root -b -q CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID, $dirID)'"
-#echo "exec root -b -q convert_tree_splitFiles.C'($centID, $dirID)' CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID,$dirID)' "
+echo "exec root -b -q CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID, $dirID, $pTiD)'"
+#echo "exec root -b -q convert_tree_splitFiles.C'($centID, $dirID)' CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID,$dirID, $pT_ID)' "
     ) > $SCRIPT
 
 qsub -q gpu $SCRIPT 
+
+let pTiD++
+
+done
 
 let centID++
 
