@@ -163,6 +163,14 @@ void CalculateFlowCME::InitializeArraysForFlowQC()
 		}
 	}
    }//for the 2 charges
+   
+   //\Delta vn hists
+   for(Int_t h = 0; h<fCRCMaxnCen; h++){
+        for(Int_t j=0; j<fFlowNHarm; j++){
+                fFlowQCFinalPtDifDeltaHist[h][j] = NULL;
+		fFlowQCFinalEtaDifDeltaHist[h][j] = NULL;
+        }
+    }//end delta vn
 }
 //=====================================================================================================
 void CalculateFlowCME::InitializeArraysForFlowGF()
@@ -533,6 +541,21 @@ void CalculateFlowCME::UserCreateOutputObjects() {
 		}
 	}
    }//for loop charge
+
+    //here the delta vn hists
+     for(Int_t h=0; h<fCRCnCen; h++) {
+		for(Int_t i=0; i<fFlowNHarm; i++) {
+                        fFlowQCFinalPtDifDeltaHist[h][i]= new TH1D(Form("fFlowQCFinalPtDifDeltaHist[%d][%d]",h,i),Form("fFlowQCFinalPtDifDeltaHist[%d][%d]",h,i),fPtDiffNBins,fCRCPtBins);
+                        fFlowQCFinalPtDifDeltaHist[h][i]->Sumw2();
+                        fFlowQCList->Add(fFlowQCFinalPtDifDeltaHist[h][i]);
+
+			fFlowQCFinalEtaDifDeltaHist[h][i] = new TH1D(Form("fFlowQCFinalEtaDifDeltaHist[%d][%d]",h,i), Form("fFlowQCFinalEtaDifDeltaHist[%d][%d]",h,i),fEtaDiffNBins,fCRCEtaBins);
+                        fFlowQCFinalEtaDifDeltaHist[h][i]->Sumw2();
+			fFlowQCList->Add(fFlowQCFinalEtaDifDeltaHist[h][i]);
+		}
+      }
+
+
 
   // for CalculateFlowGF
   for (Int_t h=0; h<fkFlowGFNHarm; h++) {
@@ -1685,7 +1708,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
 			fFlowQCCorPro[q][fCenBin][hr][1]->Fill(FillPtBin,dQC2,WdQM2*fCenWeightEbE);
 			dQ2f = kTRUE;
 		  }
-
+		/*
 		  dQM4 = qpM0*(QM*QM*QM-3.*QM*QM2+2.*QM3)-3.*(qpM*(QM*QM-QM2)+2.*(qpM3-qpM2*QM));
 		  WdQM4 = (WeigMul? dQM4 : 1.);
 		  //@Shi dQM4 has to be nonzero
@@ -1705,7 +1728,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
 			fFlowQCCorPro[q][fCenBin][hr][2]->Fill(FillPtBin,dQC4,WdQM4*fCenWeightEbE);
 			dQ4f = kTRUE;
 		  }
-
+		*/
 		  // product of correlations or covariances
 		  if(Q2f && dQ2f) fFlowQCCorCovPro[q][fCenBin][hr][0]->Fill(FillPtBin,IQC2[q][hr]*dQC2,WQM2*WdQM2*fCenWeightEbE);
 		  /*if(Q4f && dQ2f) fFlowQCCorCovPro[fCenBin][hr][1]->Fill(FillPtBin,IQC4[hr]*dQC2,WQM4*WdQM2*fCenWeightEbE);
@@ -2024,7 +2047,60 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
      } // end of for (Int_t h=0; h<fCRCnCen; h++) {
   } // end of for(Int_t hr=0; hr<fFlowNHarm; hr++)
  }//end of charge loop
-}
+
+
+//
+//
+//*************
+//****  Delta vn -> evtl export to FinalizeFlowQC()
+//*************
+//
+//
+
+  for(Int_t h = 0; h<fCRCnCen; h++){
+	for(Int_t hr=0; hr<fFlowNHarm; hr++){
+        	Double_t vpos = 0.;
+                Double_t vneg = 0.;
+                Double_t deltav = 0.;
+                Double_t vposError = 0.;
+                Double_t vnegError = 0.;
+                Double_t deltavError = 0.;
+		//variables for calculation
+		if(Pt == true){
+		for(Int_t pt=1; pt<=fPtDiffNBins; pt++){
+                     vpos = fFlowQCFinalPtDifHist[0][h][hr][0]->GetBinContent(pt);//[0] for pos charge [h] for centralities [h] for harmonic [hr=0] for differential flow v1 from QC 2 -> this means v2 is in here as well ! For hr=1 ...
+                    vneg = fFlowQCFinalPtDifHist[1][h][hr][0]->GetBinContent(pt);//for neg charge the last is actually from cov loop ! No clue what that means for me, but 0 stores the flow from cn2 and not cn4
+                    vposError = fFlowQCFinalPtDifHist[0][h][hr][0]->GetBinError(pt);
+                    vnegError = fFlowQCFinalPtDifHist[1][h][hr][0]->GetBinError(pt);
+                    deltav = vpos - vneg;
+                   	if(fabs(vpos)>0.&&fabs(vneg)>0.){
+                	//cout<<"works!"<<endl;
+                	deltavError = sqrt(abs(pow(vposError,2)-pow(vnegError,2)));
+                	fFlowQCFinalPtDifDeltaHist[h][hr]->SetBinContent(pt,deltav);//centrality, harmonic, cov
+                	fFlowQCFinalPtDifDeltaHist[h][hr]->SetBinError(pt, deltavError);
+                     	}
+		}//end of pt bin
+		}//end of it pt
+		else if(Eta == true){
+		for(Int_t eta=1; eta<=fEtaDiffNBins; eta++){
+                     vpos = fFlowQCFinalEtaDifHist[0][h][hr][0]->GetBinContent(eta);//[0] for pos charge [h] for centralities [h] for harmonic [hr=0] for differential flow v1 from QC 2 -> this means v2 is in here as well ! For hr=1 ...
+                    vneg = fFlowQCFinalEtaDifHist[1][h][hr][0]->GetBinContent(eta);//for neg charge the last is actually from cov loop ! No clue what that means for me, but 0 stores the flow from cn2 and not cn4
+                    vposError = fFlowQCFinalEtaDifHist[0][h][hr][0]->GetBinError(eta);
+                    vnegError = fFlowQCFinalEtaDifHist[1][h][hr][0]->GetBinError(eta);
+                    deltav = vpos - vneg;
+                        if(fabs(vpos)>0.&&fabs(vneg)>0.){
+                        //cout<<"works!"<<endl;
+                        deltavError = sqrt(abs(pow(vposError,2)-pow(vnegError,2)));
+                        fFlowQCFinalEtaDifDeltaHist[h][hr]->SetBinContent(eta,deltav);//centrality, harmonic, cov
+                        fFlowQCFinalEtaDifDeltaHist[h][hr]->SetBinError(eta, deltavError);
+                        }
+                }//end of eta bin
+                }//end of it Eta		
+	}//end of hr<fkFlowNHarm
+    }//end of h<fCRCnCen
+
+
+}//end of CalculateFlowwQC()
 
 //=======================================================================================================================
 

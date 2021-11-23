@@ -24,7 +24,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT){
         val1 = (centID)*5;
         val2 = (centID+1)*5;
         }
-	Double_t pTmin = 0.2;//to pick the pT range
+	Double_t pTmin = 0.2;//to pick the full pT range with random integer
 	Double_t pTmax = 5.0;
 	if(pT == 1){//for small and low pT range
 	pTmin = 0.2;
@@ -112,7 +112,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT){
 	// Save list holding histogram with weights:
 	TFile *ResultsFile;
 	// Here comes the output directory
-	ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/pos/eta_pt/Results_5.44TeV_pTrange_%d_Cent%d_%d.root",dirID, pT, val1, val2), "RECREATE");	  
+	ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/full/Results_5.44TeV_pTrange_%d_Cent%d_%d.root",dirID, pT, val1, val2), "RECREATE");	  
 
 	ResultsFile->WriteObject(fQC->GetQAList(),"QAList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");

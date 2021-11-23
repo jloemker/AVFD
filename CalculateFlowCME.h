@@ -195,7 +195,9 @@ class CalculateFlowCME
 	//final differential flow
 	TH1D *fFlowQCFinalPtDifHist[Ncharge][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; //
 	TH1D *fFlowQCFinalEtaDifHist[Ncharge][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];//hist for vn vs eta
-	
+        //final differential flow difference
+        TH1D *fFlowQCFinalPtDifDeltaHist[fCRCMaxnCen][fFlowNHarm];	
+	TH1D *fFlowQCFinalEtaDifDeltaHist[fCRCMaxnCen][fFlowNHarm];
 	Int_t fFlowQCCenBin;
 	
 	const static Int_t fFlowQCNRef = 14;
