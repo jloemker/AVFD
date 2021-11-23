@@ -104,19 +104,20 @@ TList *large = (TList*) LpT->Get("FlowQCList;1");
 //Plots vs eta 
 //************        
 
-///For vn vs eta differential flow for positive 0 and negative 1 particles in 3 pTranges
-TH1F *v1_full = (TH1F*) full->FindObject("fFlowQCFinalEtaDifHist[0][2][0][0]");
-TH1F *v1_small = (TH1F*) small->FindObject("fFlowQCFinalEtaDifHist[0][2][0][0]");
-TH1F *v1_large = (TH1F*) large->FindObject("fFlowQCFinalEtaDifHist[0][2][0][0]");
+///For vn vs eta differential flow for positive 0 particles in 3 pTranges
+TH1F *v1_full = (TH1F*) full->FindObject("fFlowQCFinalEtaDifHist[0][2][1][0]");
+TH1F *v1_small = (TH1F*) small->FindObject("fFlowQCFinalEtaDifHist[0][2][1][0]");
+TH1F *v1_large = (TH1F*) large->FindObject("fFlowQCFinalEtaDifHist[0][2][1][0]");
 
 TCanvas *V1 = new TCanvas("V1","Eta",400,400);
 V1->SetLeftMargin(0.2);
 V1->SetBottomMargin(0.2);
-v1_full->GetYaxis()->SetTitle("differential flow v_{1}");//change n
+v1_full->GetYaxis()->SetTitle("differential flow v_{2}");//change n
 v1_full->GetXaxis()->SetTitle("#eta");
-v1_full->SetLineColor(kGreen);
+v1_full->SetLineColor(kGreen+1);
 v1_full->GetXaxis()->SetRangeUser(-0.9,0.9);
 v1_full->GetXaxis()->SetTitleOffset(2.0);
+v1_full->GetYaxis()->SetRangeUser(0.04,0.09);
 v1_full->Draw();
 v1_small->SetLineColor(kRed);
 v1_small->Draw("SAME");
@@ -124,23 +125,98 @@ v1_large->SetLineColor(kBlue);
 v1_large->Draw("SAME");
 auto Legend1 = new TLegend();
 Legend1->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
-Legend1->AddEntry(v1_full,"pT: 0.2-5 GeV", "l");
-Legend1->AddEntry(v1_small,"pT: 0.2-1 GeV", "l");
-Legend1->AddEntry(v1_large,"pT: 3.0-5 GeV");
+Legend1->AddEntry(v1_full,"Positive, pT: 0.2-5 GeV", "l");
+Legend1->AddEntry(v1_small,"Positive, pT: 0.2-1 GeV", "l");
+Legend1->AddEntry(v1_large,"Positive, pT: 3.0-5 GeV");
 Legend1->Draw();
-V1->SaveAs("Pos_diffv1_eta.pdf");//change Pos/Neg and vn
+V1->SaveAs("Pos_diffv2_eta_pT012.pdf");//change vn
+
+TCanvas *V1_1 = new TCanvas("V1_1","Eta1_1",400,400);
+V1_1->SetLeftMargin(0.2);
+V1_1->SetBottomMargin(0.2);
+v1_small->GetYaxis()->SetTitle("differential flow v_{1}");//change n
+v1_small->GetXaxis()->SetTitle("#eta");
+v1_small->GetXaxis()->SetRangeUser(-0.9,0.9);
+v1_small->GetXaxis()->SetTitleOffset(2.0);
+v1_small->SetLineColor(kGreen+1);
+v1_small->Draw();
+auto Legend1_1 = new TLegend();
+Legend1_1->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
+Legend1_1->AddEntry(v1_small,"Positive, pT: 0.2-3 GeV");
+Legend1_1->Draw();
+//V1_1->SaveAs("Pos_diffv1_eta_pT1.pdf");//change and vn
+
+TCanvas *V12 = new TCanvas("V12","Eta2",400,400);
+V12->SetLeftMargin(0.2);
+V12->SetBottomMargin(0.2);
+v1_large->GetYaxis()->SetTitle("differential flow v_{2}");//change n
+v1_large->GetXaxis()->SetTitle("#eta");
+v1_large->GetXaxis()->SetRangeUser(-0.9,0.9);
+v1_large->GetXaxis()->SetTitleOffset(2.0);
+v1_large->SetLineColor(kBlue);
+v1_large->Draw();
+auto Legend12 = new TLegend();
+Legend12->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
+Legend12->AddEntry(v1_large,"Positive, pT: 3.0-5 GeV");
+Legend12->Draw();
+V12->SaveAs("Pos_diffv2_eta_pT2.pdf");//change vn
+
+
+///For vn vs eta differential flow for negative 1 particles in 3 pTranges
+TH1F *v11_full = (TH1F*) full->FindObject("fFlowQCFinalEtaDifHist[1][2][1][0]");
+TH1F *v11_small = (TH1F*) small->FindObject("fFlowQCFinalEtaDifHist[1][2][1][0]");
+TH1F *v11_large = (TH1F*) large->FindObject("fFlowQCFinalEtaDifHist[1][2][1][0]");
+
+TCanvas *V11 = new TCanvas("V11","Eta1",400,400);
+V11->SetLeftMargin(0.2);
+V11->SetBottomMargin(0.2);
+v11_full->GetYaxis()->SetTitle("differential flow v_{2}");//change n
+v11_full->GetXaxis()->SetTitle("#eta");
+v11_full->SetLineColor(kGreen+3);
+v11_full->GetXaxis()->SetRangeUser(-0.9,0.9);
+v11_full->GetXaxis()->SetTitleOffset(2.0);
+v11_full->GetYaxis()->SetRangeUser(0.04,0.09);
+v11_full->Draw();
+v11_small->SetLineColor(kRed);
+v11_small->Draw("SAME");
+v11_large->SetLineColor(kBlue);
+v11_large->Draw("SAME");
+auto Legend11 = new TLegend();
+Legend11->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
+Legend11->AddEntry(v11_full,"Negative, pT: 0.2-5 GeV", "l");
+Legend11->AddEntry(v11_small,"Negative, pT: 0.2-1 GeV", "l");
+Legend11->AddEntry(v11_large,"Negative, pT: 3.0-5 GeV");
+Legend11->Draw();
+V11->SaveAs("Neg_diffv2_eta_pT012.pdf");//change Pos/Neg and vn
+
+TCanvas *V112 = new TCanvas("V112","Eta12",400,400);
+V112->SetLeftMargin(0.2);
+V112->SetBottomMargin(0.2);
+v11_large->GetYaxis()->SetTitle("differential flow v_{2}");//change n
+v11_large->GetXaxis()->SetTitle("#eta");
+v11_large->SetLineColor(kGreen+3);
+v11_large->GetXaxis()->SetRangeUser(-0.9,0.9);
+v11_large->GetXaxis()->SetTitleOffset(2.0);
+v11_large->SetLineColor(kBlue);
+v11_large->Draw();
+auto Legend112 = new TLegend();
+Legend112->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
+Legend112->AddEntry(v11_large,"Negative, pT: 3.0-5 GeV");
+Legend112->Draw();
+V112->SaveAs("Neg_diffv2_eta_pT2.pdf");//change Pos/Neg and vn
+
 
 ///For differental delta vn vs eta in 3 pTranges
-TH1F *delv1_full = (TH1F*) full->FindObject("fFlowQCFinalEtaDifDeltaHist[2][0]");
-TH1F *delv1_small = (TH1F*) small->FindObject("fFlowQCFinalEtaDifDeltaHist[2][0]");
-TH1F *delv1_large = (TH1F*) large->FindObject("fFlowQCFinalEtaDifDeltaHist[2][0]");
+TH1F *delv1_full = (TH1F*) full->FindObject("fFlowQCFinalEtaDifDeltaHist[2][1]");
+TH1F *delv1_small = (TH1F*) small->FindObject("fFlowQCFinalEtaDifDeltaHist[2][1]");
+TH1F *delv1_large = (TH1F*) large->FindObject("fFlowQCFinalEtaDifDeltaHist[2][1]");
 
 TCanvas *delV1 = new TCanvas("DeltaV1","Eta",400,400);
 delV1->SetLeftMargin(0.2);
 delV1->SetBottomMargin(0.2);
-delv1_full->GetYaxis()->SetTitle("differential #Delta v_{1}");//change n
+delv1_full->GetYaxis()->SetTitle("differential #Delta v_{2}");//change n
 delv1_full->GetXaxis()->SetTitle("#eta");
-delv1_full->SetLineColor(kGreen);
+delv1_full->SetLineColor(kGreen+3);
 delv1_full->GetXaxis()->SetRangeUser(-0.9,0.9);
 delv1_full->GetXaxis()->SetTitleOffset(2.0);
 delv1_full->Draw();
@@ -154,8 +230,23 @@ Legend2->AddEntry(delv1_full,"pT: 0.2-5 GeV", "l");
 Legend2->AddEntry(delv1_small,"pT: 0.2-1 GeV", "l");
 Legend2->AddEntry(delv1_large,"pT: 3.0-5 GeV");
 Legend2->Draw();
-delV1->SaveAs("Del_diffv1_eta.pdf");//change vn
+delV1->SaveAs("Delta_diffv2_eta_pT012.pdf");//change vn
 
+TCanvas *delV12 = new TCanvas("DeltaV12","Eta2",400,400);
+delV1->SetLeftMargin(0.2);
+delV1->SetBottomMargin(0.3);
+delv1_large->GetYaxis()->SetTitle("differential #Delta v_{2}");//change n
+delv1_large->GetXaxis()->SetTitle("#eta");
+delv1_large->SetLineColor(kGreen+2);
+delv1_large->GetXaxis()->SetRangeUser(-0.9,0.9);
+delv1_large->GetXaxis()->SetTitleOffset(1);
+delv1_large->SetLineColor(kBlue);
+delv1_large->Draw();
+auto Legend22 = new TLegend();
+Legend22->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
+Legend22->AddEntry(delv1_large,"pT: 3.0-5 GeV");
+Legend22->Draw();
+delV12->SaveAs("Delta_diffv2_eta_pT2.pdf");//change vn
 
 //************
 //Plots vs pT
@@ -164,92 +255,123 @@ delV1->SaveAs("Del_diffv1_eta.pdf");//change vn
 //For vn vs pT differential flow for pos and neg 
 //in each pt range the vn from pos & neg particle
 //
-TH1F *pos_full = (TH1F*) full->FindObject("fFlowQCFinalPtDifHist[0][2][0][0]");
-TH1F *neg_full = (TH1F*) full->FindObject("fFlowQCFinalPtDifHist[1][2][0][0]");
-TH1F *pos_small = (TH1F*) small->FindObject("fFlowQCFinalPtDifHist[0][2][0][0]");
-TH1F *neg_small = (TH1F*) small->FindObject("fFlowQCFinalPtDifHist[1][2][0][0]");
-TH1F *pos_large = (TH1F*) large->FindObject("fFlowQCFinalPtDifHist[0][2][0][0]");
-TH1F *neg_large = (TH1F*) large->FindObject("fFlowQCFinalPtDifHist[1][2][0][0]");
+TH1F *pos_full = (TH1F*) full->FindObject("fFlowQCFinalPtDifHist[0][2][1][0]");
+TH1F *neg_full = (TH1F*) full->FindObject("fFlowQCFinalPtDifHist[1][2][1][0]");
+TH1F *pos_small = (TH1F*) small->FindObject("fFlowQCFinalPtDifHist[0][2][1][0]");
+TH1F *neg_small = (TH1F*) small->FindObject("fFlowQCFinalPtDifHist[1][2][1][0]");
+TH1F *pos_large = (TH1F*) large->FindObject("fFlowQCFinalPtDifHist[0][2][1][0]");
+TH1F *neg_large = (TH1F*) large->FindObject("fFlowQCFinalPtDifHist[1][2][1][0]");
 
 //TH1F *pos_small = (TH1F*) small->FindObject("fFlowQCFinalPtDifHist[0][2][0][0]");
 TCanvas *Vn = new TCanvas("Vn","Pt",400,400);
 Vn->SetLeftMargin(0.2);
 Vn->SetBottomMargin(0.2);
-pos_full->GetYaxis()->SetTitle("differential flow v_{1}");//change n
+pos_full->GetYaxis()->SetTitle("differential flow v_{2}");//change n
 pos_full->GetXaxis()->SetTitle("p_{T} [GeV]");
-pos_full->SetLineColor(kGreen);
+pos_full->SetLineColor(kOrange);
 pos_full->GetXaxis()->SetRangeUser(0.2,5.0);
 pos_full->GetXaxis()->SetTitleOffset(1.0);
 pos_full->Draw();
-neg_full->SetLineColor(kRed);
+neg_full->SetLineColor(kViolet);
 neg_full->Draw("SAME");
 auto Legend3 = new TLegend();
 Legend3->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
 Legend3->AddEntry(pos_full,"Positive particles", "l");
 Legend3->AddEntry(neg_full,"Negative particles", "l");
 Legend3->Draw();
-Vn->SaveAs("diffv1_pT_0.pdf");//change Pos/Neg and vn
+Vn->SaveAs("diffv2_pT_0.pdf");//change Pos/Neg and vn
 
 TCanvas *Vn1 = new TCanvas("Vn1","Pt1",400,400);
 Vn1->SetLeftMargin(0.2);
 Vn1->SetBottomMargin(0.2);
-pos_small->GetYaxis()->SetTitle("differential flow v_{1}");//change n
+pos_small->GetYaxis()->SetTitle("differential flow v_{2}");//change n
 pos_small->GetXaxis()->SetTitle("p_{T}");
-pos_small->SetLineColor(kGreen);
+pos_small->SetLineColor(kOrange);
 pos_small->GetXaxis()->SetRangeUser(0.2,1.0);
 pos_small->GetXaxis()->SetTitleOffset(1.0);
 pos_small->Draw();
-neg_small->SetLineColor(kRed);
+neg_small->SetLineColor(kViolet);
 neg_small->Draw("SAME");
 auto Legend4 = new TLegend();
 Legend4->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
 Legend4->AddEntry(pos_full,"Positive particles", "l");
 Legend4->AddEntry(neg_full,"Negative particles", "l");
 Legend4->Draw();
-Vn1->SaveAs("diffv1_pT_1.pdf");//change Pos/Neg and vn
+Vn1->SaveAs("diffv2_pT_1.pdf");//change Pos/Neg and vn
 
 TCanvas *Vn2 = new TCanvas("Vn2","Pt2",400,400);
 Vn2->SetLeftMargin(0.2);
 Vn2->SetBottomMargin(0.2);
-pos_large->GetYaxis()->SetTitle("differential flow v_{1}");//change n
+pos_large->GetYaxis()->SetTitle("differential flow v_{2}");//change n
 pos_large->GetXaxis()->SetTitle("p_{T} [GeV]");
-pos_large->SetLineColor(kGreen);
+pos_large->SetLineColor(kOrange);
 pos_large->GetXaxis()->SetRangeUser(3.0,5.0);
 pos_large->GetXaxis()->SetTitleOffset(1.0);
 pos_large->Draw();
-neg_large->SetLineColor(kRed);
+neg_large->SetLineColor(kViolet);
 neg_large->Draw("SAME");
 auto Legend5 = new TLegend();
 Legend5->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
 Legend5->AddEntry(pos_large,"Positive particles", "l");
 Legend5->AddEntry(neg_large,"Negative particles", "l");
 Legend5->Draw();
-Vn2->SaveAs("diffv1_pT_2.pdf");//change Pos/Neg and vn
+Vn2->SaveAs("diffv2_pT_2.pdf");//change Pos/Neg and vn
 
 
 //for deltavn vs pT plots
 //in each pt range the vn from pos & neg particle: full small large to find objects in pT ranges 0.2-5, 0.2-1 and 3.0 to 5
-TH1F *delvn = (TH1F*) full->FindObject("fFlowQCFinalPtDifDeltaHist[2][0]");
+TH1F *delvn = (TH1F*) full->FindObject("fFlowQCFinalPtDifDeltaHist[2][1]");
+TH1F *delvn1 = (TH1F*) small->FindObject("fFlowQCFinalPtDifDeltaHist[2][1]");
+TH1F *delvn2 = (TH1F*) large->FindObject("fFlowQCFinalPtDifDeltaHist[2][1]");
 
 TCanvas *delVn = new TCanvas("DeltaVn","Pt",400,400);
 delVn->SetLeftMargin(0.2);
 delVn->SetBottomMargin(0.2);
-delvn->GetYaxis()->SetTitle("differential #Delta v_{1}");//change n
+delvn->GetYaxis()->SetTitle("differential #Delta v_{2}");//change n
 delvn->GetXaxis()->SetTitle("p_{T} [GeV]");
-delvn->SetLineColor(kGreen);
+delvn->SetLineColor(kGreen+1);
 delvn->GetXaxis()->SetRangeUser(0.2,5.0);
 delvn->GetXaxis()->SetTitleOffset(2.0);
 delvn->GetXaxis()->SetTitleOffset(1.0);
 delvn->Draw();
-//delV1_small->SetLineColor(kRed); 0.2 to 1 Color code for the 2 pT ranges
-//delv1_large->SetLineColor(kBlue); 3 to 5
 auto Legend6 = new TLegend();
 Legend6->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
 Legend6->AddEntry(delvn,"pT: 0.2-5 GeV", "l");
-//Legend->AddEntry(delV1_small,"pT: 0.2-1 GeV", "l");
-//Legend->AddEntry(delv1_large,"pT: 3.0-5 GeV")
 Legend6->Draw();
-delVn->SaveAs("Del_diffv1_pT_0.pdf");//change Pos/Neg and vn
+delVn->SaveAs("Delta_diffv2_pT_0.pdf");//change vn
+
+TCanvas *delVn1 = new TCanvas("DeltaVn1","Pt1",400,400);
+delVn1->SetLeftMargin(0.2);
+delVn1->SetBottomMargin(0.2);
+delvn1->GetYaxis()->SetTitle("differential #Delta v_{2}");//change n
+delvn1->GetXaxis()->SetTitle("p_{T} [GeV]");
+delvn1->GetXaxis()->SetRangeUser(0.2,1.0);
+delvn1->GetXaxis()->SetTitleOffset(2.0);
+delvn1->GetXaxis()->SetTitleOffset(1.0);
+delvn1->SetLineColor(kRed+2);
+delvn1->Draw();
+auto Legend61 = new TLegend();
+Legend61->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
+Legend61->AddEntry(delvn1,"pT: 0.2-1 GeV", "l");
+Legend61->Draw();
+delVn1->SaveAs("Delta_diffv2_pT_1.pdf");//change vn
+
+TCanvas *delVn2 = new TCanvas("DeltaVn2","Pt2",400,400);
+delVn2->SetLeftMargin(0.2);
+delVn2->SetBottomMargin(0.2);
+delvn2->GetYaxis()->SetTitle("differential #Delta v_{2}");//change n
+delvn2->GetXaxis()->SetTitle("p_{T} [GeV]");
+delvn2->GetXaxis()->SetRangeUser(3,5);
+delvn2->GetXaxis()->SetTitleOffset(2.0);
+delvn2->GetXaxis()->SetTitleOffset(1.0);
+delvn2->SetLineColor(kBlue);
+delvn2->Draw();
+auto Legend62 = new TLegend();
+Legend62->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
+Legend62->AddEntry(delvn2,"pT: 3-5 GeV", "l");
+Legend62->Draw();
+delVn2->SaveAs("Delta_diffv2_pT_2.pdf");//change vn
+
 
 /*
 
