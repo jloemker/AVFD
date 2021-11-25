@@ -117,7 +117,7 @@ v1_full->GetXaxis()->SetTitle("#eta");
 v1_full->SetLineColor(kGreen+1);
 v1_full->GetXaxis()->SetRangeUser(-0.9,0.9);
 v1_full->GetXaxis()->SetTitleOffset(2.0);
-v1_full->GetYaxis()->SetRangeUser(0.04,0.09);
+//v1_full->GetYaxis()->SetRangeUser(0.04,0.09);
 v1_full->Draw();
 v1_small->SetLineColor(kRed);
 v1_small->Draw("SAME");
@@ -129,7 +129,7 @@ Legend1->AddEntry(v1_full,"Positive, pT: 0.2-5 GeV", "l");
 Legend1->AddEntry(v1_small,"Positive, pT: 0.2-1 GeV", "l");
 Legend1->AddEntry(v1_large,"Positive, pT: 3.0-5 GeV");
 Legend1->Draw();
-V1->SaveAs("Pos_diffv2_eta_pT012.pdf");//change vn
+//V1->SaveAs("Pos_diffv2_eta_pT012.pdf");//change vn
 
 TCanvas *V1_1 = new TCanvas("V1_1","Eta1_1",400,400);
 V1_1->SetLeftMargin(0.2);
@@ -159,7 +159,7 @@ auto Legend12 = new TLegend();
 Legend12->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
 Legend12->AddEntry(v1_large,"Positive, pT: 3.0-5 GeV");
 Legend12->Draw();
-V12->SaveAs("Pos_diffv2_eta_pT2.pdf");//change vn
+//V12->SaveAs("Pos_diffv2_eta_pT2.pdf");//change vn
 
 
 ///For vn vs eta differential flow for negative 1 particles in 3 pTranges
@@ -175,7 +175,7 @@ v11_full->GetXaxis()->SetTitle("#eta");
 v11_full->SetLineColor(kGreen+3);
 v11_full->GetXaxis()->SetRangeUser(-0.9,0.9);
 v11_full->GetXaxis()->SetTitleOffset(2.0);
-v11_full->GetYaxis()->SetRangeUser(0.04,0.09);
+//v11_full->GetYaxis()->SetRangeUser(0.04,0.09);
 v11_full->Draw();
 v11_small->SetLineColor(kRed);
 v11_small->Draw("SAME");
@@ -187,7 +187,7 @@ Legend11->AddEntry(v11_full,"Negative, pT: 0.2-5 GeV", "l");
 Legend11->AddEntry(v11_small,"Negative, pT: 0.2-1 GeV", "l");
 Legend11->AddEntry(v11_large,"Negative, pT: 3.0-5 GeV");
 Legend11->Draw();
-V11->SaveAs("Neg_diffv2_eta_pT012.pdf");//change Pos/Neg and vn
+//V11->SaveAs("Neg_diffv2_eta_pT012.pdf");//change Pos/Neg and vn
 
 TCanvas *V112 = new TCanvas("V112","Eta12",400,400);
 V112->SetLeftMargin(0.2);
@@ -203,7 +203,30 @@ auto Legend112 = new TLegend();
 Legend112->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
 Legend112->AddEntry(v11_large,"Negative, pT: 3.0-5 GeV");
 Legend112->Draw();
-V112->SaveAs("Neg_diffv2_eta_pT2.pdf");//change Pos/Neg and vn
+//V112->SaveAs("Neg_diffv2_eta_pT2.pdf");//change Pos/Neg and vn
+
+//direct comparison pos to negative particles in eta
+TCanvas *Vpn = new TCanvas("Vpn","Etapn",400,400);
+Vpn->SetLeftMargin(0.2);
+Vpn->SetBottomMargin(0.2);
+v11_full->GetYaxis()->SetTitle("differential flow v_{2}");//change n
+v11_full->GetXaxis()->SetTitle("#eta");
+v11_full->SetLineColor(kViolet);
+v11_full->GetXaxis()->SetRangeUser(-0.9,0.9);
+v11_full->GetXaxis()->SetTitleOffset(1.0);
+v11_full->GetYaxis()->SetRangeUser(0.04,0.08);
+v11_full->Draw();
+v1_full->SetLineColor(kOrange+2);
+v1_full->GetYaxis()->SetRangeUser(0.01,0.04);
+v1_full->Draw("SAME");
+auto Legendnp = new TLegend();
+Legendnp->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
+Legendnp->AddEntry(v11_full,"Negative, pT: 0.2-5 GeV", "l");
+Legendnp->AddEntry(v1_full,"Positive, pT: 0.2-5 GeV", "l");
+Legendnp->Draw();
+//Vpn->SaveAs("Np_diffv2_eta_pT0.pdf");//change Pos/Neg and vn
+
+
 
 
 ///For differental delta vn vs eta in 3 pTranges
@@ -230,7 +253,7 @@ Legend2->AddEntry(delv1_full,"pT: 0.2-5 GeV", "l");
 Legend2->AddEntry(delv1_small,"pT: 0.2-1 GeV", "l");
 Legend2->AddEntry(delv1_large,"pT: 3.0-5 GeV");
 Legend2->Draw();
-delV1->SaveAs("Delta_diffv2_eta_pT012.pdf");//change vn
+//delV1->SaveAs("Delta_diffv2_eta_pT012.pdf");//change vn
 
 TCanvas *delV12 = new TCanvas("DeltaV12","Eta2",400,400);
 delV1->SetLeftMargin(0.2);
@@ -246,7 +269,7 @@ auto Legend22 = new TLegend();
 Legend22->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
 Legend22->AddEntry(delv1_large,"pT: 3.0-5 GeV");
 Legend22->Draw();
-delV12->SaveAs("Delta_diffv2_eta_pT2.pdf");//change vn
+//delV12->SaveAs("Delta_diffv2_eta_pT2.pdf");//change vn
 
 //************
 //Plots vs pT
@@ -279,7 +302,7 @@ Legend3->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
 Legend3->AddEntry(pos_full,"Positive particles", "l");
 Legend3->AddEntry(neg_full,"Negative particles", "l");
 Legend3->Draw();
-Vn->SaveAs("diffv2_pT_0.pdf");//change Pos/Neg and vn
+//Vn->SaveAs("diffv2_pT_0.pdf");//change Pos/Neg and vn
 
 TCanvas *Vn1 = new TCanvas("Vn1","Pt1",400,400);
 Vn1->SetLeftMargin(0.2);
@@ -297,7 +320,7 @@ Legend4->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
 Legend4->AddEntry(pos_full,"Positive particles", "l");
 Legend4->AddEntry(neg_full,"Negative particles", "l");
 Legend4->Draw();
-Vn1->SaveAs("diffv2_pT_1.pdf");//change Pos/Neg and vn
+//Vn1->SaveAs("diffv2_pT_1.pdf");//change Pos/Neg and vn
 
 TCanvas *Vn2 = new TCanvas("Vn2","Pt2",400,400);
 Vn2->SetLeftMargin(0.2);
@@ -315,7 +338,7 @@ Legend5->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
 Legend5->AddEntry(pos_large,"Positive particles", "l");
 Legend5->AddEntry(neg_large,"Negative particles", "l");
 Legend5->Draw();
-Vn2->SaveAs("diffv2_pT_2.pdf");//change Pos/Neg and vn
+//Vn2->SaveAs("diffv2_pT_2.pdf");//change Pos/Neg and vn
 
 
 //for deltavn vs pT plots
@@ -338,7 +361,7 @@ auto Legend6 = new TLegend();
 Legend6->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
 Legend6->AddEntry(delvn,"pT: 0.2-5 GeV", "l");
 Legend6->Draw();
-delVn->SaveAs("Delta_diffv2_pT_0.pdf");//change vn
+//delVn->SaveAs("Delta_diffv2_pT_0.pdf");//change vn
 
 TCanvas *delVn1 = new TCanvas("DeltaVn1","Pt1",400,400);
 delVn1->SetLeftMargin(0.2);
@@ -354,7 +377,7 @@ auto Legend61 = new TLegend();
 Legend61->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
 Legend61->AddEntry(delvn1,"pT: 0.2-1 GeV", "l");
 Legend61->Draw();
-delVn1->SaveAs("Delta_diffv2_pT_1.pdf");//change vn
+//delVn1->SaveAs("Delta_diffv2_pT_1.pdf");//change vn
 
 TCanvas *delVn2 = new TCanvas("DeltaVn2","Pt2",400,400);
 delVn2->SetLeftMargin(0.2);
@@ -370,7 +393,7 @@ auto Legend62 = new TLegend();
 Legend62->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
 Legend62->AddEntry(delvn2,"pT: 3-5 GeV", "l");
 Legend62->Draw();
-delVn2->SaveAs("Delta_diffv2_pT_2.pdf");//change vn
+//delVn2->SaveAs("Delta_diffv2_pT_2.pdf");//change vn
 
 
 /*

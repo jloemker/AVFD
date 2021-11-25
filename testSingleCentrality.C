@@ -106,6 +106,12 @@ for(Int_t centID=3; centID < 4; centID++){
 		}
 		
 		f->Close();
+        TFile *SplitResult;
+        cout<<"SplitFile ========"<<k<<endl;
+        SplitResult = new TFile(Form("/project/alice/users/jlomker/AVFD/test/dirID-%d/split/Analysis_pTrange_%d_Cent%d_%d.root", dirID, pT, val1,val2,k), "RECREATE");
+        //does not include the Finalize()
+        SplitResult->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");
+        //
 	}
   	
 	cout<<"nTotalEvent ======== "<<nTotalEvent<<endl;
