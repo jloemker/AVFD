@@ -13,7 +13,7 @@
 #include "CalculateFlowCME.h"
 using namespace std;
 
-void testSingleCentrality(Int_t pT){
+void testSingleCentrality(Int_t pT, Int_t eta){
 for(Int_t centID=3; centID < 4; centID++){
 	//Int_t centID = 2;
 	Int_t dirID = 0;
@@ -29,14 +29,27 @@ for(Int_t centID=3; centID < 4; centID++){
 
 	Double_t pTmin = 0.2;
         Double_t pTmax = 5.0;
-        if(pT == 1){//for small and low pT range
+        if(pT == 1){//for low pT range: falling
         	pTmin = 0.2;
-        	pTmax = 1;
+        	pTmax = 0.7;
         }
-        if(pT == 2){//for small high pT range
-        	pTmin = 3.0;
-        	pTmax = 5.0;
+        if(pT == 2){//for Umuts range: rising
+        	pTmin = 1.0;
+        	pTmax = 2.0;
         }
+	if(pT == 3){//Rihan: "steps"
+		pTmin = 1.0;
+		pTmax = 3;
+	}
+	if(pT ==4){//"continuity", no obvious trend
+		pTmin = 1.8;
+		pTmax = 2.5;
+	}
+
+	Double_t etaCut = 0.8;
+	if(eta==1){
+		etaCut = 3;	
+	}
 	//should be according to the number of files per centrality
 	const Int_t nSplit = 1;
 	//TFile *f[nCentBin][nSplit];
@@ -49,7 +62,7 @@ for(Int_t centID=3; centID < 4; centID++){
 	fQC->SetmaxPtCut(pTmax);
 	fQC->SetminPtCut(pTmin);
 	fQC->SetminNtrackCut(500);
-	fQC->SetmaxEtaCut(0.8);
+	fQC->SetmaxEtaCut(etaCut);
 	fQC->SetdoQA(kTRUE);
 
 	//fQC->SetEtaGapNeg(-0.1);
@@ -108,7 +121,7 @@ for(Int_t centID=3; centID < 4; centID++){
 		f->Close();
         TFile *SplitResult;
         cout<<"SplitFile ========"<<k<<endl;
-        SplitResult = new TFile(Form("/project/alice/users/jlomker/AVFD/test/dirID-%d/split/Analysis_pTrange_%d_Cent%d_%d.root", dirID, pT, val1,val2,k), "RECREATE");
+        SplitResult = new TFile(Form("/project/alice/users/jlomker/AVFD/test/dirID-%d/split/Analysis_pTrange_%d_eta_%d_Cent%d_%d_split_%d.root", dirID, pT, eta, val1,val2,k), "RECREATE");
         //does not include the Finalize()
         SplitResult->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");
         //
@@ -121,7 +134,7 @@ for(Int_t centID=3; centID < 4; centID++){
 	TFile *ResultsFile;
 	// Here comes the output directory
 	//ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/AnalysisResults_baseline_5.44TeV_Cent%d_%d.root",dirID, val1, val2), "RECREATE");	  
-	ResultsFile = new TFile(Form("/project/alice/users/jlomker/AVFD/test/dirID-%d/pos/eta_pt/Analysis_pTrange_%d_Cent%d_%d.root", dirID, pT, val1,val2), "RECREATE");
+	ResultsFile = new TFile(Form("/project/alice/users/jlomker/AVFD/test/dirID-%d/pos/eta_pt/Analysis_pTrange_%d_eta_%d_Cent%d_%d.root", dirID, pT, eta, val1,val2), "RECREATE");
 	ResultsFile->WriteObject(fQC->GetQAList(),"QAList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetFlowGFList(),"FlowGFList","SingleKey");

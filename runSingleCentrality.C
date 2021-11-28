@@ -13,7 +13,7 @@
 #include "CalculateFlowCME.h"
 using namespace std;
 
-void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT){
+void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT, Int_t eta){
 //for(Int_t centID = 0; centID < 8; centID++){ 
 	std::cout << "Centrality ID: " << centID << "Directory ID: " << dirID <<std::endl;
         //Int_t centID = {0,1,2,3,4,5,6,7}; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70
@@ -24,15 +24,36 @@ void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT){
         val1 = (centID)*5;
         val2 = (centID+1)*5;
         }
+	//defining the pT cuts
 	Double_t pTmin = 0.2;//to pick the full pT range with random integer
 	Double_t pTmax = 5.0;
-	if(pT == 1){//for small and low pT range
-	pTmin = 0.2;
-	pTmax = 1;
+        if(pT == 1){//for low pT range: falling
+                pTmin = 0.2;
+                pTmax = 0.7;
+        }
+        if(pT == 2){//for Umuts range: rising
+                pTmin = 1.0;
+                pTmax = 2.0;
+        }
+        if(pT == 3){//Rihan: "steps"
+                pTmin = 1.0;
+                pTmax = 3;
+        }
+        if(pT ==4){//"continuity", no obvious trend
+                pTmin = 1.8;
+                pTmax = 2.5;
+        }
+	if(pT==5){//just to triple check
+		pTmin = 0.2;
+		pTmax = 3.0;
 	}
-	if(pT == 2){//for small high pT range
-	pTmin = 3.0;
-	pTmax = 5.0;
+	//to choose eta range
+        Double_t etaCut = 0.8;
+        if(eta==1){
+                etaCut = 3.0;
+        }
+	if(eta==2){
+		etaCut = 2.0;
 	}
 	//should be according to the number of files per centrality
 	const Int_t nSplit = 10;
@@ -46,7 +67,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT){
 	fQC->SetmaxPtCut(pTmax);
 	fQC->SetminPtCut(pTmin);
 	fQC->SetminNtrackCut(500);
-	fQC->SetmaxEtaCut(0.8);
+	fQC->SetmaxEtaCut(etaCut);
 	fQC->SetdoQA(kTRUE);
 
 	//fQC->SetEtaGapNeg(-0.1);
@@ -106,7 +127,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT){
 		f->Close();
 	TFile *SplitResult;
 	cout<<"SplitFile ========"<<k<<endl;
-        SplitResult = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/split/Results_5.44TeV_pTrange_%d_Cent%d_%d_split_%d.root",dirID, pT, val1, val2,k), "RECREATE");
+        SplitResult = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/split/Results_5.44TeV_pTrange_%d_eta_%d_Cent%d_%d_split_%d.root",dirID, pT, eta, val1, val2,k), "RECREATE");
 	//does not include the Finalize()
         SplitResult->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");
 
@@ -118,7 +139,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT){
 	// Save list holding histogram with weights:
 	TFile *ResultsFile;
 	// Here comes the output directory
-	ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/full/Results_5.44TeV_pTrange_%d_Cent%d_%d.root",dirID, pT, val1, val2), "RECREATE");	  
+	ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/full/Result_5.44TeV_pT_%d_eta_%d_Cent%d_%d.root",dirID, pT, eta, val1, val2), "RECREATE");	  
 
 	ResultsFile->WriteObject(fQC->GetQAList(),"QAList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");
