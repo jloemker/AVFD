@@ -43,42 +43,35 @@ Int_t Nbinsx = h0->GetNbinsX();
 TH1F *result = (TH1F*)h0->Clone("result");
 TH1F *co;
 
-Float_t ErrCorr;
-Double_t arr1[Nbinsx];
-Double_t arr2[Nbinsx];
-Double_t Err1[Nbinsx];
-Double_t Err2[Nbinsx];
-Double_t val[Nbinsx];
+for(Int_t i=1; i<=Nbinsx; i++){
+Double_t w[100];
+Double_t wTotal = 0.0;
+Double_t gCombinedValue = 0.0;
+Double_t gCombinedError = 0.0;
+for(Int_t j=0; j<9;j++){
+	if(j==0){co = (TH1F*)h0->Clone("co");}
+	if(j==1){co = (TH1F*)h1->Clone("co");}
+	if(j==2){co = (TH1F*)h2->Clone("co");}
+	if(j==3){co = (TH1F*)h3->Clone("co");}
+	if(j==4){co = (TH1F*)h4->Clone("co");}
+	if(j==5){co = (TH1F*)h5->Clone("co");}
+	if(j==6){co = (TH1F*)h6->Clone("co");}
+	if(j==7){co = (TH1F*)h7->Clone("co");}
+	if(j==8){co = (TH1F*)h8->Clone("co");}
+	if(j==9){co = (TH1F*)h9->Clone("co");}	
+	
+	w[i] = 1./TMath::Power(co->GetBinError(i),2);//maybe i+1
+	wTotal +=w [i];
 
-for(Int_t j=1; j<9;j++){
-if(j==1){co = (TH1F*)h1->Clone("co");}
-if(j==2){co = (TH1F*)h2->Clone("co");}
-if(j==3){co = (TH1F*)h3->Clone("co");}
-if(j==4){co = (TH1F*)h4->Clone("co");}
-if(j==5){co = (TH1F*)h5->Clone("co");}
-if(j==6){co = (TH1F*)h6->Clone("co");}
-if(j==7){co = (TH1F*)h7->Clone("co");}
-if(j==8){co = (TH1F*)h8->Clone("co");}
-if(j==9){co = (TH1F*)h9->Clone("co");}
-	for(Int_t i=0; i<Nbinsx; i++){
-	arr1[i] = result->GetBinContent(i+1);
-	arr2[i] = co->GetBinContent(i+1);
-	Err1[i] = result->GetBinError(i+1);
-	Err2[i] = co->GetBinError(i+1);
-	val[i] = (arr1[i]*(1/Err1[i])+arr2[i]*(1/Err2[i]))/2;
-//cout<<"Subsample: "<< j<<" Err1 "<< (Err1[i] + Err2[i])<<endl;
-	//ErrCorr = (1/2)*sqrt( Err1[i]*Err1[i] + Err2[i]*Err2[i]);
-        ErrCorr = (Err1[i]+Err2[i]);//otherwise too small = 0
-	//cout <<"BinNumber: "<<i<<" arr1: "<< arr1[i]<< " arr2: "<<arr2[i]<< " average: "<<val[i]<<" Err1: "<<Err1[i]<< " Err2: "<<Err2[i]<<" Error average : "<< ErrCorr<<endl;
-	result->SetBinContent(i+1,val[i]);
-	result->SetBinError(i+1,ErrCorr);
-	/*
-	Double_t f = hfull->GetBinContent(i+1);
-	Double_t fErr = hfull->GetBinContent(i+1);
-	hfull->SetBinContent(i+1,f/fErr);
-	hfull->SetBinError(i+1,fErr);	
-	*/
-	}
+	gCombinedValue += co->GetBinContent(i)*w[i];
+	gCombinedError += TMath::Power(co->GetBinError(i)*w[i],2);
+}
+
+gCombinedValue /= wTotal;
+gCombinedError = (1./wTotal)*TMath::Sqrt(gCombinedError);
+result->SetBinContent(i, gCombinedValue);
+result->SetBinError(i, gCombinedError);
+
 }
 //comparison from full sample vs results from subsampling method
 
@@ -115,15 +108,21 @@ pad2->cd();
 TH1F *h = (TH1F*)hfull->Clone("h");
 h->SetLineColor(kBlack);
 h->GetXaxis()->SetRangeUser(0.1,5.);
+//Error propagation for lower plot
 Double_t Err;
+Double_t arr1[Nbinsx];
+Double_t arr2[Nbinsx];
+Double_t Err1[Nbinsx];
+Double_t Err2[Nbinsx];
+Double_t val[Nbinsx];
 for(Int_t i = 0; i<=Nbinsx; i++){
         arr1[i] = hfull->GetBinContent(i+1);
         arr2[i] = result->GetBinContent(i+1);
         Err1[i] = hfull->GetBinError(i+1);
         Err2[i] = result->GetBinError(i+1);
         val[i] = (arr1[i]-arr2[i]);
-	Err = (1/2)*sqrt( Err1[i]*Err1[i] + Err2[i]*Err2[i]);
-        Err = (Err1[i]+Err2[i]);//otherwise too small
+	Err = TMath::Sqrt(Err1[i]*Err1[i] + Err2[i]*Err2[i]);
+        //Err = (Err1[i]+Err2[i]);//otherwise too small
 	h->SetBinContent(i+1,val[i]);
 	h->SetBinError(i+1,Err);
 }
