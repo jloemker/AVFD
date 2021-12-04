@@ -44,8 +44,12 @@ Directories:
 dirID = 0 for baseline
 dirID = 1 for a-0.1
 ```
+
+Centralities:
+```
 Int_t centID = 0; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70%
 ```
+
 Choose pT ranges(defined in ```runSingleAnalysis.C```):
 ```
 pTmin = 0.2;
