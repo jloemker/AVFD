@@ -5,13 +5,13 @@
 ```
 aliroot convert_tree_splitFiles.C
 ```
-2. After getting the root file, one can run the actual analysis work, which is included in five files:
+2. After getting the root file, one can run the actual analysis work, which is included in the files:
 ```
 Event.h Particle.h CalculateFlowCME.cxx CalculateFlowCME.h runSingleCentrality.C(centId, dirID,pTid,EtaID) testSingleCentrality.C(pTiD, etaID)
 ```
 Event.h and Particle.h are two basic classes which store the information of particle tracks and should not be changed.
 Inside runSingleCentrality.C, you have to specify the centrality bin that you want to analyze, the directory (baseline or CME contribution)and the pT and eta ranges. 
-To run the analysis, one has to first compile ```CalculateFlowCME.cxx``` followed by compiling ```runSingleCentrality.C``` under aliroot environment. 
+To run the analysis, one has to first compile ```CalculateFlowCME.cxx``` followed by compiling ```runSingleCentrality.C``` under aliroot environment. Use the runSingelCentraliy.C if your code works and you have a lot of time - the testSingleCentrality.C can be used for writing and testing your code (f.e. CalculateFlowCME.cxx).
 Then, one has to put the right directory which stores the root data in this variable:
 ```
 directory = Form("/dcache/alice/shiqiu/2020_AVFD_2.76TeV/Baseline/tree_Baseline_Cent%d_%d_%d.root", (centID)*5, (centID+1)*5, k);
@@ -51,9 +51,9 @@ pTmin = 0.2;
 pTmax = 5.0;
 if(pT == 1){pTmin = 0.2;pTmax = 0.7;}
 if(pT == 2){pTmin = 1.0;pTmax = 2.0;}
-if(pT == 3{pTmin = 1.0;pTmax = 3;}
-if(pT ==4){pTmin = 1.8;pTmax = 2.5;}
-if(pT==5){pTmin = 0.2;pTmax = 3.0;}
+if(pT == 3){pTmin = 1.0;pTmax = 3;}
+if(pT == 4){pTmin = 1.8;pTmax = 2.5;}
+if(pT == 5){pTmin = 0.2;pTmax = 3.0;}
 ```
 Choosing eta ranges:
 ```
