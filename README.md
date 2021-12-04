@@ -46,7 +46,8 @@ dirID = 1 for a-0.1
 ```
 Int_t centID = 0; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70%
 ```
-Choosing pT ranges:
+Choose pT ranges(defined in ```runSingleAnalysis.C```):
+```
 pTmin = 0.2;
 pTmax = 5.0;
 if(pT == 1){pTmin = 0.2;pTmax = 0.7;}
@@ -55,7 +56,7 @@ if(pT == 3){pTmin = 1.0;pTmax = 3;}
 if(pT == 4){pTmin = 1.8;pTmax = 2.5;}
 if(pT == 5){pTmin = 0.2;pTmax = 3.0;}
 ```
-Choosing eta ranges:
+Choose eta ranges(defined ```runSingleAnalysis.C```):
 ```
 etaCut = 0.8;
 if(eta==1){etaCut = 3.0;}
