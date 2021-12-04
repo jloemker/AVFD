@@ -23,39 +23,43 @@ gStyle -> SetOptStat(0);
 //plot small sample 2 for all and pos on top of eachother:
 TFile* file_all = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/all/v1/AnalysisResults_Cent20_30.root");
 TFile* file_pos = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/pos/eta_pt/Analysis_pTrange_0_Cent20_30.root");
+//Cent30_40_5.
+TFile* high = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/pos/eta_pt/Analysis_pTrange_0_eta_0_Cent20_30.root");
 //Getting the list(s) of files for all
 TList *qa = (TList*) file_all->Get("QAList;1");//Kinematics from POI`s
 TList *flowQC = (TList*) file_all->Get("FlowQCList;1");//Matrices for calculations ?
 TList *cme = (TList*) file_all->Get("CMEList;1");//(SS/OS/Delta) delta, gamma 
 //for pos particles 
 TList *posFlowQC = (TList*) file_pos->Get("FlowQCList;1");//Matrices for calculations ?
+TList *higher = (TList*) high->Get("FlowQCList;1");
 
 //TH1F *v2_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][0][0]");
-TH1F *v2_pos = (TH1F*) posFlowQC->FindObject("fFlowQCFinalEtaDifDeltaHist[2][0]");
+TH1F *v1 = (TH1F*) higher->FindObject("fFlowQCFinalEtaDifHist[0][2][1][0]");
 
 //TH1F *v3_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][1][0]");
 TH1F *v3_pos = (TH1F*) posFlowQC->FindObject("fFlowQCFinalEtaDifDeltaHist[2][1]");
 
-TCanvas *v2 = new TCanvas("v2","pT",400,400);
-v2->SetLeftMargin(0.2);
-v2_pos->GetYaxis() -> SetTitleOffset(2.0);
+TCanvas *V2 = new TCanvas("v2","pT",400,400);
+V2->SetLeftMargin(0.2);
+v1->GetYaxis() -> SetTitleOffset(2.0);
 /*v2_all ->GetYaxis()->SetTitle("differential flow v_{1}");
 v2_all ->GetXaxis()->SetTitle("p_{T} [GeV]");
 v2_all ->SetLineColor(kBlack);
 v2_all->GetXaxis()->SetRangeUser(0.,5.);
 v2_all->Draw();*/
-v2_pos ->GetYaxis()->SetTitle("differential flow v_{1}");
+v1 ->GetYaxis()->SetTitle("differential flow v_{n}");
 //v2_pos ->GetXaxis()->SetTitle("p_{T} [GeV]");
-v2_pos->GetXaxis()->SetTitle("eta");
-v2_pos ->GetXaxis()->SetRangeUser(-1.,1.);
-v2_pos->SetLineColor(kRed);
-v2_pos->Draw("same");
+v1->GetXaxis()->SetTitle("#eta");
+v1->GetYaxis()->SetRangeUser(-0.3,0.3);
+v1 ->GetXaxis()->SetRangeUser(-1,1);
+v1->SetLineColor(kRed);
+v1->Draw("same");
 auto legend = new TLegend();
 legend->SetHeader("Small sample Xe-Xe: 5.44TeV, 20-30%","C");
 //legend->AddEntry(v2_all,"Charged particles", "l");
-legend->AddEntry(v2_pos,"Pos particles", "l");
+//legend->AddEntry(v1,"Pos particles", "l");
 //legend->Draw();
-//v2 ->SaveAs("test_eta_delta_v1.pdf");
+V2 ->SaveAs("testptv2.pdf");
 
 ////**********************************************************/////
 ////*********************************************************/////

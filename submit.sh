@@ -4,12 +4,12 @@ dirID=0
 
 #while [ $dirID -le 0 ]; do
 echo "Directory ID: $dirID"
-centID=2
+centID=7
 while [ $centID -le 7 ]; do
-pTiD=0
+pTiD=1
 while [ $pTiD -le 5 ]; do
-etaID=0
-while [ $etaID -le 2 ]; do
+etaID=2
+#while [ $etaID -le 2 ]; do
 echo "Opening the script for centrality ID: $centID , pT ID: $pTiD and eta ID: $etaID"
 #make the script to submit
     (#echo "#!/bin/bash"
@@ -54,9 +54,9 @@ echo "exec root -b -q CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID, $
 
 qsub -q gpu $SCRIPT 
 
-let etaID++
+#let etaID++
 
-done 
+#done 
 
 let pTiD++
 
