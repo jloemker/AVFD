@@ -63,6 +63,5 @@ if(pT == 5){pTmin = 0.2;pTmax = 3.0;}
 Choose eta ranges(defined ```runSingleAnalysis.C```):
 ```
 etaCut = 0.8;
-if(eta==1){etaCut = 3.0;}
-if(eta==2){etaCut = 2.0;}
+if(eta==1){etaCut = 2.0;}
 ```
