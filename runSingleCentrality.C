@@ -49,10 +49,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT, Int_t eta){
 	}
 	//to choose eta range
         Double_t etaCut = 0.8;
-        if(eta==1){
-                etaCut = 3.0;
-        }
-	if(eta==2){
+	if(eta==1){
 		etaCut = 2.0;
 	}
 	//should be according to the number of files per centrality

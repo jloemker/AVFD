@@ -6,10 +6,10 @@ dirID=0
 echo "Directory ID: $dirID"
 centID=1
 while [ $centID -le 7 ]; do
-pTiD=1
+pTiD=0
 while [ $pTiD -le 5 ]; do
 etaID=0
-while [ $etaID -le 2 ]; do
+while [ $etaID -le 1 ]; do
 echo "Opening the script for centrality ID: $centID , pT ID: $pTiD and eta ID: $etaID"
 #make the script to submit
     (#echo "#!/bin/bash"
