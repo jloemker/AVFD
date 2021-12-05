@@ -24,7 +24,7 @@ gStyle -> SetOptStat(0);
 TFile* file_all = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/all/v1/AnalysisResults_Cent20_30.root");
 TFile* file_pos = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/pos/eta_pt/Analysis_pTrange_0_Cent20_30.root");
 //Cent30_40_5.
-TFile* high = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/pos/eta_pt/Analysis_pTrange_0_eta_0_Cent20_30.root");
+TFile* high = new TFile("/data/alice/jlomker/AVFD/result/dirID-0/full/Result_5.44TeV_pT_0_eta_0_Cent20_30.root");//"/project/alice/users/jlomker/AVFD/test/dirID-0/pos/eta_pt/Analysis_pTrange_0_eta_0_Cent20_30.root");
 //Getting the list(s) of files for all
 TList *qa = (TList*) file_all->Get("QAList;1");//Kinematics from POI`s
 TList *flowQC = (TList*) file_all->Get("FlowQCList;1");//Matrices for calculations ?
@@ -59,7 +59,7 @@ legend->SetHeader("Small sample Xe-Xe: 5.44TeV, 20-30%","C");
 //legend->AddEntry(v2_all,"Charged particles", "l");
 //legend->AddEntry(v1,"Pos particles", "l");
 //legend->Draw();
-V2 ->SaveAs("testptv2.pdf");
+V2 ->SaveAs("testetav2.pdf");
 
 ////**********************************************************/////
 ////*********************************************************/////
