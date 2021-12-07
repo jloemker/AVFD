@@ -34,8 +34,8 @@ TList *posFlowQC = (TList*) file_pos->Get("FlowQCList;1");//Matrices for calcula
 TList *higher = (TList*) high->Get("FlowQCList;1");
 
 //TH1F *v2_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][0][0]");
-TH1F *v1 = (TH1F*) higher->FindObject("fFlowQCFinalPtDifHist[0][2][1][0]");
-TH1F *v1e = (TH1F*) higher->FindObject("fFlowQCFinalEtaDifHist[0][2][1][0]");
+TH1F *v1 = (TH1F*) higher->FindObject("fFlowQCFinalPtDifHist[0][2][0][0]");
+TH1F *v1e = (TH1F*) higher->FindObject("fFlowQCFinalEtaDifHist[0][2][0][0]");
 //TH1F *v3_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][1][0]");
 TH1F *v3_pos = (TH1F*) posFlowQC->FindObject("fFlowQCFinalEtaDifDeltaHist[2][1]");
 
@@ -48,7 +48,7 @@ v1->SetLineColor(kRed);
 v1->Draw("same");
 auto legend = new TLegend();
 legend->SetHeader("Small sample Xe-Xe: 5.44TeV, 20-30%","C");
-V2 ->SaveAs("testptv2.pdf");
+V2 ->SaveAs("ptv1.pdf");
 
 
 TCanvas *V1 = new TCanvas("v2","pT",400,400);
@@ -60,7 +60,7 @@ v1e->GetYaxis()->SetRangeUser(-0.3,0.3);
 v1e->GetXaxis()->SetRangeUser(-1,1);
 v1e->SetLineColor(kRed);
 v1e->Draw("same");
-V1 ->SaveAs("testetav2.pdf");
+V1 ->SaveAs("etav1.pdf");
 
 ////**********************************************************/////
 ////*********************************************************/////

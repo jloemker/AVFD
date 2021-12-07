@@ -52,7 +52,7 @@ echo "exec root -b -q CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID, $
 #echo "exec root -b -q convert_tree_splitFiles.C'($centID, $dirID)' CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID,$dirID, $pTiD, $etaID)' "
     ) > $SCRIPT
 
-qsub -q gpu $SCRIPT 
+qsub -q generic $SCRIPT 
 
 let etaID++
 
