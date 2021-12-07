@@ -48,7 +48,7 @@ v1->SetLineColor(kRed);
 v1->Draw("same");
 auto legend = new TLegend();
 legend->SetHeader("Small sample Xe-Xe: 5.44TeV, 20-30%","C");
-V2 ->SaveAs("ptv1.pdf");
+V2 ->SaveAs("newptv1.pdf");
 
 
 TCanvas *V1 = new TCanvas("v2","pT",400,400);
@@ -60,7 +60,7 @@ v1e->GetYaxis()->SetRangeUser(-0.3,0.3);
 v1e->GetXaxis()->SetRangeUser(-1,1);
 v1e->SetLineColor(kRed);
 v1e->Draw("same");
-V1 ->SaveAs("etav1.pdf");
+V1 ->SaveAs("newetav1.pdf");
 
 ////**********************************************************/////
 ////*********************************************************/////

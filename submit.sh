@@ -4,10 +4,10 @@ dirID=0
 
 #while [ $dirID -le 0 ]; do
 echo "Directory ID: $dirID"
-centID=1
-while [ $centID -le 7 ]; do
+centID=2
+while [ $centID -le 2 ]; do
 pTiD=0
-while [ $pTiD -le 5 ]; do
+while [ $pTiD -le 0 ]; do
 etaID=0
 while [ $etaID -le 1 ]; do
 echo "Opening the script for centrality ID: $centID , pT ID: $pTiD and eta ID: $etaID"

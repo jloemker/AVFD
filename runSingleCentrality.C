@@ -138,7 +138,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT, Int_t eta){
 	// Save list holding histogram with weights:
 	TFile *ResultsFile;
 	// Here comes the output directory
-	ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/new/Result_5.44TeV_pT_%d_eta_%d_Cent%d_%d.root",dirID, pT, eta, val1, val2), "RECREATE");	  
+	ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/new2/Result_5.44TeV_pT_%d_eta_%d_Cent%d_%d.root",dirID, pT, eta, val1, val2), "RECREATE");	  
 
 	ResultsFile->WriteObject(fQC->GetQAList(),"QAList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");

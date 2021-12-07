@@ -1823,6 +1823,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
        fFlowQCFinalPtDifHist[q][h][hr][5]->SetBinContent(pt,Dn2);
        fFlowQCFinalPtDifHist[q][h][hr][5]->SetBinError(pt,Dn2E);
         //cout<<"Cn2 "<<"h"<<Cn2<<endl;
+	//took out the fabs!
 	if(fabs(Cn2)>0) {
 	//cout<<" Dn2"<<Dn2<<endl;
           Double_t Flow2 = Dn2/sqrt(fabs(Cn2));
@@ -1831,17 +1832,23 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
           Double_t twoError = QC2E;
           Double_t twoReduced = qp2;
           Double_t twoReducedError = qp2E;
-          Double_t wCovTwoTwoReduced = fFlowQCCorCovPro[q][h][hr][0]->GetBinContent(pt);
+          Double_t Cov = pow(Dn2*sqrt(fabs(Cn2)),2) - pow(Dn2,2)*pow(sqrt(fabs(Cn2)),2) ;
+	  Double_t wCovTwoTwoReduced = fFlowQCCorCovPro[q][h][hr][0]->GetBinContent(pt); 
+	//cout<<"cov"<<wCovTwoTwoReduced <<endl;//e-11 to e-15 or 0
         //cout<<" fFlowQCCorCovPro: "<< fFlowQCCorCovPro[q][h][hr][0]->GetBinContent(pt)<<" pt "<<pt<<endl;
-	//cout<<"Flow2 "<<Flow2<<" flow2e "<<Flow2E<<" QC2 "<<QC2<<" QC2E "<<QC2E<<" qp2 "<<qp2<<" qp2E "<<qp2E<<endl;   
+	//cout<<" two "<<QC2<<" twoError "<<QC2E<<" twoReduced "<<qp2<<" two reduced error "<<qp2E<<" covError "<< wCovTwoTwoReducedError<<endl;   
 	/*
 	Double_t v2PrimeErrorSquared = (1./4.)*pow(two,-3.)*(pow(twoReduced,2.)*pow(twoError,2.)
                                 + 4.*pow(two,2.)*pow(twoReducedError,2.)
                                 - 4.*two*twoReduced*wCovTwoTwoReduced); 
-	*/
+	
         Double_t v2PrimeErrorSquared = (1./4.)*pow(two,-1.)*(pow(twoReduced,-1.)*pow(twoReducedError,2.)
                                 + (1/16)*pow(two,-4.)*pow(twoError,2.)*pow(twoReduced,2)
                                 + pow(two,-2)*pow(twoReduced,2)*two*wCovTwoTwoReduced);
+	*/
+        Double_t v2PrimeErrorSquared = (pow(two,-1.)*pow(twoReducedError,2.)
+                                + (1/4)*pow(two,-3.)*pow(twoError,2.)*pow(twoReduced,2.)
+                                + pow(two,-2)*twoReduced*Cov);
 	if(v2PrimeErrorSquared>0.){Flow2E = pow(v2PrimeErrorSquared,0.5);}
 	//cout<<"Flow2 "<<Flow2<<" flow2e "<<Flow2E<<" QC2 "<<QC2<<" QC2E "<<QC2E<<" qp2 "<<qp2<<" qp2E "<<qp2E<<" v2PrimeErrorSquared "<< v2PrimeErrorSquared<<endl;
           if(Flow2E>0.) {
@@ -1853,8 +1860,8 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
       }//end of if(Pt == true)
       else if(Eta == true){
       for(Int_t eta=1; eta<=fEtaDiffNBins; eta++) {
-        Float_t qp2 = fFlowQCCorEtaHist[q][h][hr][1]->GetBinContent(eta);
-        Float_t qp2E = fFlowQCCorEtaHist[q][h][hr][1]->GetBinError(eta);
+        Double_t qp2 = fFlowQCCorEtaHist[q][h][hr][1]->GetBinContent(eta);
+        Double_t qp2E = fFlowQCCorEtaHist[q][h][hr][1]->GetBinError(eta);
         Double_t Dn2 = qp2;
         Double_t Dn2E = qp2E;
        fFlowQCFinalEtaDifHist[q][h][hr][5]->SetBinContent(eta,Dn2);
@@ -1865,17 +1872,21 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
           Double_t Flow2E = 0.;
           Double_t two = QC2;
           Double_t twoError = QC2E;
-          Float_t twoReduced = qp2;
-          Float_t twoReducedError = qp2E;
-          Float_t wCovTwoTwoReduced = fFlowQCCorCovEtaPro[q][h][hr][0]->GetBinContent(eta);
-        //v2 saving abs 
+          Double_t twoReduced = qp2;
+          Double_t twoReducedError = qp2E;
+          Double_t Cov = pow(Dn2*sqrt(fabs(Cn2)),2) - pow(Dn2,2)*pow(sqrt(fabs(Cn2)),2) ; 
+	  Double_t wCovTwoTwoReduced = fFlowQCCorCovEtaPro[q][h][hr][0]->GetBinContent(eta);
 	 /*Float_t v2PrimeErrorSquared = (1./4.)*pow(two,-3.)*(pow(twoReduced,2.)*pow(twoError,2.)
                                 + 4.*pow(two,2.)*pow(twoReducedError,2.)
 				- 4.*two*twoReduced*wCovTwoTwoReduced);
-	*/
+	
         Double_t v2PrimeErrorSquared = (1./4.)*pow(two,-1.)*(pow(twoReduced,-1.)*pow(twoReducedError,2.)
                                 + (1/16)*pow(two,-4.)*pow(twoError,2.)*pow(twoReduced,2)
                                 + pow(two,-2)*pow(twoReduced,2)*two*wCovTwoTwoReduced);
+	*/
+        Double_t v2PrimeErrorSquared = (pow(two,-1.)*pow(twoReducedError,2.)
+                                + (1/4)*pow(two,-3.)*pow(twoError,2.)*pow(twoReduced,2.)
+                                + pow(two,-2)*twoReduced*Cov);
 	if(v2PrimeErrorSquared>0.){Flow2E = pow(v2PrimeErrorSquared,0.5);}
           if(Flow2E>0.) {  
 //cout<<Flow2<<endl;
