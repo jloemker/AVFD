@@ -1589,7 +1589,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
 	Double_t FillPtBin = 0.;
 	Double_t FillEtaBin = 0.;
 	Double_t IQC2[Ncharge][fFlowNHarm] = {0.};
-	Double_t IQC4[fFlowNHarm] = {0.};
+	Double_t DQC2[Ncharge][fFlowNHarm] = {0.};
 	Double_t IQM2=0., IQM4=0.;
 	Double_t WQM2=0., WQM4=0.;
 	Double_t dQC2=0., dQC4=0.;
@@ -1673,6 +1673,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
 			dQC2 = (qpRe0*QRe+qpIm0*QIm-qpM)/dQM2;
 			fFlowQCCorPro[q][fCenBin][hr][1]->Fill(FillPtBin,dQC2,WdQM2*fCenWeightEbE);
 			dQ2f = kTRUE;
+			//DQC2[q][hr] += dQC2;
 		  }
 		  // product of correlations or covariances
 		  if(Q2f && dQ2f) fFlowQCCorCovPro[q][fCenBin][hr][0]->Fill(FillPtBin,IQC2[q][hr]*dQC2,WQM2*WdQM2*fCenWeightEbE);
@@ -1696,8 +1697,9 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
                   if(qpM0>0 && QM0>0) {
                   dQC2 = (qpRe0*QRe+qpIm0*QIm-qpM)/dQM2;
                   fFlowQCCorEtaPro[q][fCenBin][hr][1]->Fill(FillEtaBin,dQC2,WdQM2*fCenWeightEbE);
-                  dQ2f = kTRUE;
-                  }
+		  dQ2f = kTRUE;
+                  }//filled with product of the two-particle cumulants QC{2'} ans QC{2} = <2> =(|Q|^2-M)/M(M-1) in 3.54 further used for flow via 3.43, 3.42
+			//but this is more x*y and not sum(x*y) - sum(x)*sum(y) 
                   if(Q2f && dQ2f) fFlowQCCorCovEtaPro[q][fCenBin][hr][0]->Fill(FillEtaBin,IQC2[q][hr]*dQC2,WQM2*WdQM2*fCenWeightEbE);
 		}//end of eta loop
 		}//end of if(eta==true)
@@ -1832,11 +1834,13 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
           Double_t twoError = QC2E;
           Double_t twoReduced = qp2;
           Double_t twoReducedError = qp2E;
-          Double_t Cov = pow(Dn2*sqrt(fabs(Cn2)),2) - pow(Dn2,2)*pow(sqrt(fabs(Cn2)),2) ;
-	  Double_t wCovTwoTwoReduced = fFlowQCCorCovPro[q][h][hr][0]->GetBinContent(pt); 
+          //Double_t Cov = pow(Dn2*sqrt(fabs(Cn2)),2) - pow(Dn2,2)*pow(sqrt(fabs(Cn2)),2) ;
+	  Double_t wCovTwoTwoReduced = fFlowQCCorCovPro[q][h][hr][0]->GetBinContent(pt);
+	  Double_t wCovTwoTwoReducedError = fFlowQCCorCovPro[q][h][hr][0]->GetBinError(pt);
+ 
 	//cout<<"cov"<<wCovTwoTwoReduced <<endl;//e-11 to e-15 or 0
         //cout<<" fFlowQCCorCovPro: "<< fFlowQCCorCovPro[q][h][hr][0]->GetBinContent(pt)<<" pt "<<pt<<endl;
-	//cout<<" two "<<QC2<<" twoError "<<QC2E<<" twoReduced "<<qp2<<" two reduced error "<<qp2E<<" covError "<< wCovTwoTwoReducedError<<endl;   
+	//cout<<" two "<<QC2<<" twoError "<<QC2E<<" twoReduced "<<qp2<<" two reduced error "<<qp2E<<" covError "<< wCovTwoTwoReducedError<<" cov "<< wCovTwoTwoReduced <<endl;   
 	/*
 	Double_t v2PrimeErrorSquared = (1./4.)*pow(two,-3.)*(pow(twoReduced,2.)*pow(twoError,2.)
                                 + 4.*pow(two,2.)*pow(twoReducedError,2.)
@@ -1846,9 +1850,9 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
                                 + (1/16)*pow(two,-4.)*pow(twoError,2.)*pow(twoReduced,2)
                                 + pow(two,-2)*pow(twoReduced,2)*two*wCovTwoTwoReduced);
 	*/
-        Double_t v2PrimeErrorSquared = (pow(two,-1.)*pow(twoReducedError,2.)
+        Double_t v2PrimeErrorSquared = abs(pow(two,-1.)*pow(twoReducedError,2.)
                                 + (1/4)*pow(two,-3.)*pow(twoError,2.)*pow(twoReduced,2.)
-                                + pow(two,-2)*twoReduced*Cov);
+                                + pow(two,-2)*pow(wCovTwoTwoReducedError,2));
 	if(v2PrimeErrorSquared>0.){Flow2E = pow(v2PrimeErrorSquared,0.5);}
 	//cout<<"Flow2 "<<Flow2<<" flow2e "<<Flow2E<<" QC2 "<<QC2<<" QC2E "<<QC2E<<" qp2 "<<qp2<<" qp2E "<<qp2E<<" v2PrimeErrorSquared "<< v2PrimeErrorSquared<<endl;
           if(Flow2E>0.) {
@@ -1875,8 +1879,9 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
           Double_t twoReduced = qp2;
           Double_t twoReducedError = qp2E;
           Double_t Cov = pow(Dn2*sqrt(fabs(Cn2)),2) - pow(Dn2,2)*pow(sqrt(fabs(Cn2)),2) ; 
-	  Double_t wCovTwoTwoReduced = fFlowQCCorCovEtaPro[q][h][hr][0]->GetBinContent(eta);
-	 /*Float_t v2PrimeErrorSquared = (1./4.)*pow(two,-3.)*(pow(twoReduced,2.)*pow(twoError,2.)
+	  Double_t wCovTwoTwoReduced = fFlowQCCorCovEtaPro[q][h][hr][0]->GetBinContent(eta);//<2'><2>
+	  Double_t wCovTwoTwoReducedError = fFlowQCCorCovEtaPro[q][h][hr][0]->GetBinError(eta);//(1/sqrt(N)*sigma; sigma = sqrt((1/N) sum_i [xy_i - xy_ave]^2) 
+	/*Float_t v2PrimeErrorSquared = (1./4.)*pow(two,-3.)*(pow(twoReduced,2.)*pow(twoError,2.)
                                 + 4.*pow(two,2.)*pow(twoReducedError,2.)
 				- 4.*two*twoReduced*wCovTwoTwoReduced);
 	
@@ -1884,9 +1889,9 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
                                 + (1/16)*pow(two,-4.)*pow(twoError,2.)*pow(twoReduced,2)
                                 + pow(two,-2)*pow(twoReduced,2)*two*wCovTwoTwoReduced);
 	*/
-        Double_t v2PrimeErrorSquared = (pow(two,-1.)*pow(twoReducedError,2.)
+        Double_t v2PrimeErrorSquared = abs(pow(two,-1.)*pow(twoReducedError,2.)
                                 + (1/4)*pow(two,-3.)*pow(twoError,2.)*pow(twoReduced,2.)
-                                + pow(two,-2)*twoReduced*Cov);
+                                + pow(two,-2)*twoReduced*pow(wCovTwoTwoReducedError,2));
 	if(v2PrimeErrorSquared>0.){Flow2E = pow(v2PrimeErrorSquared,0.5);}
           if(Flow2E>0.) {  
 //cout<<Flow2<<endl;
