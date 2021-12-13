@@ -36,6 +36,9 @@ TList *higher = (TList*) high->Get("FlowQCList;1");
 //TH1F *v2_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][0][0]");
 TH1F *v1 = (TH1F*) higher->FindObject("fFlowQCFinalPtDifHist[0][2][0][0]");
 TH1F *v1e = (TH1F*) higher->FindObject("fFlowQCFinalEtaDifHist[0][2][0][0]");
+TH1F *w1 = (TH1F*) higher->FindObject("fFlowQCFinalPtDifHist[0][2][1][0]");
+TH1F *v2e = (TH1F*) higher->FindObject("fFlowQCFinalEtaDifHist[0][2][1][0]");
+
 //TH1F *v3_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][1][0]");
 TH1F *v3_pos = (TH1F*) posFlowQC->FindObject("fFlowQCFinalEtaDifDeltaHist[2][1]");
 
@@ -46,8 +49,6 @@ v1->GetYaxis()->SetRangeUser(-0.3,0.3);
 v1->GetXaxis()->SetRangeUser(0,5);
 v1->SetLineColor(kRed);
 v1->Draw("same");
-auto legend = new TLegend();
-legend->SetHeader("Small sample Xe-Xe: 5.44TeV, 20-30%","C");
 V2 ->SaveAs("sq_coverrptv1.pdf");
 
 
@@ -61,6 +62,28 @@ v1e->GetXaxis()->SetRangeUser(-1,1);
 v1e->SetLineColor(kRed);
 v1e->Draw("same");
 V1 ->SaveAs("sq_coverretav1.pdf");
+
+TCanvas *W1 = new TCanvas("v2","pT",400,400);
+W1->SetLeftMargin(0.2);
+w1->GetYaxis() -> SetTitleOffset(2.0);
+w1->GetYaxis()->SetRangeUser(-0.3,0.3);
+w1->GetXaxis()->SetRangeUser(0,5);
+w1->SetLineColor(kRed);
+w1->Draw("same");
+W1 ->SaveAs("sq_coverrptv2.pdf");
+
+
+TCanvas *W2 = new TCanvas("v2","pT",400,400);
+W2->SetLeftMargin(0.2);
+v2e->GetYaxis() -> SetTitleOffset(2.0);
+v2e ->GetYaxis()->SetTitle("differential flow v_{n}");
+v2e->GetXaxis()->SetTitle("#eta");
+v2e->GetYaxis()->SetRangeUser(-0.3,0.3);
+v2e->GetXaxis()->SetRangeUser(-1,1);
+v2e->SetLineColor(kRed);
+v2e->Draw("same");
+W2 ->SaveAs("sq_coverretav2.pdf");
+
 
 ////**********************************************************/////
 ////*********************************************************/////
