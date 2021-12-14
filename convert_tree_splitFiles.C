@@ -97,7 +97,7 @@ dir = "a-0.1";
   }
 
   for (int nthOutput = 0; nthOutput < nFinalFiles; nthOutput++) {
-	  TFile file(Form("tree_5.44TeV_Cent%d_%d_%d.root", val1, val2, nthOutput),"RECREATE");//submit puts me into dirID/...
+	  TFile file(Form("tree_5.02TeV_Cent%d_%d_%d.root", val1, val2, nthOutput),"RECREATE");//submit puts me into dirID/...
 	  TTree tree("events", "event");
 	  Event ev;
 	  tree.Branch("event", &ev);
@@ -105,9 +105,9 @@ dir = "a-0.1";
 		for (int ithFile = 1; ithFile <= nFile; ithFile++) {
 		  std::ifstream file_dat;
 		if(dirID == 0){
-		  directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality%d-%d/Baseline/job-%d/particle_distribution_final/%d.dat",val1, val2, ithJob,ithFile);
+		  directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.02TeV/Centrality%d-%d/Baseline/job-%d/particle_distribution_final/%d.dat",val1, val2, ithJob,ithFile);
                   }else{
-		  directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality%d-%d/a-0.1/job-%d/particle_distribution_final/%d.dat",val1, val2, ithJob,ithFile);
+		  directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.02TeV/Centrality%d-%d/a-0.1/job-%d/particle_distribution_final/%d.dat",val1, val2, ithJob,ithFile);
   		  }	
 		  file_dat.open(directory.c_str());
 		  

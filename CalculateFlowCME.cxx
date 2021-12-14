@@ -1669,7 +1669,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
 //m_p POI's with some refs
 //M REF's with some POI's
 //m_q only REF's & POI's
-		  dQM2 = qpM0*QM-qpM;// m_p * M - m_q
+		  dQM2 = qpM0*QM - qpM;// m_p * M - m_q
 		  WdQM2 = (WeigMul? dQM2 : 1.);
 
 		  if(qpM0>0 && WdQM2>0) {// p_n * Q* - m_q || p_n * Q_complxconj
@@ -1725,7 +1725,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
         Double_t SumWeigSq  = stats[1];
         Double_t SumTwo  = stats[4];
         Double_t SumTwoSq = stats[5];
-        if(SumWeig>0.) {
+        //if(SumWeig>0.) {
           Double_t Corr = SumTwo/SumWeig;
           Double_t SqCorr = SumTwoSq/SumWeigSq;
           Double_t Weig = SumWeig;
@@ -1741,7 +1741,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
             fFlowQCRefCorHist[q][hr][j][spectrum]->SetBinContent(cen,Corr);
             fFlowQCRefCorHist[q][hr][j][spectrum]->SetBinError(cen,CorrErr);
 	 }
-        }
+        //}
       } // end of for(Int_t pt=1;pt<=100;pt++)
       fFlowQCRefCorPro[q][hr][j][spectrum]->GetXaxis()->SetRange(1,fFlowQCRefCorPro[q][hr][j][spectrum]->GetNbinsX());
     } // end of for(Int_t j=0; j<5; j++)
@@ -1759,7 +1759,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
           Double_t SumWeigSq  = stats[1];
           Double_t SumTwo  = stats[4];
           Double_t SumTwoSq = stats[5];
-          if(SumWeig>0.) {
+          //if(SumWeig>0.) {
             Double_t Corr = SumTwo/SumWeig;
             Double_t SqCorr = SumTwoSq/SumWeigSq;
             Double_t Weig = SumWeig;
@@ -1796,7 +1796,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
 	      fFlowQCCorCovHist[q][h][hr][j]->SetBinContent(pt,Cov);
 	      fFlowQCCorCovHist[q][h][hr][j]->SetBinError(pt,CovErr);
 		}
-          }
+          //}
         } // end of for(Int_t pt=1;pt<=fPtDiffNBins;pt++)
         fFlowQCCorPro[q][h][hr][j]->GetXaxis()->SetRange(1,fPtDiffNBins);
 	}//end of if(pt == true)
@@ -1810,7 +1810,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
           Double_t SumWeigSq  = stats[1];
           Double_t SumTwo  = stats[4];
           Double_t SumTwoSq = stats[5];
-          if(SumWeig>0.) {
+          //if(SumWeig>0.) {
             Double_t Corr = SumTwo/SumWeig;
             Double_t SqCorr = SumTwoSq/SumWeigSq;
             Double_t Weig = SumWeig;
@@ -1847,7 +1847,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
 //  cout<<"eta bin"<<eta<<" j "<<j<<endl;
 
 	    }
-          }
+          //}
          } // end of for(Int_t eta=1;eta<=fEtaDiffNBins;eta++)
 	fFlowQCCorEtaPro[q][h][hr][j]->GetXaxis()->SetRange(1,fEtaDiffNBins);
 	}//end of elseif(eta == true)	
@@ -1873,7 +1873,6 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
        fFlowQCFinalPtDifHist[q][h][hr][5]->SetBinContent(pt,Dn2);
        fFlowQCFinalPtDifHist[q][h][hr][5]->SetBinError(pt,Dn2E);
         //cout<<"Cn2 "<<"h"<<Cn2<<endl;
-	//took out the fabs!
 	if(fabs(Dn2)>0) {
           Double_t Flow2 = Dn2/sqrt(fabs(Cn2));
           Double_t Flow2E = 0.;
