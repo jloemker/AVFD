@@ -3,24 +3,37 @@
 void RatioPlot(){
 TFile *Published = new TFile("/project/alice/users/jlomker/AVFD/plots/published.root");
 //the vocab. is a bit unhandy ...
-TFile* pT0eta0 = new TFile("/data/alice/jlomker/AVFD/result/dirID-0/full/Result_5.44TeV_pT_0_eta_0_Cent20_30.root");//
+//
+//producing new file for 5.02TeV with corresponding centrality
+TFile* pT0eta0 = new TFile("/data/alice/jlomker/AVFD/result/dirID-0/new2/Result_5.02TeV_pT_0_eta_0_Cent30_40.root");//
+TFile *Pb = new TFile("/data/alice/jlomker/AVFD/result/dirID-0/new/Result_5.44TeV_pT_0_eta_0_Cent20_30.root");//
 
 TKey *p = (TKey*) Published->Get("Table 5;1");
 TList *eta0pT0 = (TList*) pT0eta0->Get("FlowQCList;1");
+TList *pb = (TList*) Pb->Get("FlowQCList;1");
 
 //20 to 30 % [positive = 0][centrality = 2][harmonic = 1 = (v2)][0]
-TH1F *h1 = (TH1F*) eta0pT0->FindObject("fFlowQCFinalPtDifHist[0][2][1][0]");//check 1 in full range->has 36 Entries 
-
+TH1F *h1 = (TH1F*) eta0pT0->FindObject("fFlowQCFinalPtDifHist[0][3][1][0]");//check 1 in full range->has 36 Entries 
+//TH1F *h2 =  (TH1F*) pb->FindObject("fFlowQCFinalPtDifHist[0][2][1][0]");
+/*
+// The Xe-Xe data 5.44TeV from ALICE 20-30%
 Double_t h2_x[18] = {0.25,0.35,0.45,0.55,0.65,0.75,0.85,0.95,1.125,1.375,1.625,1.875,2.125,2.375,2.75,3.25,3.75,4.5};
 Double_t h2_y[18] = {0.0336282, 0.0442939, 0.0563404,0.067766, 0.0780708, 0.0879414, 0.0966931, 0.105392, 0.120248, 0.138635,0.154528, 0.166843, 0.179147,0.187231,0.194451 ,0.192949,0.18926,0.170559};
 Double_t h2_err[18] = {0.00149402, 0.001888284, 0.002114885,0.002380251, 0.002362924, 0.001851419, 0.002107053, 0.002307215, 0.002392648, 0.00281213, 0.003222799, 0.003611608,0.00404789, 0.00447, 0.00454807,0.00527164, 0.00623852, 0.00644067};
-TH1F *h2 = new TH1F("ALICE Fit: Pol 4","ALICE vs AVFD",18,0.25,4.5);
-TH1F *hErr = new TH1F("ErrFit","ErrFit",18,0.25,4.5);
-for(int i=1; i < 19; ++i) {
+*/
+// The Pb-Pb data 5.02TeV from ALICE for 30-40%
+Double_t h2_x[13] = {0.3,0.5,0.7,0.9,1.25,1.375,1.625,1.875,2.25,2.75,3.25,3.75,4.5};
+Double_t h2_y[13] = {0.0477,0.0771,0.1024,0.1249,0.1695,0.192,0.2068,0.2225,0.2395,0.2494,0.2448,0.198};
+Double_t h2_err[13] = {0.0021,0.003,0.0038,0.0053,0.0032,0.0039,0.0058,0.0047,0.0049,0.007,0.0057,0.0126,0.016};
+//adjust fitting range and try lower order pol !
+TH1F *h2 = new TH1F("ALICE Fit: Pol 4","ALICE vs AVFD",12,0.3,4.5);
+TH1F *hErr = new TH1F("ErrFit","ErrFit",12, 0.3,4.5);
+for(int i=1; i < 13; ++i) {
    h2->SetBinContent(i,h2_y[i-1]);
    h2->SetBinError(i,h2_err[i-1]);
    hErr->SetBinContent(i,h2_y[i-1]+h2_err[i-1]);
 }
+
 //fit hist 2 with poln and then difference from fit (poln) to my data 
 TF1 *func = new TF1("func","pol 4",0,5);
 //TF1 *funcErr = new TF1("funcErr","pol 3",0.,5);
@@ -31,7 +44,7 @@ Double_t chi2_h2 = func_res2->GetChisquare();
 Double_t NDF = func_res2 ->GetNDF();
 cout<<"h2 ALICE: chi2/ndf "<<chi2_h2/NDF<<endl;
 
-gStyle->SetOptFit(100);
+//gStyle->SetOptFit(100);
 //gStyle->SetStatX(0.6);
 //gStyle->SetStatW(0.2);
 //gStyle->SetLabelOffset(0.1);
@@ -56,9 +69,10 @@ h2->SetLineColor(kBlue-1);
 h2->SetLineWidth(2);
 h2->Draw("same");  
 auto L_Ratio = new TLegend(0.2,0.7,0.48,0.9);
-L_Ratio->SetHeader("Xe-Xe: 5.44TeV, 20-30%","C");
-L_Ratio->AddEntry(h1,"AVFD,pos, pT: 0.2 - 5 GeV, #eta: 0.8", "l");
-L_Ratio->AddEntry(h2,"ALICE,charged, pT: 0.25 - 4.5 GeV, #eta: 0.8", "l");
+L_Ratio->SetHeader("Pb-Pb, 5.02TeV, pT: 0.2 -5 GeV, #eta: 0.8","C");
+L_Ratio->AddEntry(h1,"AVFD, pos, Centrality 30-40%", "l");
+//L_Ratio->AddEntry(h2,"Pb-Pb 5.02TeV pT: 0.2 - 5 GeV, #eta: 0.8 ","l");
+L_Ratio->AddEntry(h2,"ALICE,charged, Centrality 30-40%", "l");
 L_Ratio->Draw();
 /*TGaxis *axis = new TGaxis(-5, 20, -5, 220, 20,220,510,"");
 axis->SetLabelFont(43); // Absolute font size in pixel (precision 3)
@@ -79,6 +93,7 @@ h3->SetLineColor(kBlack);
 h3->GetXaxis()->SetRangeUser(0.,4.5);
 h3->SetStats(0);      // No statistics on lower plot
 //Error Calculation/Propagation for lower plot
+
 Int_t NBins = h1->GetNbinsX();
 Double_t arr1[NBins];
 Double_t arr2[NBins];
@@ -91,6 +106,7 @@ TF1 *func_resErr = hErr->GetFunction("func");
 Double_t chi2_hErr = func_resErr->GetChisquare();
 Double_t NDFErr = func_resErr ->GetNDF();
 cout<<"hErr ALICE: chi2/ndf "<<chi2_hErr/NDFErr<<endl;
+
 for(Int_t i = 0; i<NBins; i++){
 	arr1[i] = h1->GetBinContent(i+1);
 	Err1[i] = h1->GetBinError(i+1);

@@ -4,8 +4,8 @@ dirID=0
 
 #while [ $dirID -le 0 ]; do
 echo "Directory ID: $dirID"
-centID=3
-while [ $centID -le 3 ]; do
+centID=1
+while [ $centID -le 7 ]; do
 pTiD=0
 while [ $pTiD -le 0 ]; do
 etaID=0
@@ -48,8 +48,8 @@ echo "if [ ! -f runSingleCentrality.C ]"
 echo " then "
 echo "ln -s /project/alice/users/jlomker/AVFD/runSingleCentrality.C ."
 echo "fi"
-#echo "exec root -b -q CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID, $dirID, $pTiD, $etaID)'"
-echo "exec root -b -q convert_tree_splitFiles.C'($centID, $dirID)' CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID,$dirID, $pTiD, $etaID)' "
+echo "exec root -b -q CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID, $dirID, $pTiD, $etaID)'"
+#echo "exec root -b -q convert_tree_splitFiles.C'($centID, $dirID)' CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID,$dirID, $pTiD, $etaID)' "
     ) > $SCRIPT
 
 qsub -q generic $SCRIPT 

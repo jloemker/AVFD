@@ -24,8 +24,11 @@ gStyle -> SetOptStat(0);
 TFile* file_all = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/all/v1/AnalysisResults_Cent20_30.root");
 TFile* file_pos = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/pos/eta_pt/Analysis_pTrange_0_Cent20_30.root");
 //Cent30_40_5.
-TFile* high = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/pos/eta_pt/Analysis_pTrange_0_eta_0_Cent20_30.root");
+for(Int_t c = 2; c<7; c++){
+//TFile* high = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-0/new2/Result_5.02TeV_pT_2_eta_0_Cent%d0_%d0.root",c,c+1));
 //Getting the list(s) of files for all
+TFile* high = new TFile(Form("/project/alice/users/jlomker/AVFD/test/dirID-0/Pb/Analysis_pTrange_0_eta_0_Cent%d0_%d0.root",c,c+1));
+
 TList *qa = (TList*) file_all->Get("QAList;1");//Kinematics from POI`s
 TList *flowQC = (TList*) file_all->Get("FlowQCList;1");//Matrices for calculations ?
 TList *cme = (TList*) file_all->Get("CMEList;1");//(SS/OS/Delta) delta, gamma 
@@ -34,10 +37,10 @@ TList *posFlowQC = (TList*) file_pos->Get("FlowQCList;1");//Matrices for calcula
 TList *higher = (TList*) high->Get("FlowQCList;1");
 
 //TH1F *v2_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][0][0]");
-TH1F *v1 = (TH1F*) higher->FindObject("fFlowQCFinalPtDifHist[0][2][0][0]");
-TH1F *v1e = (TH1F*) higher->FindObject("fFlowQCFinalEtaDifHist[0][2][0][0]");
-TH1F *w1 = (TH1F*) higher->FindObject("fFlowQCFinalPtDifHist[0][2][1][0]");
-TH1F *v2e = (TH1F*) higher->FindObject("fFlowQCFinalEtaDifHist[0][2][1][0]");
+TH1F *v1 = (TH1F*) higher->FindObject(Form("fFlowQCFinalPtDifHist[0][%d][0][0]",c));
+TH1F *v1e = (TH1F*) higher->FindObject(Form("fFlowQCFinalEtaDifHist[0][%d][0][0]",c));
+TH1F *w1 = (TH1F*) higher->FindObject(Form("fFlowQCFinalPtDifHist[0][%d][1][0]",c));
+TH1F *v2e = (TH1F*) higher->FindObject(Form("fFlowQCFinalEtaDifHist[0][%d][1][0]",c));
 
 //TH1F *v3_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][1][0]");
 TH1F *v3_pos = (TH1F*) posFlowQC->FindObject("fFlowQCFinalEtaDifDeltaHist[2][1]");
@@ -45,46 +48,50 @@ TH1F *v3_pos = (TH1F*) posFlowQC->FindObject("fFlowQCFinalEtaDifDeltaHist[2][1]"
 TCanvas *V2 = new TCanvas("v2","pT",400,400);
 V2->SetLeftMargin(0.2);
 v1->GetYaxis() -> SetTitleOffset(2.0);
-v1->GetYaxis()->SetRangeUser(-0.3,0.3);
-v1->GetXaxis()->SetRangeUser(0,5);
+v1->GetYaxis()->SetTitle("differential flow v_{1}");
+//v1->GetYaxis()->SetRangeUser(-0.3,0.3);
+v1->GetXaxis()->SetTitle("p_{T} [GeV]");
+v1->GetXaxis()->SetRangeUser(0.5,3);
 v1->SetLineColor(kRed);
 v1->Draw("same");
-V2 ->SaveAs("sq_coverrptv1.pdf");
+V2 ->SaveAs(Form("sq_coverrptv1_%d.pdf",c));
 
 
 TCanvas *V1 = new TCanvas("v2","pT",400,400);
 V1->SetLeftMargin(0.2);
 v1e->GetYaxis() -> SetTitleOffset(2.0);
-v1e ->GetYaxis()->SetTitle("differential flow v_{n}");
+v1e ->GetYaxis()->SetTitle("differential flow v_{1}");
 v1e->GetXaxis()->SetTitle("#eta");
 v1e->GetYaxis()->SetRangeUser(-0.3,0.3);
 v1e->GetXaxis()->SetRangeUser(-1,1);
 v1e->SetLineColor(kRed);
 v1e->Draw("same");
-V1 ->SaveAs("sq_coverretav1.pdf");
+V1 ->SaveAs(Form("sq_coverretav1_%d.pdf",c));
 
 TCanvas *W1 = new TCanvas("v2","pT",400,400);
 W1->SetLeftMargin(0.2);
 w1->GetYaxis() -> SetTitleOffset(2.0);
-w1->GetYaxis()->SetRangeUser(-0.3,0.3);
-w1->GetXaxis()->SetRangeUser(0,5);
+w1->GetYaxis()->SetTitle("differential flow v_{2}");
+//w1->GetYaxis()->SetRangeUser(-0.3,0.3);
+w1->GetXaxis()->SetRangeUser(0.5,3);
+w1->GetXaxis()->SetTitle("p_{T} [GeV]");
 w1->SetLineColor(kRed);
 w1->Draw("same");
-W1 ->SaveAs("sq_coverrptv2.pdf");
+W1 ->SaveAs(Form("sq_coverrptv2_%d.pdf",c));
 
 
 TCanvas *W2 = new TCanvas("v2","pT",400,400);
 W2->SetLeftMargin(0.2);
 v2e->GetYaxis() -> SetTitleOffset(2.0);
-v2e ->GetYaxis()->SetTitle("differential flow v_{n}");
+v2e ->GetYaxis()->SetTitle("differential flow v_{2}");
 v2e->GetXaxis()->SetTitle("#eta");
 v2e->GetYaxis()->SetRangeUser(-0.3,0.3);
 v2e->GetXaxis()->SetRangeUser(-1,1);
 v2e->SetLineColor(kRed);
 v2e->Draw("same");
-W2 ->SaveAs("sq_coverretav2.pdf");
+W2 ->SaveAs(Form("sq_coverretav2_%d.pdf",c));
 
-
+}
 ////**********************************************************/////
 ////*********************************************************/////
 //							    /////
@@ -192,12 +199,12 @@ N_eta0->AddEntry(vn_05,"Negative, pT: 0.2-3 GeV", "l");
 if(charge == 0){
 P_eta0->Draw();
 TString a = Form("Pos_diffv%d_Eta0_a2_pT.pdf",vn);
-Eta0->SaveAs(a);
+//Eta0->SaveAs(a);
 }
 if(charge == 1){
 N_eta0->Draw();
 TString b = Form("Neg_diffv%d_Eta0_a2_pT.pdf",vn);
-Eta0->SaveAs(b);
+//Eta0->SaveAs(b);
 }
 
 //For eta [-3,3]
@@ -241,12 +248,12 @@ N_eta1->AddEntry(vn_15,"Negative, pT: 0.2-3 GeV", "l");
 if(charge == 0){
 P_eta1->Draw();
 TString c = Form("Pos_diffv%d_Eta1_a1_pT.pdf",vn);
-Eta1->SaveAs(c);
+//Eta1->SaveAs(c);
 }
 if(charge == 1){
 N_eta1->Draw();
 TString d = Form("Neg_diffv%d_Eta1_a1_pT.pdf",vn);
-Eta1->SaveAs(d);
+//Eta1->SaveAs(d);
 }
 
 
@@ -294,12 +301,12 @@ N_pt0->AddEntry(vn_10,"Negative, pT: 0.2-5 GeV, #eta: 3", "l");
 if(charge == 0){
 P_pt0->Draw();
 TString e = Form("Pos_diffv%d_pT_0_Eta01.pdf",vn);
-Pt0->SaveAs(e);
+//Pt0->SaveAs(e);
 }
 if(charge == 1){
 N_pt0->Draw();
 TString f = Form("Neg_diffv%d_pT_0_Eta01.pdf",vn);
-Pt0->SaveAs(f);
+//Pt0->SaveAs(f);
 }
 //Pt1
 TCanvas *Pt1 = new TCanvas("Pt1","Pt1",400,400);
@@ -324,12 +331,12 @@ N_pt1->AddEntry(vn_11,"Negative, pT: 0.2-0.7 GeV, #eta: 3", "l");
 if(charge == 0){
 TString g = Form("Pos_diffv%d_pT_1_Eta01.pdf",vn);
 P_pt1->Draw();
-Pt1->SaveAs(g);
+//Pt1->SaveAs(g);
 }
 if(charge == 1){
 TString h = Form("Neg_diffv%d_pT_1_Eta01.pdf",vn);
 N_pt1->Draw();
-Pt1->SaveAs(h);
+//Pt1->SaveAs(h);
 }
 //Pt2
 TCanvas *Pt2 = new TCanvas("Pt2","Pt2",400,400);
@@ -354,12 +361,12 @@ N_pt2->AddEntry(vn_12,"Negative, pT: 1-2 GeV, #eta: 3", "l");
 if(charge == 0){
 P_pt2->Draw();
 TString i = Form("Pos_diffv%d_pT_2_Eta01.pdf",vn);
-Pt2->SaveAs(i);
+//Pt2->SaveAs(i);
 }
 if(charge == 1){
 TString j = Form("Neg_diffv%d_pT_2_Eta01.pdf",vn);
 N_pt2->Draw();
-Pt2->SaveAs(j);
+//Pt2->SaveAs(j);
 }
 
 TCanvas *Pt3 = new TCanvas("Pt3","Pt3",400,400);
@@ -384,12 +391,12 @@ N_pt3->AddEntry(vn_13,"Negative, pT: 1-3 GeV, #eta: 3", "l");
 if(charge == 0){
 TString k = Form("Pos_diffv%d_pT_3_Eta01.pdf",vn);
 P_pt3->Draw();
-Pt3->SaveAs(k);
+//Pt3->SaveAs(k);
 }
 if(charge == 1){
 TString l = Form("Neg_diffv%d_pT_3_Eta01.pdf",vn);
 N_pt3->Draw();
-Pt3->SaveAs(l);
+//Pt3->SaveAs(l);
 }
 
 TCanvas *Pt4 = new TCanvas("Pt4","Pt4",400,400);
@@ -414,12 +421,12 @@ N_pt4->AddEntry(vn_14,"Negative, pT: 1.8-2.5 GeV, #eta: 3", "l");
 if(charge == 0){
 P_pt4->Draw();
 TString m = Form("Pos_diffv%d_pT_4_Eta01.pdf",vn);
-Pt4->SaveAs(m);
+//Pt4->SaveAs(m);
 }
 if(charge == 1){
 TString n = Form("Neg_diffv%d_pT_4_Eta01.pdf",vn);
 N_pt4->Draw();
-Pt4->SaveAs(n);
+//Pt4->SaveAs(n);
 }
 
 TCanvas *Pt5 = new TCanvas("Pt5","Pt5",400,400);
@@ -444,12 +451,12 @@ N_pt5->AddEntry(vn_15,"Negative, pT: 0.2-3 GeV, #eta: 3", "l");
 if(charge == 0){
 TString o = Form("Pos_diffv%d_pT_5_Eta01.pdf",vn);
 P_pt5->Draw();
-Pt5->SaveAs(o);
+//Pt5->SaveAs(o);
 }
 if(charge == 1){
 TString p = Form("Neg_diffv%d_pT5_Eta01_all_pT.pdf",vn);
 N_pt5->Draw();
-Pt5->SaveAs(p);
+//Pt5->SaveAs(p);
 }
 
 
@@ -505,7 +512,7 @@ Del_E0->AddEntry(Del_vn_04,"pT: 1.8-2.5 GeV","l");
 Del_E0->AddEntry(Del_vn_05,"pT: 0.2-3 GeV", "l");
 Del_E0->Draw();
 TString q = Form("Delta_diffv%d_Eta0_a1_pT.pdf",vn);
-DelEta0->SaveAs(q);
+//DelEta0->SaveAs(q);
 //larger eta range
 TCanvas *DelEta1 = new TCanvas("DelEta1","DelEta1",400,400);
 DelEta1->SetLeftMargin(0.2);
@@ -538,7 +545,7 @@ Del_E1->AddEntry(Del_vn_14,"pT: 1.8-2.5 GeV","l");
 Del_E1->AddEntry(Del_vn_15,"pT: 0.2-3 GeV", "l");
 Del_E1->Draw();
 TString r = Form("Delta_diffv%d_Eta1_a1_pT.pdf",vn);
-DelEta1->SaveAs(r);
+//DelEta1->SaveAs(r);
 
 //************
 ////Plots vs pT
@@ -585,7 +592,7 @@ Del_Pt0->AddEntry(Del_v_00,"pT: 0.2-5 GeV, eta: 0.8", "l");
 Del_Pt0->AddEntry(Del_v_10,"pT: 0.2-5 GeV, eta: 3", "l");
 Del_Pt0->Draw();
 TString s = Form("Delta_diffv%d_pT_0_E01.pdf",vn);
-DelPt0->SaveAs(s);
+//DelPt0->SaveAs(s);
 //Pt1
 TCanvas *DelPt1 = new TCanvas("DelPt1","DelPt1",400,400);
 DelPt1->SetLeftMargin(0.2);
@@ -604,7 +611,7 @@ Del_Pt1->AddEntry(Del_v_01,"pT: 0.2-0.7 GeV, eta: 0.8", "l");
 Del_Pt1->AddEntry(Del_v_11,"pT: 0.2-0.7 GeV, eta: 3", "l");
 Del_Pt1->Draw();
 TString t = Form("Delta_diffv%d_pT_1_E01.pdf",vn);
-DelPt0->SaveAs(t);
+//DelPt0->SaveAs(t);
 //Pt2
 TCanvas *DelPt2 = new TCanvas("DelPt2","DelPt2",400,400);
 DelPt0->SetLeftMargin(0.2);
@@ -623,7 +630,7 @@ Del_Pt2->AddEntry(Del_v_02,"pT: 1-2 GeV, eta: 0.8", "l");
 Del_Pt2->AddEntry(Del_v_12,"pT: 1-2 GeV, eta: 3", "l");
 Del_Pt2->Draw();
 TString u = Form("Delta_diffv%d_pT_2_E01.pdf",vn);
-DelPt2->SaveAs(u);
+//DelPt2->SaveAs(u);
 //Pt3
 TCanvas *DelPt3 = new TCanvas("DelPt3","DelPt3",400,400);
 DelPt3->SetLeftMargin(0.2);
@@ -642,7 +649,7 @@ Del_Pt3->AddEntry(Del_v_03,"pT: 1-3 GeV, eta: 0.8", "l");
 Del_Pt3->AddEntry(Del_v_13,"pT: 1-3 GeV, eta: 3", "l");
 Del_Pt3->Draw();
 TString v = Form("Delta_diffv%d_pT_3_E01.pdf",vn);
-DelPt3->SaveAs(v);
+//DelPt3->SaveAs(v);
 //Pt4
 TCanvas *DelPt4 = new TCanvas("DelPt4","DelPt4",400,400);
 DelPt4->SetLeftMargin(0.2);
@@ -661,7 +668,7 @@ Del_Pt4->AddEntry(Del_v_04,"pT: 1.8-2.5 GeV, eta: 0.8", "l");
 Del_Pt4->AddEntry(Del_v_14,"pT: 1.8-2.5 GeV, eta: 3", "l");
 Del_Pt4->Draw();
 TString w = Form("Delta_diffv%d_pT_4_E01.pdf",vn);
-DelPt4->SaveAs(w);
+//DelPt4->SaveAs(w);
 //Pt5
 TCanvas *DelPt5 = new TCanvas("DelPt5","DelPt5",400,400);
 DelPt5->SetLeftMargin(0.2);
@@ -680,7 +687,7 @@ Del_Pt5->AddEntry(Del_v_05,"pT: 0.2-3 GeV, eta: 0.8", "l");
 Del_Pt5->AddEntry(Del_v_15,"pT: 0.2-3 GeV, eta: 3", "l");
 Del_Pt5->Draw();
 TString x = Form("Delta_diffv%d_pT_5_E01.pdf",vn);
-DelPt5->SaveAs(x);
+//DelPt5->SaveAs(x);
 
 }//harm
 
@@ -957,65 +964,6 @@ Legend62->Draw();
 //delVn2->SaveAs("Delta_diffv2_pT_2.pdf");//change vn
 */
 
-/*
 
-TFile *Published = new TFile("/project/alice/users/jlomker/AVFD/plots/published.root");
-TList *p = (TList*) Published->Get("Table 5");
- 
-TH1F *h1 = (TH1F*) p->FindObject("");
-TH1F *h2 = (TH1F*) FlowQC->FindObject("fFlowQCFinalPtDifHist[2][0][0]");//define canvas
-TCanvas *c = new TCanvas("c", "canvas", 800, 800);//upper plot in pad1
-TPad *pad1 = new TPad("pad1", "pad1", 0, 0.3, 1, 1.0);
-pad1->SetBottomMargin(0); // Upper and lower plot are joined
-pad1->SetGridx();         // Vertical grid
-pad1->Draw();             // Draw the upper pad: pad1
-pad1->cd();               // pad1 becomes the current pad
-h1->SetStats(0);          // No statistics on upper plot
-h1->Draw();               // Draw h1
-h2->Draw("same");         // Draw h2 on top of h1
-
-h1->GetYaxis()->SetLabelSize(0.);
-TGaxis *axis = new TGaxis( -5, 20, -5, 220, 20,220,510,"");
-axis->SetLabelFont(43); // Absolute font size in pixel (precision 3)
-axis->SetLabelSize(15);
-axis->Draw();//lower plot in pad
-c->cd();          // Go back to the main canvas before defining pad2
-TPad *pad2 = new TPad("pad2", "pad2", 0, 0.05, 1, 0.3);
-pad2->SetTopMargin(0);
-pad2->SetBottomMargin(0.2);
-pad2->SetGridx(); // vertical grid
-pad2->Draw();
-pad2->cd();       // pad2 becomes the current pad//define raito plot
-TH1F *h3 = (TH1F*)h1->Clone("h3");
-h3->SetLineColor(kBlack);
-h3->SetMinimum(0.8);  // Define Y ..
-h3->SetMaximum(1.35); // .. range
-h3->Sumw2();
-h3->SetStats(0);      // No statistics on lower plot
-h3->Divide(h2);
-h3->SetMarkerStyle(21);
-h3->Draw("ep");       // Draw the ratio plot//h1 settings
-h1->SetLineColor(kBlue+1);
-h1->SetLineWidth(2);// Y axis h1 plot settings
-h1->GetYaxis()->SetTitleSize(20);
-h1->GetYaxis()->SetTitleFont(43);
-h1->GetYaxis()->SetTitleOffset(1.55);//h2 setting
-h2->SetLineColor(kRed);
-h2->SetLineWidth(2);// Ratio plot (h3) settings
-h3->SetTitle(""); // Remove the ratio title // Y axis ratio plot settings
-h3->GetYaxis()->SetTitle("ratio h1/h2 ");
-h3->GetYaxis()->SetNdivisions(505);
-h3->GetYaxis()->SetTitleSize(20);
-h3->GetYaxis()->SetTitleFont(43);
-h3->GetYaxis()->SetTitleOffset(1.55);
-h3->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
-h3->GetYaxis()->SetLabelSize(15);// X axis ratio plot settings
-h3->GetXaxis()->SetTitleSize(20);
-h3->GetXaxis()->SetTitleFont(43);
-h3->GetXaxis()->SetTitleOffset(4.);
-h3->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
-h3->GetXaxis()->SetLabelSize(15);
-
-c->SaveAs("ratio.pdf");*/
 }
 

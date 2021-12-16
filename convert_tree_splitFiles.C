@@ -67,8 +67,8 @@ dir = "a-0.1";
  std::cout <<"Centrality ID: " << centID << " and directory: " << dir << std::endl;
  //Int_t centID = {0,1,2,3,4,5,6,7}; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70%
 
-  int nJob = 2000;//was 2000 but panos has only 999 jobs in baseline tir
-  int nFile = 201;//was 201
+  int nJob = 200;//was 2000 but panos has only 999 jobs in baseline tir
+  int nFile = 20;//was 201
   int nFinalFiles =10;//was 10
   // map to convert UrQMD pid to PDG pid
   std::map<int, int> pid_conversion_map;
