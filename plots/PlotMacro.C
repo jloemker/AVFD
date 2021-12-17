@@ -21,19 +21,19 @@ gStyle -> SetOptStat(0);
 //AnalysisResults_5.44TeV_Cent20_30.root
 
 //plot small sample 2 for all and pos on top of eachother:
-TFile* file_all = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/all/v1/AnalysisResults_Cent20_30.root");
-TFile* file_pos = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/pos/eta_pt/Analysis_pTrange_0_Cent20_30.root");
+//TFile* file_all = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/all/v1/AnalysisResults_Cent20_30.root");
+//TFile* file_pos = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/pos/eta_pt/Analysis_pTrange_0_Cent20_30.root");
 //Cent30_40_5.
 for(Int_t c = 2; c<7; c++){
-//TFile* high = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-0/new2/Result_5.02TeV_pT_2_eta_0_Cent%d0_%d0.root",c,c+1));
+TFile* high = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-0/new/Result_5.02TeV_pT_0_eta_0_Cent%d0_%d0.root",c,c+1));
 //Getting the list(s) of files for all
-TFile* high = new TFile(Form("/project/alice/users/jlomker/AVFD/test/dirID-0/Pb/Analysis_pTrange_0_eta_0_Cent%d0_%d0.root",c,c+1));
-
-TList *qa = (TList*) file_all->Get("QAList;1");//Kinematics from POI`s
-TList *flowQC = (TList*) file_all->Get("FlowQCList;1");//Matrices for calculations ?
-TList *cme = (TList*) file_all->Get("CMEList;1");//(SS/OS/Delta) delta, gamma 
+//TFile* high = new TFile(Form("/project/alice/users/jlomker/AVFD/test/dirID-0/Pb/Analysis_pTrange_0_eta_0_Cent%d0_%d0.root",c,c+1));
+ 
+//TList *qa = (TList*) file_all->Get("QAList;1");//Kinematics from POI`s
+//TList *flowQC = (TList*) file_all->Get("FlowQCList;1");//Matrices for calculations ?
+//TList *cme = (TList*) file_all->Get("CMEList;1");//(SS/OS/Delta) delta, gamma 
 //for pos particles 
-TList *posFlowQC = (TList*) file_pos->Get("FlowQCList;1");//Matrices for calculations ?
+//TList *posFlowQC = (TList*) file_pos->Get("FlowQCList;1");//Matrices for calculations ?
 TList *higher = (TList*) high->Get("FlowQCList;1");
 
 //TH1F *v2_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][0][0]");
@@ -43,7 +43,7 @@ TH1F *w1 = (TH1F*) higher->FindObject(Form("fFlowQCFinalPtDifHist[0][%d][1][0]",
 TH1F *v2e = (TH1F*) higher->FindObject(Form("fFlowQCFinalEtaDifHist[0][%d][1][0]",c));
 
 //TH1F *v3_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][1][0]");
-TH1F *v3_pos = (TH1F*) posFlowQC->FindObject("fFlowQCFinalEtaDifDeltaHist[2][1]");
+//TH1F *v3_pos = (TH1F*) posFlowQC->FindObject("fFlowQCFinalEtaDifDeltaHist[2][1]");
 
 TCanvas *V2 = new TCanvas("v2","pT",400,400);
 V2->SetLeftMargin(0.2);

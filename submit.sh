@@ -1,7 +1,6 @@
 ##!/bin/bash
 SCRIPT="runAnalysis.sh"
 dirID=0
-
 #while [ $dirID -le 0 ]; do
 echo "Directory ID: $dirID"
 centID=1
