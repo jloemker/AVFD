@@ -90,6 +90,7 @@ class CalculateFlowCME
 	Double_t wPt = 1; // In MC, set to 1 for now.
 	Double_t wEta = 1; // In MC, set to 1 for now.
 	Double_t wTrack = 1; // In MC, set to 1 for now.
+	Double_t *binsX;
 	Double_t *fCRCPtBins;
 	Double_t *fCRCEtaBins;
 	Bool_t doQA = kFALSE;
@@ -192,6 +193,8 @@ class CalculateFlowCME
         TProfile *fFlowQCCorCovEtaPro[Ncharge][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];
         TH1D *fFlowQCCorEtaHist[Ncharge][fCRCMaxnCen][fFlowNHarm][fFlowQCNPro]; // <<2'>>, [CRCBin][eg]
         TH1D *fFlowQCCorCovEtaHist[Ncharge][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; // histo for covariances
+	//for v1 filled with cos(dPhi)
+	TProfile *fFlowQCQv1[Ncharge][fCRCMaxnCen][Nspectrum]; //for eta and pT
 	//final differential flow
 	TH1D *fFlowQCFinalPtDifHist[Ncharge][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; //
 	TH1D *fFlowQCFinalEtaDifHist[Ncharge][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov];//hist for vn vs eta

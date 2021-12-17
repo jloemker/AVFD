@@ -144,6 +144,9 @@ void CalculateFlowCME::InitializeArraysForFlowQC()
   
     // differential flow
 	for (Int_t h=0; h<fCRCMaxnCen; h++) {
+		for(Int_t spec = 0; spec <Nspectrum; spec++){
+                fFlowQCQv1[q][h][spec] = NULL;
+                }
 		for(Int_t i=0; i<fFlowNHarm; i++) {
 			for(Int_t j=0; j<fFlowQCNPro; j++) {
 				fFlowQCCorPro[q][h][i][j] = NULL;
@@ -423,8 +426,9 @@ void CalculateFlowCME::UserCreateOutputObjects() {
 	fQAList->Add(fAntiProtonsPhiSpectra);
 	
 	// Calculate FlowQC Hists
-	//
-	// Add the extra dimension for charge!
+	// for v1 in given spectra
+	Int_t NbinsX;
+	binsX = new Double_t[51];
 	fPtDiffNBins = 36;
 	fCRCPtBins = new Double_t[37];//actually 37 before
 	Double_t PtBins[] = {0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.,1.25,1.5,1.75,2.,2.25,2.5,2.75,3.,3.25,3.5,3.75,4.,4.5,5.,5.5,6.,7.,8.,9.,10.,12.,14.,17.,20.,25.,30.,40.,50.};
@@ -436,7 +440,10 @@ void CalculateFlowCME::UserCreateOutputObjects() {
 	//Double_t PtBins[] = {0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3.0,3.1,3.2,3.3,3.4,3.5,3.6,3.7,3.8,3.9,4.0,4.1,4.2,4.3,4.5};
 	for(Int_t r=0; r<37; r++) {
 		fCRCPtBins[r] = PtBins[r];
+		binsX[r] = PtBins[r];
 	}
+	//for v1
+	NbinsX = fPtDiffNBins;	
 
 	fEtaDiffNBins = 50;
 	fCRCEtaBins = new Double_t[51];
@@ -505,6 +512,14 @@ void CalculateFlowCME::UserCreateOutputObjects() {
 	}
     // differential flow
 	for (Int_t h=0; h<fCRCnCen; h++) {
+		// for v1 calculation
+		for(Int_t spec = 0; spec <Nspectrum; spec++){
+		    if(spec == 1){
+			NbinsX = fEtaDiffNBins;
+        		for(Int_t i=0; i<51; i++){binsX[i] = etabinEdge[i];}		
+		    }
+		    fFlowQCQv1[q][h][spec] = new TProfile(Form("fFlowQCQv1[%d][%d][%d]",q,h,spec),Form("fFlowQCQv1[%d][%d][%d]",q,h,spec),NbinsX, binsX,"s");
+		}
 		for(Int_t i=0; i<fFlowNHarm; i++) {
 			for(Int_t j=0; j<fFlowQCNPro; j++) {
 				fFlowQCCorPro[q][h][i][j] = new TProfile(Form("fFlowQCCorPro[%d][%d][%d][%d]",q,h,i,j),Form("fFlowQCCorPro[%d][%d][%d][%d]",q,h,i,j),fPtDiffNBins,fCRCPtBins,"s");
@@ -966,7 +981,6 @@ void CalculateFlowCME::Make(Event* anEvent) {
                                 fPOIEtaDiffQRe[q][k][h]->Fill(dEta,pow(wPhiEta,k)*TMath::Cos((h+1.)*dPhi));
                                 fPOIEtaDiffQIm[q][k][h]->Fill(dEta,pow(wPhiEta,k)*TMath::Sin((h+1.)*dPhi));
                                 fPOIEtaDiffMul[q][k][h]->Fill(dEta,pow(wPhiEta,k));
-	cout<<wPhiEta<<endl;
 			}
 		}
 	//}
@@ -1607,12 +1621,10 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
 	Int_t h= fCenBin;
 	if(Pt == true){
 		spectrum = 0.;
-		spec = "Eta"; 
 		//cout<<"vn for Pt"<<endl;
 	}
 	if(Eta == true){
 		spectrum = 1.;
-		spec = "Pt";
 		//cout<<"vn for Eta"<<endl;
 	}
 
@@ -1652,6 +1664,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
 			IQC2[q][hr] = ( fabs(QRe*QRe+QIm*QIm) -QM)/IQM2; // <2> = |Q2,1|^2-S1,2/(S2,1-S1,2)
 			fFlowQCIntCorPro[q][hr][0][spectrum]->Fill(fCentralityEBE,IQC2[q][hr],WQM2*fCenWeightEbE); // cent vs. <2>
 			fFlowQCRefCorPro[q][hr][0][spectrum]->Fill(fCentralityEBE,IQC2[q][hr],WQM2*fCenWeightEbE); // cent vs. <2>
+			if(hr == 0){fFlowQCQv1[q][fCenBin][spectrum]->Fill(fCentralityEBE,QRe,WQM2*fCenWeightEbE);}
 			Q2f = kTRUE;
 		}
 		// ********************************************************************
