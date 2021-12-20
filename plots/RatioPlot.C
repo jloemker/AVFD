@@ -5,7 +5,7 @@ TFile *Published = new TFile("/project/alice/users/jlomker/AVFD/plots/published.
 //the vocab. is a bit unhandy ...
 //
 //producing new file for 5.02TeV with corresponding centrality
-TFile* pT0eta0 = new TFile("/data/alice/jlomker/AVFD/result/dirID-0/new2/Result_5.02TeV_pT_0_eta_0_Cent30_40.root");//
+TFile* pT0eta0 = new TFile("/data/alice/jlomker/AVFD/result/dirID-0/new/Result_5.02TeV_pT_0_eta_0_Cent30_40.root");//
 TFile *Pb = new TFile("/data/alice/jlomker/AVFD/result/dirID-0/new/Result_5.44TeV_pT_0_eta_0_Cent20_30.root");//
 
 TKey *p = (TKey*) Published->Get("Table 5;1");

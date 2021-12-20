@@ -21,28 +21,35 @@ gStyle -> SetOptStat(0);
 //AnalysisResults_5.44TeV_Cent20_30.root
 
 //plot small sample 2 for all and pos on top of eachother:
-//TFile* file_all = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/all/v1/AnalysisResults_Cent20_30.root");
+TFile* file_all = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/all/v1/AnalysisResults_Cent20_30.root");
 //TFile* file_pos = new TFile("/project/alice/users/jlomker/AVFD/test/dirID-0/pos/eta_pt/Analysis_pTrange_0_Cent20_30.root");
 //Cent30_40_5.
-for(Int_t c = 3; c<7; c++){
-//TFile* high = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-0/new/Result_5.02TeV_pT_0_eta_0_Cent%d0_%d0.root",c,c+1));
+for(Int_t c = 2; c<7; c++){
+TFile* high = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-0/new/Result_5.02TeV_pT_0_eta_0_Cent%d0_%d0.root",c,c+1));
 //Getting the list(s) of files for all
-TFile* high = new TFile(Form("/project/alice/users/jlomker/AVFD/test/dirID-0/Pb/Analysis_pTrange_0_eta_0_Cent%d0_%d0.root",c,c+1));
+//TFile* high = new TFile(Form("/project/alice/users/jlomker/AVFD/test/dirID-0/Pb/Analysis_pTrange_0_eta_0_Cent%d0_%d0.root",c,c+1));
  
 //TList *qa = (TList*) file_all->Get("QAList;1");//Kinematics from POI`s
-//TList *flowQC = (TList*) file_all->Get("FlowQCList;1");//Matrices for calculations ?
+TList *flowQC = (TList*) file_all->Get("FlowQCList;1");//Matrices for calculations ?
 //TList *cme = (TList*) file_all->Get("CMEList;1");//(SS/OS/Delta) delta, gamma 
 //for pos particles 
 //TList *posFlowQC = (TList*) file_pos->Get("FlowQCList;1");//Matrices for calculations ?
 TList *higher = (TList*) high->Get("FlowQCList;1");
 
-//TH1F *v2_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][0][0]");
+TH1F *v2_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][0][0]");
 TH1F *v1 = (TH1F*) higher->FindObject(Form("fFlowQCFinalPtDifHist[0][%d][2][0]",c));
 TH1F *v1e = (TH1F*) higher->FindObject(Form("fFlowQCFinalEtaDifHist[0][%d][2][0]",c));
 TH1F *w1 = (TH1F*) higher->FindObject(Form("fFlowQCFinalPtDifHist[0][%d][1][0]",c));
 TH1F *v2e = (TH1F*) higher->FindObject(Form("fFlowQCFinalEtaDifHist[0][%d][1][0]",c));
-TProfile *vpT = (TProfile*) higher->FindObject(Form("fFlowQCQv1[0][%d][0]",c));
-TProfile *vEta = (TProfile*) higher->FindObject(Form("fFlowQCQv1[0][%d][1]",c));
+//TH1F *vpT = (TH1F*) higher->FindObject(Form("fFlowQCFinalPtDifHist[0][%d][0][0]",c));
+//TH1F *vEta = (TH1F*) higher->FindObject(Form("fFlowQCFinalEtaDifHist[0][%d][0][0]",c));
+//TProfile *vpT = (TProfile*) higher->FindObject(Form("fFlowQCQv1[0][%d][0]",c));
+//TProfile *vEta = (TProfile*) higher->FindObject(Form("fFlowQCQv1[0][%d][1]",c));
+//TH1F *vpT = (TH1F*) higher->FindObject(Form("fFlowQCQv1[0][%d][0]",c));
+//TH1F *vEta = (TH1F*) higher->FindObject(Form("fFlowQCQv1[0][%d][1]",c));
+
+TProfile *vEta = (TProfile*) higher->FindObject(Form("fFlowQCQv1[1][%d][1]",c));
+TProfile *vpT = (TProfile*) higher->FindObject(Form("fFlowQCQv1[1][%d][0]",c));
 //TH1F *v3_all = (TH1F*) flowQC->FindObject("fFlowQCFinalEtaDifHist[2][1][0]");
 //TH1F *v3_pos = (TH1F*) posFlowQC->FindObject("fFlowQCFinalEtaDifDeltaHist[2][1]");
 
@@ -54,24 +61,23 @@ vpT->GetXaxis()->SetRangeUser(0,5);
 vpT->GetXaxis()->SetTitle("p_{T} [GeV]");
 vpT->SetLineColor(kRed);
 vpT->Draw("same");
-VpT ->SaveAs(Form("ptv1_%d.pdf",c));
+VpT ->SaveAs(Form("Nptv1_%d.pdf",c));
 
 TCanvas *VEta = new TCanvas("veta","veta",400,400);
 VEta->SetLeftMargin(0.2);
 vEta->GetYaxis() -> SetTitleOffset(2.0);
-vEta->GetYaxis()->SetTitle("differential flow v_3}");
+vEta->GetYaxis()->SetTitle("differential flow v_{1}");
 vEta->GetXaxis()->SetTitle("#eta");
-vEta->GetYaxis()->SetRangeUser(-0.3,0.3);
+//vEta->GetYaxis()->SetRangeUser(-0.3,0.3);
 vEta->GetXaxis()->SetRangeUser(-1,1);
 vEta->SetLineColor(kRed);
 vEta->Draw("same");
-VEta ->SaveAs(Form("etav1_%d.pdf",c));
-
+VEta ->SaveAs(Form("Netav1_%d.pdf",c));
+/*
 TCanvas *V2 = new TCanvas("v2","pT",400,400);
 V2->SetLeftMargin(0.2);
 v1->GetYaxis() -> SetTitleOffset(2.0);
 v1->GetYaxis()->SetTitle("differential flow v_{3}");
-//v1->GetYaxis()->SetRangeUser(-0.3,0.3);
 v1->GetXaxis()->SetTitle("p_{T} [GeV]");
 v1->GetXaxis()->SetRangeUser(0.,5);
 v1->SetLineColor(kRed);
@@ -94,7 +100,6 @@ TCanvas *W1 = new TCanvas("v2","pT",400,400);
 W1->SetLeftMargin(0.2);
 w1->GetYaxis() -> SetTitleOffset(2.0);
 w1->GetYaxis()->SetTitle("differential flow v_{2}");
-//w1->GetYaxis()->SetRangeUser(-0.3,0.3);
 w1->GetXaxis()->SetRangeUser(0.,5);
 w1->GetXaxis()->SetTitle("p_{T} [GeV]");
 w1->SetLineColor(kRed);
@@ -112,7 +117,7 @@ v2e->GetXaxis()->SetRangeUser(-1,1);
 v2e->SetLineColor(kRed);
 v2e->Draw("same");
 W2 ->SaveAs(Form("etav2_%d.pdf",c));
-
+*/
 }
 ////**********************************************************/////
 ////*********************************************************/////
