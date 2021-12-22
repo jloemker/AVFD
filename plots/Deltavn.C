@@ -6,7 +6,7 @@
 #include <math.h>
 //======================================================================================
 //
-//Little helps : Problem with cloging the file again .. too many open files
+//Little helps 
 //
 //======================================================================================
 TH1F *Subsampling(TString file, TString obj, TH1F *result){
@@ -66,6 +66,18 @@ return result;
 //from subsampled histos -> calculate diff pos - neg and propagate final error magically without knowledge of the degree of correlation ...
 //took the saem equation for the \Delta vn Error as  in the CalculateFlowCME 
 
+//=================================================================================================
+//
+//The Main from this macro
+//
+//
+//Trouble notes:
+//______________
+//
+// 1) Error Propagation on \Deltav1 - here and in CalculateFlowCME.cxx
+// 2) Filling of hists at right place in the ClaculateFlowCME.cxx - maybe a loop earlier ? 
+// 3) Change limits/ranges and make things pretty
+//=================================================================================================
 void Deltavn(bool subsample_deltavn){
 	//Bins from CalculateFlowCME.cxx, for the not yet initialized histograms (\Delta vn)=======
 	Double_t fPtDiffNBins = 36;
