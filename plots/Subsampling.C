@@ -4,7 +4,6 @@
 #include <iostream>
 #include "TStyle.h"
 #include <math.h>
-//file to get the different centrality files 
 TH1F* Subsampling(TString file, TString obj){
 TH1F *result;
 TH1F *co;

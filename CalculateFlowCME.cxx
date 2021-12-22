@@ -513,15 +513,13 @@ void CalculateFlowCME::UserCreateOutputObjects() {
     // differential flow
 	for (Int_t h=0; h<fCRCnCen; h++) {
 		// for v1 calculation
-		for(Int_t spec = 0; spec <Nspectrum; spec++){
-		    if(spec == 1){
-			NbinsX = fEtaDiffNBins;
-        		for(Int_t i=0; i<51; i++){binsX[i] = etabinEdge[i];}		
-		    }
-		    fFlowQCQv1[q][h][spec] = new TProfile(Form("fFlowQCQv1[%d][%d][%d]",q,h,spec),Form("fFlowQCQv1[%d][%d][%d]",q,h,spec),NbinsX, binsX,"s");
-		    fFlowQCQv1[q][h][spec]->Sumw2();
-                    fFlowQCList->Add(fFlowQCQv1[q][h][spec]);
-		}
+		    fFlowQCQv1[q][h][0] = new TProfile(Form("fFlowQCQv1[%d][%d][0]",q,h),Form("fFlowQCQv1[%d][%d][0]",q,h),fPtDiffNBins,fCRCPtBins,"s");
+		    fFlowQCQv1[q][h][0]->Sumw2();
+                    fFlowQCList->Add(fFlowQCQv1[q][h][0]);
+                    fFlowQCQv1[q][h][1] = new TProfile(Form("fFlowQCQv1[%d][%d][1]",q,h),Form("fFlowQCQv1[%d][%d][1]",q,h),fEtaDiffNBins,fCRCEtaBins,"s");
+                    fFlowQCQv1[q][h][1]->Sumw2();
+                    fFlowQCList->Add(fFlowQCQv1[q][h][1]);
+
 		for(Int_t i=0; i<fFlowNHarm; i++) {
 			for(Int_t j=0; j<fFlowQCNPro; j++) {
 				fFlowQCCorPro[q][h][i][j] = new TProfile(Form("fFlowQCCorPro[%d][%d][%d][%d]",q,h,i,j),Form("fFlowQCCorPro[%d][%d][%d][%d]",q,h,i,j),fPtDiffNBins,fCRCPtBins,"s");
@@ -1704,14 +1702,12 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
 			fFlowQCCorPro[q][fCenBin][hr][0]->Fill(FillPtBin,dQC2,WdQM2*fCenWeightEbE);
 			if(hr == 0){fFlowQCCorPro[q][fCenBin][hr][0]->Fill(FillPtBin,qpRe0,WdQM2*fCenWeightEbE);}
 			dQ2f = kTRUE;
-			//DQC2[q][hr] += dQC2;
 		  }
 		  // product of correlations or covariances
 		  if(Q2f && dQ2f){ 
 			fFlowQCCorCovPro[q][fCenBin][hr][0]->Fill(FillPtBin,IQC2[q][hr]*dQC2,WQM2*WdQM2*fCenWeightEbE);
 			if(hr == 0){ fFlowQCCorCovPro[q][fCenBin][hr][0]->Fill(FillPtBin,qpRe0,WQM2*WdQM2*fCenWeightEbE);}
 			}
-	//	cout<<"hr "<<hr<<" val "<<IQC2[q][hr]*dQC2<<" weights "<<WQM2*WdQM2*fCenWeightEbE<<endl;}
 		//to get v1 with only cos(dPhhi)
                  if(hr==0){
                  fFlowQCFinalPtDifHist[q][h][hr][0]->SetBinContent(pt+1,fFlowQCQv1[q][h][0]->GetBinContent(pt+1));
@@ -1726,7 +1722,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
                   FillEtaBin = fPOIEtaDiffQRe[q][0][0]->GetBinCenter(eta+1);
                   qpRe0=0.; qpIm0=0.; qpM0=0.; qpM=0.; qpM2=0.;
 
-                  qpRe0 = fPOIEtaDiffQRe[q][0][hr]->GetBinContent(eta+1);//changed 0 to 1
+                  qpRe0 = fPOIEtaDiffQRe[q][0][hr]->GetBinContent(eta+1);
                   qpIm0 = fPOIEtaDiffQIm[q][0][hr]->GetBinContent(eta+1);
 
                   qpM0 = fPOIEtaDiffMul[q][0][hr]->GetBinContent(eta+1);
@@ -1738,7 +1734,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
                   if(qpM0>0 && WdQM2>0) {// p_n * Q_complxconj -> + sin
                   dQC2 = ((qpRe0*QRe+qpIm0*QIm)-qpM)/dQM2;
                   fFlowQCCorEtaPro[q][fCenBin][hr][0]->Fill(FillEtaBin,dQC2,WdQM2*fCenWeightEbE);
-		  if(hr == 0){ fFlowQCCorEtaPro[q][fCenBin][hr][0]->Fill(FillPtBin,qpRe0,WQM2*WdQM2*fCenWeightEbE);}
+		  if(hr == 0){ fFlowQCCorEtaPro[q][fCenBin][hr][0]->Fill(FillEtaBin,qpRe0,WQM2*WdQM2*fCenWeightEbE);}
 		  dQ2f = kTRUE;
                   }//filled with product of the two-particle cumulants QC{2'} ans QC{2} = <2> =(|Q|^2-M)/M(M-1) in 3.54 further used for flow via 3.43, 3.42
 		//but this is more x*y and not sum(x*y) - sum(x)*sum(y) 
@@ -1747,7 +1743,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
 			if(hr == 0){ fFlowQCCorCovEtaPro[q][fCenBin][hr][0]->Fill(FillPtBin,qpRe0,WQM2*WdQM2*fCenWeightEbE);}
 			}
 		//for v1 with only cos(dPhi)
-                 if(hr==0){
+		 if(hr==0){
                  fFlowQCFinalEtaDifHist[q][h][hr][0]->SetBinContent(eta+1,fFlowQCQv1[q][h][1]->GetBinContent(eta+1));
                  fFlowQCFinalEtaDifHist[q][h][hr][0]->SetBinError(eta+1,fFlowQCQv1[q][h][1]->GetBinError(eta+1));
                  }
@@ -2022,9 +2018,8 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
                     vposError = fFlowQCFinalPtDifHist[0][h][hr][0]->GetBinError(pt);
                     vnegError = fFlowQCFinalPtDifHist[1][h][hr][0]->GetBinError(pt);
                     deltav = vpos - vneg;
-                   	if(fabs(vpos)>0.&&fabs(vneg)>0.){
-                	//cout<<"works!"<<endl;
-                	deltavError = sqrt(abs(pow(vposError,2)-pow(vnegError,2)));
+                   	if(fabs(vpos)>0.&&fabs(vneg)>0.){//for partially correlated variables..no clue what the degree of correlation might be or how to get it yet.
+                	deltavError = sqrt(abs(pow(vposError,2)+pow(vnegError,2)-2*vnegError*vposError));
                 	fFlowQCFinalPtDifDeltaHist[h][hr]->SetBinContent(pt,deltav);//centrality, harmonic, cov
                 	fFlowQCFinalPtDifDeltaHist[h][hr]->SetBinError(pt, deltavError);
                      	}
@@ -2039,7 +2034,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
                     deltav = vpos - vneg;
                         if(fabs(vpos)>0.&&fabs(vneg)>0.){
                         //cout<<"works!"<<endl;
-                        deltavError = sqrt(abs(pow(vposError,2)-pow(vnegError,2)));
+                        deltavError = sqrt(abs(pow(vposError,2)+pow(vnegError,2)-2*vnegError*vposError));
                         fFlowQCFinalEtaDifDeltaHist[h][hr]->SetBinContent(eta,deltav);//centrality, harmonic, cov
                         fFlowQCFinalEtaDifDeltaHist[h][hr]->SetBinError(eta, deltavError);
                         }

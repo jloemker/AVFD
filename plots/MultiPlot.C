@@ -12,7 +12,7 @@ for(Int_t cen = 1; cen<7; cen++){
 TFile* f = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-0/new/Result_5.02TeV_pT_0_eta_0_Cent%d0_%d0.root",cen,cen+1));
 TList *l = (TList*) f->Get("FlowQCList;1");
 
-for(Int_t harm = 0; harm<1;harm++){
+for(Int_t harm = 0; harm<3;harm++){
 //histograms
 //eta and pt pos/neg
 
