@@ -14,7 +14,8 @@
 TH1F *Subsampling(TString file, TString obj, TH1F *result, Int_t c, Int_t harm){
 TFile *f;
 TH1F *co, *h;
-TH1F *Mean = (TH1F*)result;
+TH1D *Mean = new TH1D("Mean","Mean",11,0,10);
+//TH1F *Mean = (TH1F*)result;
 Int_t Nbins = result->GetNbinsX();
 cout<<"subsampling Nbins"<<Nbins<<endl;
 for(Int_t i=1; i<=Nbins; i++){
@@ -28,14 +29,15 @@ for(Int_t i=1; i<=Nbins; i++){
         	h = (TH1F*) l->FindObject(obj);
 
                 co = (TH1F*)h->Clone("co");
-		Mean->Fill(i, co->GetMean());
+		Mean->Fill(split+1,co->GetBinContent(9));
 
                 w[i] = 1./TMath::Power(co->GetBinError(i),2);//maybe i+1
                 wTotal +=w [i];
 
                 gCombinedValue += co->GetBinContent(i)*w[i];
                 gCombinedError += TMath::Power(co->GetBinError(i)*w[i],2);
-        	delete f;
+        //	Mean->Fill(split+1,co->GetBinContent(i)*w[i]);
+		delete f;
 	}
         gCombinedValue /= wTotal;
         gCombinedError = (1./wTotal)*TMath::Sqrt(gCombinedError);
@@ -44,24 +46,25 @@ for(Int_t i=1; i<=Nbins; i++){
                 result->SetBinError(i, gCombinedError);
         }
 }//end Nbins
+
 TCanvas *M = new TCanvas("M","M",400,400);
 M->SetLeftMargin(0.2);
 Mean->GetYaxis()->SetTitleOffset(2.0);
-Mean->GetYaxis()->SetTitle(Form("Mean of differential flow v_{%d}",harm+1));
+Mean->GetYaxis()->SetTitle(Form("All bin contens from differential flow v_{%d}",harm+1));
 Mean->GetXaxis()->SetRangeUser(0,10);
 Mean->GetXaxis()->SetTitle("split");
 Mean->SetLineColor(kRed);
-Mean->Draw("same");
+Mean->DrawCopy();
 M ->SaveAs(Form("Mean_"+obj+"v%d_%d.pdf",harm+1,c));
 delete M;
-
+delete Mean;
 return result;
 }//end Subsampling
 
 TH1F *Subsample_Dv(TString file, TString obj1,TString obj2, TH1F *result, Int_t c, Int_t harm){
 TFile *f;
 TH1F *Dv = (TH1F*)result;
-TH1F *Mean = (TH1F*)result;
+TH1D *MeanD = new TH1D("MeanD","MeanD",11,0,10);//(TH1F*)result;
 TH1F *P, *N;
 Int_t Nbins = result->GetNbinsX();
 
@@ -94,16 +97,18 @@ for(Int_t i=1; i<=Nbins; i++){
                          Dv->SetBinContent(i,deltav);
                          Dv->SetBinError(i, deltavError);
 			
-			 Mean->Fill(split+1, Dv->GetMean());
+			MeanD->Fill(split+1,Dv->GetBinContent(i));
         	}
 	w[i] = 1./TMath::Power(Dv->GetBinError(i),2);//maybe i+1
 	wTotal +=w [i];
 
 	gCombinedValue += Dv->GetBinContent(i)*w[i];
 	gCombinedError += TMath::Power(Dv->GetBinError(i)*w[i],2);
+	//MeanD->Fill(split+1,Dv->GetBinContent(i)*w[i]);
+
+	//evtl fill for gaussian here ?
 	delete f;
-	}//end of split	
-	
+	}//end of split		
 	gCombinedValue /= wTotal;
 	gCombinedError = (1./wTotal)*TMath::Sqrt(gCombinedError);
 	if(abs(gCombinedValue)>0){
@@ -113,18 +118,38 @@ for(Int_t i=1; i<=Nbins; i++){
 }//end Nbins
 TCanvas *M = new TCanvas("M","M",400,400);
 M->SetLeftMargin(0.2);
-Mean->GetYaxis()->SetTitleOffset(2.0);
-Mean->GetYaxis()->SetTitle(Form("Mean of differential flow v_{%d}",harm+1));
-Mean->GetXaxis()->SetRangeUser(0,10);
-Mean->GetXaxis()->SetTitle("split");
-Mean->SetLineColor(kRed);
-Mean->Draw("same");
-M ->SaveAs(Form("Mean_"+obj1+"_"+obj2+"v%d_%d.pdf",harm+1,c));
+MeanD->GetYaxis()->SetTitleOffset(2.0);
+MeanD->GetYaxis()->SetTitle(Form("All bin contents from differential flow v_{%d}",harm+1));
+MeanD->GetXaxis()->SetRangeUser(0,10);
+MeanD->GetXaxis()->SetTitle("split");
+MeanD->SetLineColor(kRed);
+MeanD->DrawCopy();
+M ->SaveAs(Form("DMean_"+obj1+"_"+obj2+"v%d_%d.pdf",harm+1,c));
 delete M;
-
+delete MeanD;
 return result;
 }//end Subsample
 
+/* Make a plot for all centralities
+void CentralityPlot(){
+for(Int_t c=1; c<7;c++){
+        cout<<"cen "<<c<<endl;
+        TString input = Form("/data/alice/jlomker/AVFD/result/dirID-0/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0",c,c+1);
+
+TCanvas *M = new TCanvas("M","M",400,400);
+M->SetLeftMargin(0.2);
+MeanD->GetYaxis()->SetTitleOffset(2.0);
+MeanD->GetYaxis()->SetTitle(Form("Mean of differential flow v_{%d}",harm+1));
+MeanD->GetXaxis()->SetRangeUser(0,10);
+MeanD->GetXaxis()->SetTitle("split");
+MeanD->SetLineColor(kRed);
+MeanD->Draw("same");
+}
+Cen ->SaveAs(Form("Mean_"+obj1+"_"+obj2+"v%d_%d.pdf",harm+1,c));
+delete Cen;
+
+}
+*/
 
 //from subsampled histos -> calculate diff pos - neg and propagate final error magically without knowledge of the degree of correlation ...
 //took the saem equation for the \Delta vn Error as  in the CalculateFlowCME 
@@ -142,7 +167,7 @@ return result;
 // 3) Automate things and make centrality evolution plots (via mean or multiple in 1 canvas) ?
 // 4) Change limits/ranges and make things pretty
 //=================================================================================================
-void Deltavn(bool subsample_deltavn, Int_t c){
+void Deltavn(bool subsample_deltavn, Int_t c, Int_t cmax, Int_t harm){
 	//Bins from CalculateFlowCME.cxx, for the not yet initialized histograms (\Delta vn)=======
 	Double_t fPtDiffNBins = 36;
 	Double_t fCRCPtBins[37];//actually 37 before
@@ -159,7 +184,7 @@ void Deltavn(bool subsample_deltavn, Int_t c){
 	cout<<"cen "<<c<<endl;
 	TString input = Form("/data/alice/jlomker/AVFD/result/dirID-0/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0",c,c+1);
 	// !!! For harm = 0 we could also try to use the fFlowQCQv1[pos=0, neg=1][cen][pt = 0, eta = 1] !!!
-	for(Int_t harm=0; harm<3; harm++){
+	//for(Int_t harm=0; harm<3; harm++){
 		cout<<"harm "<<harm<<endl;;
 		//apply subsampling to all histograms from pos/neg particles=======================
 		//mean from subsamples:
@@ -296,8 +321,14 @@ void Deltavn(bool subsample_deltavn, Int_t c){
 	NvEta->Delete();
 	DvEta->Delete();
 	delete cEta;
-}//end of hr<fkFlowNHarm
+//}//end of hr<fkFlowNHarm
 //}//end of centrality loop
+
+//add subsampled plots for multiple centralities
+for(Int_t cen = c; cen < cmax, cen++){
+
+
+}
 
 }//end void
 
