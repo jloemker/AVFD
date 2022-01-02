@@ -14,7 +14,6 @@ TH1F *Subsampling(TString file, TString obj, TH1F *result, Int_t c, Int_t harm){
 TFile *f;
 TH1F *co, *h;
 TH1D *Mean = new TH1D("Unweighted Bin Content","Unweighted Bin Content",11,0,10);
-//TH1F *Mean = (TH1F*)result;
 Int_t Nbins = result->GetNbinsX();
 cout<<"subsampling Nbins"<<Nbins<<endl;
 for(Int_t i=1; i<=Nbins; i++){
@@ -40,7 +39,8 @@ for(Int_t i=1; i<=Nbins; i++){
 	}
         gCombinedValue /= wTotal;
         gCombinedError = (1./wTotal)*TMath::Sqrt(gCombinedError);
-        if(abs(gCombinedValue)>0){
+        if(fabs(gCombinedValue)>0){
+        //cout<<"bin "<<i<<endl;
                 result->SetBinContent(i, gCombinedValue);
                 result->SetBinError(i, gCombinedError);
         }
@@ -52,7 +52,7 @@ Mean->GetYaxis()->SetTitleOffset(2.0);
 Mean->GetYaxis()->SetTitle(Form("All values from differential flow v_{%d}",harm+1));
 Mean->GetXaxis()->SetRangeUser(0,10);
 Mean->GetXaxis()->SetTitle("Split sample");
-Mean->SetLineColor(kRed);
+Mean->SetLineColor(c+harm);
 Mean->DrawCopy();
 M ->SaveAs(Form("v%d/Split_c%d_"+obj+".pdf",harm+1,c));
 delete M;
@@ -63,12 +63,12 @@ return result;
 TH1F *Subsample_Dv(TString file, TString obj1,TString obj2, TH1F *result, Int_t c, Int_t harm){
 TFile *f;
 TH1F *Dv = (TH1F*)result;
-TH1D *MeanD = new TH1D("Unweighted Bin Difference","Unweighted Bin Difference",11,0,10);//(TH1F*)result;
+TH1D *MeanD = new TH1D("Unweighted Bin Difference","Unweighted Bin Difference",11,0,10);
 TH1F *P, *N;
 Int_t Nbins = result->GetNbinsX();
 
 cout<<"subsampling Nbins"<<Nbins<<endl;
-for(Int_t i=1; i<Nbins; i++){// <= to check if pT plot improves
+for(Int_t i=1; i<=Nbins; i++){
 	Double_t w[100];
 	Double_t wTotal = 0.0;
 	Double_t gCombinedValue = 0.0;
@@ -110,7 +110,8 @@ for(Int_t i=1; i<Nbins; i++){// <= to check if pT plot improves
 	}//end of split		
 	gCombinedValue /= wTotal;
 	gCombinedError = (1./wTotal)*TMath::Sqrt(gCombinedError);
-	if(abs(gCombinedValue)>0){
+	if(fabs(gCombinedValue)>0){
+	//cout<<"bin "<<i<<endl;
 		result->SetBinContent(i, gCombinedValue);
 		result->SetBinError(i, gCombinedError);
 	}	
@@ -121,7 +122,7 @@ MeanD->GetYaxis()->SetTitleOffset(2.0);
 MeanD->GetYaxis()->SetTitle(Form("All values from differential flow v_{%d}",harm+1));
 MeanD->GetXaxis()->SetRangeUser(0,10);
 MeanD->GetXaxis()->SetTitle("split");
-MeanD->SetLineColor(kRed);
+MeanD->SetLineColor(c+harm);
 MeanD->DrawCopy();
 M ->SaveAs(Form("v%d/SplitDelta_c%d_"+obj1+".pdf",harm+1,c));
 delete M;
@@ -137,45 +138,42 @@ void PlotpT(TH1F *PvpT, TH1F *NvpT, TH1F *DvpT, Int_t c, Int_t harm){
         pad1->SetLeftMargin(0.2);
         pad1->Draw();             // Draw the upper pad: pad1
         pad1->cd();               // pad1 becomes the current pad//and filled with pos
-        PvpT->GetXaxis()->SetRangeUser(0.,5);
-        PvpT->SetLineColor(kRed-1);
+        PvpT->GetXaxis()->SetRange(1,21);
+        PvpT->SetLineColor(c+1);
         PvpT->SetLineWidth(2);
         PvpT->GetYaxis()->SetTitle(Form("differential flow v_{%d}",harm+1));
         PvpT->SetStats(0);
 	PvpT->SetTitle(" ");
         PvpT->DrawCopy();
-        NvpT->SetLineColor(kBlue-1);
+	NvpT->GetXaxis()->SetRange(1,21);//range in bins
+        NvpT->SetLineColor(c+2);
         NvpT->SetLineWidth(2);
 	NvpT->SetTitle(" ");
         NvpT->DrawCopy("same");
         auto L1 = new TLegend();
         L1->SetHeader("Pb-Pb, 5.02TeV, pT: 0.2 -5 GeV, #eta: 0.8","C");
-        L1->AddEntry(PvpT,Form("AVFD, pos, Cent %d0-%d0",c,c+1), "l");
-        L1->AddEntry(NvpT,Form("AVFD, neg, Cent %d0-%d0",c,c+1), "l");
+        L1->AddEntry(PvpT,Form("+h, Centrality %d0-%d0",c,c+1), "l");
+        L1->AddEntry(NvpT,Form("-h, Centrality %d0-%d0",c,c+1), "l");
         L1->Draw();
         c1->cd();          // Go back to the main canvas before defining pad2
         TPad *pad2 = new TPad("pad2", "pad2", 0, 0., 1, 0.5);
         pad2->SetTopMargin(0);
         pad2->SetLeftMargin(0.2);
-        pad2->SetRightMargin(4.);
+        //pad2->SetRightMargin(4.);
         pad2->SetBottomMargin(0.2);
         pad2->SetGridx(); // vertical grid
         pad2->Draw();
         pad2->cd();
 	DvpT->SetTitle(" ");
 	DvpT->SetStats(0);
-        DvpT->GetXaxis()->SetRangeUser(0.,5.);
-        DvpT->SetLineColor(kGreen-1);
+        DvpT->GetXaxis()->SetRange(1,21);
+        DvpT->SetLineColor(c);
         DvpT->SetLineWidth(2);
         DvpT->GetXaxis()->SetTitle("p_{T} [GeV]");
         DvpT->GetYaxis()->SetTitle(Form("#Delta v_{%d} = v_{%d}(+h) - v_{%d}(-h)",harm+1,harm+1,harm+1));
         DvpT->DrawCopy();
         c1->SaveAs(Form("v%d/pT_c%d.pdf",harm+1,c));
-/*
-        PvpT->Delete();
-        NvpT->Delete();
-        DvpT->Delete();
-*/ 
+ 
        delete c1;
 }
 
@@ -188,26 +186,26 @@ void PlotEta(TH1F *PvEta, TH1F *NvEta, TH1F *DvEta,Int_t c, Int_t harm){
         padeta1->Draw();
         padeta1->cd();
         PvEta->GetXaxis()->SetRangeUser(-0.9,0.9);
-        PvEta->SetLineColor(kRed+1);
+        PvEta->SetLineColor(c+1);
         PvEta->SetLineWidth(2);
         PvEta->GetYaxis()->SetTitle(Form("differential flow v_{%d}",harm+1));
         PvEta->SetStats(0);
 	PvEta->SetTitle(" ");
         PvEta->DrawCopy();
-        NvEta->SetLineColor(kBlue+1);
+        NvEta->SetLineColor(c+2);
         NvEta->SetLineWidth(2);
 	NvEta->SetTitle(" ");
         NvEta->DrawCopy("same");
         auto L2 = new TLegend();
         L2->SetHeader("Pb-Pb, 5.02TeV, pT: 0.2 -5 GeV, #eta: 0.8","C");
-        L2->AddEntry(PvEta,Form("AVFD, pos, Cent %d0-%d0",c,c+1), "l");
-        L2->AddEntry(NvEta,Form("AVFD, neg, Cent %d0-%d0",c,c+1), "l");
+        L2->AddEntry(PvEta,Form("+h, Centrality %d0-%d0",c,c+1), "l");
+        L2->AddEntry(NvEta,Form("-h, Centrality %d0-%d0",c,c+1), "l");
         L2->Draw();
         cEta->cd();
         TPad *padeta2 = new TPad("padeta2", "padeta2", 0, 0., 1, 0.5);
         padeta2->SetTopMargin(0);
         padeta2->SetLeftMargin(0.2);
-        padeta2->SetRightMargin(4.);
+        //padeta2->SetRightMargin(4.);
         padeta2->SetBottomMargin(0.2);
         padeta2->SetGridx();
         padeta2->Draw();
@@ -216,16 +214,12 @@ void PlotEta(TH1F *PvEta, TH1F *NvEta, TH1F *DvEta,Int_t c, Int_t harm){
         DvEta->GetXaxis()->SetRangeUser(-0.9,0.9);
         DvEta->GetXaxis()->SetTitle("#eta");
 	DvEta->SetTitle(" ");
-        DvEta->SetLineColor(kGreen+1);
+        DvEta->SetLineColor(c);
         DvEta->SetLineWidth(2);
         DvEta->GetYaxis()->SetTitle(Form("#Delta v_{%d} = v_{%d}(+h) - v_{%d}(-h)",harm+1,harm+1,harm+1));
         DvEta->DrawCopy();
         cEta->SaveAs(Form("v%d/eta_c%d.pdf",harm+1,c));
-/*
-        PvEta->Delete();
-        NvEta->Delete();
-        DvEta->Delete();
-*/
+
         delete cEta;
 
 }
@@ -243,13 +237,12 @@ void PlotEta(TH1F *PvEta, TH1F *NvEta, TH1F *DvEta,Int_t c, Int_t harm){
 //
 // 1) Error Propagation on \Deltav1 - here and in CalculateFlowCME.cxx
 // 2) Filling of hists at right place in the ClaculateFlowCME.cxx - maybe a loop earlier ? 
-// 3) Automate things and make centrality evolution plots (via mean or multiple in 1 canvas) ?
-// 4) Change limits/ranges and make things pretty
+// 3) Change limits/ranges and make things pretty
 //=================================================================================================
 void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
 	//Bins from CalculateFlowCME.cxx, for the not yet initialized histograms (\Delta vn)=======
 	Double_t fPtDiffNBins = 36;
-	Double_t fCRCPtBins[36];//actually 37 before
+	Double_t fCRCPtBins[37]={0};//actually 37 before
 	Double_t PtBins[37] = {0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.,1.25,1.5,1.75,2.,2.25,2.5,2.75,3.,3.25,3.5,3.75,4.,4.5,5.,5.5,6.,7.,8.,9.,10.,12.,14.,17.,20.,25.,30.,40.,50.};
 	for(Int_t r=0; r<37; r++){fCRCPtBins[r] = PtBins[r];}
 
@@ -258,35 +251,19 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
 	Double_t etabinEdge[51] = {-3.5,-3.25,-3,-2.75,-2.5,-2.25,-2,-1.8,-1.7,-1.6,-1.5,-1.4,-1.3,-1.2,-1.1,-1,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,2,2.25,2.5,2.75,3,3.25,3.5};
 	for(Int_t i=0; i<51; i++){fCRCEtaBins[i] = etabinEdge[i];}
 
-//=========================================================================================
-	TH1F *cen;
-	if(pT == true){cen = new TH1F("Multiple Centralities","Multiple Centralities",fPtDiffNBins, fCRCPtBins);}
-	else if(pT == false){cen = new TH1F("Multiple Centralities", "Multiple Centralities", fEtaDiffNBins, fCRCEtaBins);}
-	//generate empty hist with bins from above !
+//================================================================================================
+	//generate empty canvas for multiple centrality plots
         TCanvas *Cen = new TCanvas("Cen","Cen",400,400);//one for pT's and one for eta's
         Cen->SetLeftMargin(0.2);
-        cen->GetYaxis()->SetTitleOffset(2.0);
-        cen->GetYaxis()->SetTitle(Form("differential flow #Delta v_{%d}",harm+1));//cen->GetXaxis()->SetRangeUser(0,5);
-	if(pT == true){
-	cen->GetXaxis()->SetRangeUser(0.1,5);
-	cen->GetXaxis()->SetTitle("p_{T} [GeV]");
-	cen->GetYaxis()->SetRangeUser(-0.1,0.1);
-	}
-	else{
-	cen->GetXaxis()->SetRangeUser(-1,1);
-	cen->GetXaxis()->SetTitle("#eta");
-	}
-	cen->SetStats(0);        
-	cen->DrawCopy();
-        auto C = new TLegend();
+	auto C = new TLegend();
         C->SetHeader("Pb-Pb, 5.02TeV, pT: 0.2 -5 GeV, #eta: 0.8","C");
 
 	for(Int_t c=cent; c<=cmax;c++){
-	cout<<"cen "<<c<<endl;
+	cout<<"centrality "<<c<<endl;
 	TString input = Form("/data/alice/jlomker/AVFD/result/dirID-0/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0",c,c+1);
 	// !!! For harm = 0 we could also try to use the fFlowQCQv1[pos=0, neg=1][cen][pt = 0, eta = 1] !!!
 	//for(Int_t harm=0; harm<3; harm++){
-		cout<<"harm "<<harm<<endl;;
+		cout<<"harmonic - 1: "<<harm<<endl;;
 		//apply subsampling to all histograms from pos/neg particles=======================
 		//mean from subsamples:
 		if(pT == true){
@@ -297,9 +274,24 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
 		TH1F *DvpT = new TH1F("dvnpT","dvnpT",fPtDiffNBins,fCRCPtBins);
 		DvpT = Subsample_Dv(input, Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm),Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm), DvpT, c, harm);
 	 	//Plot the difference for multiple centralities====================================	
-		DvpT->SetLineColor(c);
-		C->AddEntry(DvpT,Form("AVFD, Cent %d0-%d0",c,c+1), "l");
-		DvpT->DrawCopy("same");//draws hoefully in Cen canvas
+		if(c == cent){//draw vn difference for multiple centralities       
+			DvpT->GetYaxis()->SetTitleOffset(2.0);
+        		DvpT->GetYaxis()->SetTitle(Form("differential flow #Delta v_{%d}",harm+1));//cen->GetXaxis()->SetRangeUser(0,5);
+        		DvpT->SetStats(0);
+			DvpT->SetTitle(" ");
+			DvpT->GetXaxis()->SetRange(1,22);
+        		DvpT->GetXaxis()->SetTitle("p_{T} [GeV]");
+        		//DvpT->SetAxisRange(0,5,"X");
+			DvpT->SetLineColor(c);
+			C->AddEntry(DvpT,Form("AVFD, Centrality %d0-%d0",c,c+1),"l");
+			DvpT->DrawCopy();
+		   }else if(c>cent){
+			DvpT->GetXaxis()->SetRange(1,22);
+			//DvpT->SetAxisRange(0,5,"X");
+			DvpT->SetLineColor(c);
+			C->AddEntry(DvpT,Form("AVFD, Centrylity %d0-%d0",c,c+1), "l");
+			DvpT->DrawCopy("same");
+		}
 		//Plot the pos/neg with difference================================================= 
 		PlotpT(PvpT, NvpT, DvpT, c, harm);// plot will delete all hists!
 		
@@ -307,7 +299,7 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
         	NvpT->Delete();
         	//DvpT->Delete();
 		}//end of pT if
-		else{
+		else if(pT == false){
 		TH1F *PvEta = new TH1F("pvEta","pvEta",fEtaDiffNBins,fCRCEtaBins);
 		PvEta = Subsampling(input,Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm), PvEta, c, harm);
 		TH1F *NvEta = new TH1F("nvEta", "nvEta", fEtaDiffNBins, fCRCEtaBins);
@@ -315,15 +307,29 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
 		TH1F *DvEta = new TH1F("deltavneta","deltavneta",fEtaDiffNBins,fCRCEtaBins);
 		DvEta = Subsample_Dv(input, Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm), Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm), DvEta, c, harm);
 		//Plot the difference for multiple centralities====================================
-		DvEta->SetLineColor(c);
-        	C->AddEntry(DvEta,Form("AVFD, Cent %d0-%d0",c,c+1), "l");
-		DvEta->DrawCopy("same");
+		if(c==cent){ 
+			DvEta->GetYaxis()->SetTitleOffset(2.0);
+			DvEta->GetYaxis()->SetTitle(Form("differential flow #Delta v_{%d}",harm+1));
+        		DvEta->GetXaxis()->SetRangeUser(-0.9,0.9);
+        		DvEta->GetXaxis()->SetTitle("#eta");
+        		DvEta->SetStats(0);
+			DvEta->SetTitle(" ");
+			DvEta->SetLineColor(c);
+			C->AddEntry(DvEta,Form("AVFD, Centrality %d0-%d0",c,c+1),"l");
+	        	DvEta->DrawCopy();
+		   }else if(c>cent){
+                        DvEta->SetLineColor(c);
+			DvEta->GetXaxis()->SetRangeUser(-0.9,0.9);
+                        C->AddEntry(DvEta,Form("AVFD, Centrylity %d0-%d0",c,c+1), "l");
+                        DvEta->DrawCopy("same");
+		}
+
 		//Plot the pos/neg with difference=================================================
 		PlotEta(PvEta, NvEta, DvEta, c, harm);
 		
         	PvEta->Delete();
         	NvEta->Delete();
-	        DvEta->Delete();
+	        //DvEta->Delete();
 		}//end of eta if
 		/*
       		else if(subsample_deltavn == false){
@@ -363,13 +369,12 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
 
 }//centrality loop
 C->Draw();
-Cen->SaveAs(Form("v%d/Multi_cen%d_%d.pdf",harm+1,cent,cmax));
+if(pT==true){Cen->SaveAs(Form("v%d/Pt_Multi_cen%d_%d.pdf",harm+1,cent,cmax));}
+else if(pT == false){Cen->SaveAs(Form("v%d/Eta_Multi_cen%d_%d.pdf",harm+1,cent,cmax));}
 //delete C;
 delete Cen;
-delete cen;
 
 //}//end of hr<fkFlowNHarm
-//}//end of centrality loop
 
 }//end void
 
