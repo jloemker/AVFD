@@ -138,14 +138,14 @@ void PlotpT(TH1F *PvpT, TH1F *NvpT, TH1F *DvpT, Int_t c, Int_t harm){
         pad1->SetLeftMargin(0.2);
         pad1->Draw();             // Draw the upper pad: pad1
         pad1->cd();               // pad1 becomes the current pad//and filled with pos
-        PvpT->GetXaxis()->SetRange(1,21);
+        PvpT->GetXaxis()->SetRange(1,22);
         PvpT->SetLineColor(c+1);
         PvpT->SetLineWidth(2);
         PvpT->GetYaxis()->SetTitle(Form("differential flow v_{%d}",harm+1));
         PvpT->SetStats(0);
 	PvpT->SetTitle(" ");
         PvpT->DrawCopy();
-	NvpT->GetXaxis()->SetRange(1,21);//range in bins
+	NvpT->GetXaxis()->SetRange(1,22);//range in bins
         NvpT->SetLineColor(c+2);
         NvpT->SetLineWidth(2);
 	NvpT->SetTitle(" ");
@@ -166,7 +166,7 @@ void PlotpT(TH1F *PvpT, TH1F *NvpT, TH1F *DvpT, Int_t c, Int_t harm){
         pad2->cd();
 	DvpT->SetTitle(" ");
 	DvpT->SetStats(0);
-        DvpT->GetXaxis()->SetRange(1,21);
+        DvpT->GetXaxis()->SetRange(1,22);
         DvpT->SetLineColor(c);
         DvpT->SetLineWidth(2);
         DvpT->GetXaxis()->SetTitle("p_{T} [GeV]");
@@ -242,12 +242,12 @@ void PlotEta(TH1F *PvEta, TH1F *NvEta, TH1F *DvEta,Int_t c, Int_t harm){
 void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
 	//Bins from CalculateFlowCME.cxx, for the not yet initialized histograms (\Delta vn)=======
 	Double_t fPtDiffNBins = 36;
-	Double_t fCRCPtBins[37]={0};//actually 37 before
+	Double_t fCRCPtBins[37]={0};
 	Double_t PtBins[37] = {0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.,1.25,1.5,1.75,2.,2.25,2.5,2.75,3.,3.25,3.5,3.75,4.,4.5,5.,5.5,6.,7.,8.,9.,10.,12.,14.,17.,20.,25.,30.,40.,50.};
 	for(Int_t r=0; r<37; r++){fCRCPtBins[r] = PtBins[r];}
 
 	Double_t fEtaDiffNBins = 50;
-	Double_t fCRCEtaBins[51];
+	Double_t fCRCEtaBins[51]={0};
 	Double_t etabinEdge[51] = {-3.5,-3.25,-3,-2.75,-2.5,-2.25,-2,-1.8,-1.7,-1.6,-1.5,-1.4,-1.3,-1.2,-1.1,-1,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,2,2.25,2.5,2.75,3,3.25,3.5};
 	for(Int_t i=0; i<51; i++){fCRCEtaBins[i] = etabinEdge[i];}
 
