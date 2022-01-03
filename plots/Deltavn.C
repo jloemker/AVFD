@@ -10,11 +10,12 @@
 //
 //
 //======================================================================================
-TH1F *Subsampling(TString file, TString obj, TH1F *result, Int_t c, Int_t harm){
+TH1F *Subsampling(TString file, TString obj, Double_t binArr[], TH1F *result, Int_t c, Int_t harm){
 TFile *f;
 TH1F *co, *h;
-TH1D *Mean = new TH1D("Unweighted Bin Content","Unweighted Bin Content",11,0,10);
 Int_t Nbins = result->GetNbinsX();
+TProfile *Mint = new TProfile("Weighted Bin Content","Weighted Bin Content",11,0,10,"s");
+TProfile *Mdiff = new TProfile("Unweighted Bin Content","Unweighted Bin Content",Nbins,binArr);
 cout<<"subsampling Nbins"<<Nbins<<endl;
 for(Int_t i=1; i<=Nbins; i++){
         Double_t w[100];
@@ -25,13 +26,13 @@ for(Int_t i=1; i<=Nbins; i++){
 	        f = new TFile(Form(file+"_split_%d.root",split));
         	TList *l = (TList*) f->Get("FlowQCList;1");
         	h = (TH1F*) l->FindObject(obj);
-
                 co = (TH1F*)h->Clone("co");
-		Mean->Fill(split+1,co->GetBinContent(i));
+
+		Mdiff->Fill(binArr[i],co->GetBinContent(i));//differential value for all subsamples without weight
+		Mint->Fill(split+1,co->GetBinContent(i),Nbins);//integrated value over all bins, weighted by #bins
 
                 w[i] = 1./TMath::Power(co->GetBinError(i),2);
                 wTotal +=w [i];
-
                 gCombinedValue += co->GetBinContent(i)*w[i];
                 gCombinedError += TMath::Power(co->GetBinError(i)*w[i],2);
 		
@@ -40,7 +41,6 @@ for(Int_t i=1; i<=Nbins; i++){
         gCombinedValue /= wTotal;
         gCombinedError = (1./wTotal)*TMath::Sqrt(gCombinedError);
         if(fabs(gCombinedValue)>0){
-        //cout<<"bin "<<i<<endl;
                 result->SetBinContent(i, gCombinedValue);
                 result->SetBinError(i, gCombinedError);
         }
@@ -48,24 +48,43 @@ for(Int_t i=1; i<=Nbins; i++){
 
 TCanvas *M = new TCanvas("M","M",400,400);
 M->SetLeftMargin(0.2);
-Mean->GetYaxis()->SetTitleOffset(2.0);
-Mean->GetYaxis()->SetTitle(Form("All values from differential flow v_{%d}",harm+1));
-Mean->GetXaxis()->SetRangeUser(0,10);
-Mean->GetXaxis()->SetTitle("Split sample");
-Mean->SetLineColor(c+harm);
-Mean->DrawCopy();
-M ->SaveAs(Form("v%d/Split_c%d_"+obj+".pdf",harm+1,c));
+Mdiff->GetYaxis()->SetTitleOffset(2.0);
+Mdiff->GetYaxis()->SetTitle(Form("differential flow v_{%d} from all splitfiles",harm+1));
+if(Nbins<40){//pT bins
+Mdiff->GetXaxis()->SetTitle("p_{T} [GeV]");
+Mdiff->GetXaxis()->SetRange(1,22);//range in bins !
+}else if(Nbins>40){
+Mdiff->GetXaxis()->SetTitle("#eta");
+Mdiff->GetXaxis()->SetRangeUser(-0.9,0.9);
+}
+Mdiff->SetLineColor(c+harm);
+Mdiff->DrawCopy();
+M ->SaveAs(Form("v%d/Mdiff_c%d_"+obj+".pdf",harm+1,c));
 delete M;
-delete Mean;
+delete Mdiff;
+
+TCanvas *Mi = new TCanvas("Mi","Mi",400,400);
+Mi->SetLeftMargin(0.2);
+Mint->GetYaxis()->SetTitleOffset(2.0);
+Mint->GetYaxis()->SetTitle(Form("differential flow v_{%d} from all bins",harm+1));
+Mint->GetXaxis()->SetTitle("Split file");
+Mint->GetXaxis()->SetRangeUser(0,10);
+Mint->SetLineColor(c+harm);
+Mint->DrawCopy();
+Mi ->SaveAs(Form("v%d/Mint_c%d_"+obj+".pdf",harm+1,c));
+delete Mi;
+delete Mint;
 return result;
 }//end Subsampling
 
-TH1F *Subsample_Dv(TString file, TString obj1,TString obj2, TH1F *result, Int_t c, Int_t harm){
+TH1F *Subsample_Dv(TString file, TString obj1,TString obj2, Double_t binArr[], TH1F *result, Int_t c, Int_t harm){
 TFile *f;
 TH1F *Dv = (TH1F*)result;
-TH1D *MeanD = new TH1D("Unweighted Bin Difference","Unweighted Bin Difference",11,0,10);
-TH1F *P, *N;
 Int_t Nbins = result->GetNbinsX();
+TH1D *MeanD = new TH1D("Unweighted Bin Difference","Unweighted Bin Difference",11,0,10);
+TProfile *Dint = new TProfile("Weighted Bin Content","Weighted Bin Content",11,0,10,"s");
+TProfile *Diff = new TProfile("Unweighted Bin Content","Unweighted Bin Content",Nbins,binArr);
+TH1F *P, *N;
 
 cout<<"subsampling Nbins"<<Nbins<<endl;
 for(Int_t i=1; i<=Nbins; i++){
@@ -95,38 +114,52 @@ for(Int_t i=1; i<=Nbins; i++){
                          deltavError = sqrt(abs(pow(vposError,2)+pow(vnegError,2)-2*vnegError*vposError));
                          Dv->SetBinContent(i,deltav);
                          Dv->SetBinError(i, deltavError);
-			
-			MeanD->Fill(split+1,Dv->GetBinContent(i));
+	
+	                 Diff->Fill(binArr[i],Dv->GetBinContent(i));//differential value for all subsamples without weight
+        	         Dint->Fill(split+1,Dv->GetBinContent(i),Nbins);//integrated value over all bins, weighted by #bins
         	}
 	w[i] = 1./TMath::Power(Dv->GetBinError(i),2);//maybe i+1
 	wTotal +=w [i];
-
 	gCombinedValue += Dv->GetBinContent(i)*w[i];
 	gCombinedError += TMath::Power(Dv->GetBinError(i)*w[i],2);
-	//MeanD->Fill(split+1,Dv->GetBinContent(i)*w[i]);
 
-	//evtl fill for gaussian here ?
 	delete f;
 	}//end of split		
 	gCombinedValue /= wTotal;
 	gCombinedError = (1./wTotal)*TMath::Sqrt(gCombinedError);
 	if(fabs(gCombinedValue)>0){
-	//cout<<"bin "<<i<<endl;
 		result->SetBinContent(i, gCombinedValue);
 		result->SetBinError(i, gCombinedError);
 	}	
 }//end Nbins
 TCanvas *M = new TCanvas("M","M",400,400);
 M->SetLeftMargin(0.2);
-MeanD->GetYaxis()->SetTitleOffset(2.0);
-MeanD->GetYaxis()->SetTitle(Form("All values from differential flow v_{%d}",harm+1));
-MeanD->GetXaxis()->SetRangeUser(0,10);
-MeanD->GetXaxis()->SetTitle("split");
-MeanD->SetLineColor(c+harm);
-MeanD->DrawCopy();
-M ->SaveAs(Form("v%d/SplitDelta_c%d_"+obj1+".pdf",harm+1,c));
+Diff->GetYaxis()->SetTitleOffset(2.0);
+Diff->GetYaxis()->SetTitle(Form("#Delta v_{%d} from all splitfiles",harm+1));
+if(Nbins<40){//pT bins
+Diff->GetXaxis()->SetTitle("p_{T} [GeV]");
+Diff->GetXaxis()->SetRange(1,22);//range in bins !
+}else if(Nbins>40){
+Diff->GetXaxis()->SetTitle("#eta");
+Diff->GetXaxis()->SetRangeUser(-0.9,0.9);
+}
+Diff->SetLineColor(c+harm);
+Diff->DrawCopy();
+M ->SaveAs(Form("v%d/Diff_c%d_"+obj1+".pdf",harm+1,c));
 delete M;
-delete MeanD;
+delete Diff;
+
+TCanvas *Mi = new TCanvas("Mi","Mi",400,400);
+Mi->SetLeftMargin(0.2);
+Dint->GetYaxis()->SetTitleOffset(2.0);
+Dint->GetYaxis()->SetTitle(Form("#Delta v_{%d} from all bins",harm+1));
+Dint->GetXaxis()->SetTitle("Split file");
+Dint->GetXaxis()->SetRangeUser(0,10);
+Dint->SetLineColor(c+harm);
+Dint->DrawCopy();
+Mi ->SaveAs(Form("v%d/Dint_c%d_"+obj1+".pdf",harm+1,c));
+delete Mi;
+delete Dint;
 return result;
 }//end Subsample
 
@@ -186,12 +219,14 @@ void PlotEta(TH1F *PvEta, TH1F *NvEta, TH1F *DvEta,Int_t c, Int_t harm){
         padeta1->Draw();
         padeta1->cd();
         PvEta->GetXaxis()->SetRangeUser(-0.9,0.9);
+	PvEta->GetXaxis()->SetNdivisions(4);
         PvEta->SetLineColor(c+1);
         PvEta->SetLineWidth(2);
         PvEta->GetYaxis()->SetTitle(Form("differential flow v_{%d}",harm+1));
         PvEta->SetStats(0);
 	PvEta->SetTitle(" ");
         PvEta->DrawCopy();
+	NvEta->GetXaxis()->SetNdivisions(4);
         NvEta->SetLineColor(c+2);
         NvEta->SetLineWidth(2);
 	NvEta->SetTitle(" ");
@@ -240,6 +275,7 @@ void PlotEta(TH1F *PvEta, TH1F *NvEta, TH1F *DvEta,Int_t c, Int_t harm){
 // 3) Change limits/ranges and make things pretty
 //=================================================================================================
 void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
+	gROOT->SetBatch();//to avoid opening the plots ak bad wifi struggle
 	//Bins from CalculateFlowCME.cxx, for the not yet initialized histograms (\Delta vn)=======
 	Double_t fPtDiffNBins = 36;
 	Double_t fCRCPtBins[37]={0};
@@ -268,11 +304,11 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
 		//mean from subsamples:
 		if(pT == true){
 		TH1F *PvpT = new TH1F("pvpT", "pvpT", fPtDiffNBins, fCRCPtBins);
-		PvpT = Subsampling(input,Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm), PvpT, c, harm);
+		PvpT = Subsampling(input,Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm),fCRCPtBins, PvpT, c, harm);
 		TH1F *NvpT = new TH1F("nvpT","nvpT",fPtDiffNBins,fCRCPtBins);
-		NvpT = Subsampling(input,Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm), NvpT, c ,harm);
+		NvpT = Subsampling(input,Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm),fCRCPtBins, NvpT, c ,harm);
 		TH1F *DvpT = new TH1F("dvnpT","dvnpT",fPtDiffNBins,fCRCPtBins);
-		DvpT = Subsample_Dv(input, Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm),Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm), DvpT, c, harm);
+		DvpT = Subsample_Dv(input, Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm),Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm), fCRCPtBins, DvpT, c, harm);
 	 	//Plot the difference for multiple centralities====================================	
 		if(c == cent){//draw vn difference for multiple centralities       
 			DvpT->GetYaxis()->SetTitleOffset(2.0);
@@ -301,11 +337,11 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
 		}//end of pT if
 		else if(pT == false){
 		TH1F *PvEta = new TH1F("pvEta","pvEta",fEtaDiffNBins,fCRCEtaBins);
-		PvEta = Subsampling(input,Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm), PvEta, c, harm);
+		PvEta = Subsampling(input,Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm),fCRCEtaBins, PvEta, c, harm);
 		TH1F *NvEta = new TH1F("nvEta", "nvEta", fEtaDiffNBins, fCRCEtaBins);
-		NvEta = Subsampling(input,Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm), NvEta, c, harm);
+		NvEta = Subsampling(input,Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm),fCRCEtaBins, NvEta, c, harm);
 		TH1F *DvEta = new TH1F("deltavneta","deltavneta",fEtaDiffNBins,fCRCEtaBins);
-		DvEta = Subsample_Dv(input, Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm), Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm), DvEta, c, harm);
+		DvEta = Subsample_Dv(input, Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm), Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm), fCRCEtaBins, DvEta, c, harm);
 		//Plot the difference for multiple centralities====================================
 		if(c==cent){ 
 			DvEta->GetYaxis()->SetTitleOffset(2.0);
