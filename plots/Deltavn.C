@@ -8,42 +8,41 @@
 //
 //Little helps
 //
-//let’s try to confirm that the spread we see on the left plot is correct then as a cross-check; 
-//let’s pick three pT bins and make an 1D histogram for each of these bins that will be filled with the v1 values of all samples; 
-//then compare the std deviation of the 1D histo with the spread of the TProfile for this pT bin
-//
 //======================================================================================
-void CrossCheck(TProfile *Prof, TH1D *hist, Int_t bin, Double_t binValue){
-//calculate spread for Profile and std from TH1D
+void CrossCheck(TProfile *Prof, TH1D *hist, Int_t bin){//calculate spread for Profile and std from TH1D
 //for(Int_t bin=1; bin<36; bin++){
-	Double_t stats[6] = {0.};
+	Double_t N = Prof->GetNbinsX();
+	Double_t stats[6] = {0.};//double check if not rather [2][3] of relevance -> Filling
 	Prof->GetXaxis()->SetRange(bin,bin);
 	Prof->GetStats(stats);
 	Double_t SumWeig   = stats[0];
         Double_t SumWeigSq  = stats[1];
         Double_t SumTwo  = stats[4];
         Double_t SumTwoSq = stats[5];
-//wtf one is 0 the other has a value in hist->(bin ?!)
-	cout<<"bin Nr:"<<bin<<" binValue "<<binValue<<" contentProfile "<<Prof->GetBinContent(bin)<<" contentHist "<< hist->GetBinContent(bin)<<endl;
-	Double_t spread = pow( fabs(pow(SumTwo/SumWeig,2)- SumTwoSq/SumWeigSq) ,0.5);
+	cout<<"Cross check bin Nr:"<<bin<<endl;
+	cout<<"Content Profile "<< Prof->GetBinContent(bin) <<endl;//" contentHist "<< hist->GetBinContent(5)<<endl;
+	Double_t spread = sqrt(fabs(pow(SumTwo/SumWeig,2)- SumTwoSq/SumWeigSq));
 	Double_t histErr = hist->GetRMS();
-	Double_t histErr1 = hist->GetStdDev();
-	Double_t histErr2 = hist->GetBinError(bin);
-	cout<<" TProfile spread "<<spread<<"; hist->GetBinError "<<histErr2<<"; (hist->GetRMS)"<<histErr<<"; (hist->GetStdDev) "<<histErr1<<endl;
+	Double_t spreadP = Prof->GetRMS(bin);
+	cout<<" TProfile spread "<<spread<<" hist->GetRMS() "<<histErr<<endl;
+	cout<<" TProfile->GetRMS(bin) "<<spreadP<<endl;
+	Prof->GetXaxis()->SetRange(1,N);
 //}
 }//end void
 
 TH1F *Subsampling(TString file, TString obj, Double_t binArr[], TH1F *result, Int_t c, Int_t harm){
-Int_t binMin=15;
-Double_t binMinArr = binArr[binMin];
 TFile *f;
 TH1F *co, *h;
 Int_t Nbins = result->GetNbinsX();
-TH1D *hist = new TH1D("hist","hist",Nbins,binArr);
+//TH1D *hist = new TH1D("hist","hist",Nbins,binArr);
 TProfile *Mint = new TProfile("Weighted Bin Content","Weighted Bin Content",11,0,10,"s");
 TProfile *Mdiff = new TProfile("Unweighted Bin Content","Unweighted Bin Content",Nbins,binArr);
-cout<<"subsampling Nbins"<<Nbins<<endl;
+
+if(Nbins<50){cout<<"Subsampling pT"<<endl;}
+else if(Nbins>50){cout<<"Subsampling #eta"<<endl;}
+
 for(Int_t i=1; i<=Nbins; i++){
+	TH1D *hist = new TH1D("CrossCheck","CrossCheck",11,0,10);//"hist","hist",1,binArr[i-1]);
         Double_t w[100];
         Double_t wTotal = 0.0;
         Double_t gCombinedValue = 0.0;
@@ -55,8 +54,8 @@ for(Int_t i=1; i<=Nbins; i++){
                 co = (TH1F*)h->Clone("co");
 
 		Mdiff->Fill(binArr[i-1],co->GetBinContent(i));//differential value for all subsamples without weight
-		Mint->Fill(split+1,co->GetBinContent(i),Nbins);//integrated value over all bins, weighted by #bins
-		if(i==binMin){hist->Fill(binArr[i-1],co->GetBinContent(i));}
+		Mint->Fill(split+1,co->GetBinContent(i),Nbins);//integrated value over all bins, weighted by #bins		
+		hist->Fill(split+1,co->GetBinContent(i));//For CrossCheck with Mdiff
 
                 w[i] = 1./TMath::Power(co->GetBinError(i),2);
                 wTotal +=w [i];
@@ -71,8 +70,9 @@ for(Int_t i=1; i<=Nbins; i++){
                 result->SetBinContent(i, gCombinedValue);
                 result->SetBinError(i, gCombinedError);
         }
+	CrossCheck(Mdiff,hist,i);
+	delete hist;
 }//end Nbins
-CrossCheck(Mdiff,hist,binMin,binMinArr);//Profile, hist, bin range is integer -> relevant for spread calculation
 TCanvas *M = new TCanvas("M","M",400,400);
 M->SetLeftMargin(0.2);
 Mdiff->GetYaxis()->SetTitleOffset(2.0);
@@ -112,8 +112,9 @@ TH1D *MeanD = new TH1D("Unweighted Bin Difference","Unweighted Bin Difference",1
 TProfile *Dint = new TProfile("Weighted Bin Content","Weighted Bin Content",11,0,10,"s");
 TProfile *Diff = new TProfile("Unweighted Bin Content","Unweighted Bin Content",Nbins,binArr);
 TH1F *P, *N;
+if(Nbins<50){cout<<"Subsampling pT"<<endl;}
+else if(Nbins>50){cout<<"Subsampling #eta"<<endl;}
 
-cout<<"subsampling Nbins"<<Nbins<<endl;
 for(Int_t i=1; i<=Nbins; i++){
 	Double_t w[100];
 	Double_t wTotal = 0.0;
@@ -322,11 +323,11 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
         C->SetHeader("Pb-Pb, 5.02TeV, pT: 0.2 -5 GeV, #eta: 0.8","C");
 
 	for(Int_t c=cent; c<=cmax;c++){
-	cout<<"centrality "<<c<<endl;
+	cout<<"Centrality: "<<c<<"0-"<<(c+1)<<"0"<<endl;
 	TString input = Form("/data/alice/jlomker/AVFD/result/dirID-0/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0",c,c+1);
 	// !!! For harm = 0 we could also try to use the fFlowQCQv1[pos=0, neg=1][cen][pt = 0, eta = 1] !!!
 	//for(Int_t harm=0; harm<3; harm++){
-		cout<<"harmonic - 1: "<<harm<<endl;;
+		cout<<"Harmonic: "<<(harm+1)<<endl;;
 		//apply subsampling to all histograms from pos/neg particles=======================
 		//mean from subsamples:
 		if(pT == true){
