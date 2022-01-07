@@ -9,41 +9,32 @@
 //Little helps
 //
 //======================================================================================
-void CrossCheck(TProfile *Prof, TH1D *hist, Int_t bin){//calculate spread for Profile and std from TH1D
-//for(Int_t bin=1; bin<36; bin++){
+double CrossCheck(TProfile *Prof, TH1D *hist, Int_t bin){//calculate spread for Profile and std from TH1D
 	Double_t N = Prof->GetNbinsX();
-	Double_t stats[6] = {0.};//double check if not rather [2][3] of relevance -> Filling
-	Prof->GetXaxis()->SetRange(bin,bin);
-	Prof->GetStats(stats);
-	Double_t SumWeig   = stats[0];
-        Double_t SumWeigSq  = stats[1];
-        Double_t SumTwo  = stats[4];
-        Double_t SumTwoSq = stats[5];
-	cout<<"Cross check bin Nr:"<<bin<<endl;
-	cout<<"Content Profile "<< Prof->GetBinContent(bin) <<endl;//" contentHist "<< hist->GetBinContent(5)<<endl;
-	Double_t spread = sqrt(fabs(pow(SumTwo/SumWeig,2)- SumTwoSq/SumWeigSq));
-	Double_t histErr = hist->GetRMS();
-	Double_t spreadP = Prof->GetRMS(bin);
-	cout<<" TProfile spread "<<spread<<" hist->GetRMS() "<<histErr<<endl;
-	cout<<" TProfile->GetRMS(bin) "<<spreadP<<endl;
-	Prof->GetXaxis()->SetRange(1,N);
-//}
+	Double_t RMS = hist->GetRMS();
+	cout<<"Cross check bin_Nr:"<<bin<<endl;
+	cout<<"Content TProfile "<< Prof->GetBinContent(bin) <<endl;
+	for(Int_t i = 1; i<=hist->GetNbinsX(); i++){cout<<"Content 1D hist "<<hist->GetBinContent(i)<<endl;}
+	cout<<" TProfle->GetBinError(bin_Nr) "<<Prof->GetBinError(bin)<<" hist->GetRMS() "<<hist->GetRMS()<<endl;
+	return RMS;
 }//end void
 
 TH1F *Subsampling(TString file, TString obj, Double_t binArr[], TH1F *result, Int_t c, Int_t harm){
 TFile *f;
 TH1F *co, *h;
 Int_t Nbins = result->GetNbinsX();
-//TH1D *hist = new TH1D("hist","hist",Nbins,binArr);
-TProfile *Mint = new TProfile("Weighted Bin Content","Weighted Bin Content",11,0,10,"s");
-TProfile *Mdiff = new TProfile("Unweighted Bin Content","Unweighted Bin Content",Nbins,binArr);
+Double_t RMS[51] = {0.};
 
+TProfile *Mint = new TProfile("Weighted Bin Content","Weighted Bin Content",11,0,10,"s");
+TProfile *Mdiff = new TProfile("Unweighted Bin Content","Unweighted Bin Content",Nbins,binArr,"s");
+TH1F *rms = new TH1F("rms evolution","rms evolution",Nbins,binArr);
 if(Nbins<50){cout<<"Subsampling pT"<<endl;}
 else if(Nbins>50){cout<<"Subsampling #eta"<<endl;}
 
 for(Int_t i=1; i<=Nbins; i++){
 	TH1D *hist = new TH1D("CrossCheck","CrossCheck",11,0,10);//"hist","hist",1,binArr[i-1]);
-        Double_t w[100];
+        TH1D *cc = new TH1D();
+	Double_t w[100];
         Double_t wTotal = 0.0;
         Double_t gCombinedValue = 0.0;
         Double_t gCombinedError = 0.0;
@@ -55,7 +46,8 @@ for(Int_t i=1; i<=Nbins; i++){
 
 		Mdiff->Fill(binArr[i-1],co->GetBinContent(i));//differential value for all subsamples without weight
 		Mint->Fill(split+1,co->GetBinContent(i),Nbins);//integrated value over all bins, weighted by #bins		
-		hist->Fill(split+1,co->GetBinContent(i));//For CrossCheck with Mdiff
+		hist->Fill(split,co->GetBinContent(i));//For RMS vs split evolution
+		cc->Fill(co->GetBinContent(i));//For CrossCheck with Mdiff
 
                 w[i] = 1./TMath::Power(co->GetBinError(i),2);
                 wTotal +=w [i];
@@ -70,9 +62,52 @@ for(Int_t i=1; i<=Nbins; i++){
                 result->SetBinContent(i, gCombinedValue);
                 result->SetBinError(i, gCombinedError);
         }
-	CrossCheck(Mdiff,hist,i);
+	RMS[i] = CrossCheck(Mdiff,cc,i);
+	
+	if(RMS[i]<RMS[i-1]){//Checking the drops in RMS pT evolution
+	TCanvas *D = new TCanvas("Drops","Drops",400,400);
+	D->SetLeftMargin(0.2);
+	hist->GetYaxis()->SetTitleOffset(2.0);
+	if(Nbins<40){hist->GetYaxis()->SetTitle(Form("Differential flow v_{%d}(p_{T} = %f)",harm+1,binArr[i]));}
+	else if(Nbins>40){hist->GetYaxis()->SetTitle(Form("Differential flow v_{%d}(#eta = %f)",harm+1,binArr[i]));}
+	hist->GetXaxis()->SetTitle("Splitfile");
+	hist->SetLineColor(c+harm);
+	hist->DrawCopy();
+	D->SaveAs(Form("v%d/drop_bin%d_c%d_"+obj+".pdf",harm+1,i,c));
+	delete D;
+	}//end of single bin subsample plots for strange pT drops
+	else if(RMS[i]>=RMS[i-1]){
+        TCanvas *D = new TCanvas("Drops","Drops",400,400);
+        D->SetLeftMargin(0.2);
+        hist->GetYaxis()->SetTitleOffset(2.0);
+        if(Nbins<40){hist->GetYaxis()->SetTitle(Form("Differential flow v_{%d}(p_{T} = %f)",harm+1,binArr[i]));}
+        else if(Nbins>40){hist->GetYaxis()->SetTitle(Form("Differential flow v_{%d}(#eta = %f)",harm+1,binArr[i]));}
+        hist->GetXaxis()->SetTitle("Splitfile");
+        hist->SetLineColor(c+harm);
+        hist->DrawCopy();
+        D->SaveAs(Form("v%d/rise_bin%d_c%d_"+obj+".pdf",harm+1,i,c));
+        delete D;
+	}//end of else if -> rising RMS pT evolution
 	delete hist;
+	rms->SetBinContent(i,RMS[i]);//RMS vs bin evolution
 }//end Nbins
+TCanvas *R = new TCanvas("R","R",400,400);
+R->SetLeftMargin(0.2);
+rms->GetYaxis()->SetTitleOffset(2.0);
+rms->GetYaxis()->SetTitle(Form("RMS of 1D Hist from all splitfiles v_{%d}",harm+1));
+if(Nbins<40){//pT bins
+rms->GetXaxis()->SetTitle("p_{T} [GeV]");
+rms->GetXaxis()->SetRange(1,22);//range in bins !
+}else if(Nbins>40){
+rms->GetXaxis()->SetTitle("#eta");
+rms->GetXaxis()->SetRangeUser(-0.9,0.9);
+}
+rms->SetLineColor(c+harm);
+rms->DrawCopy();
+R->SaveAs(Form("v%d/RMS_c%d_"+obj+".pdf",harm+1,c));
+delete R;
+delete rms;
+
 TCanvas *M = new TCanvas("M","M",400,400);
 M->SetLeftMargin(0.2);
 Mdiff->GetYaxis()->SetTitleOffset(2.0);
