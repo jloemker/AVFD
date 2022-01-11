@@ -12,9 +12,10 @@
 double CrossCheck(TProfile *Prof, TH1D *hist, Int_t bin){//calculate spread for Profile and std from TH1D
 	Double_t N = Prof->GetNbinsX();
 	Double_t RMS = hist->GetRMS();
+	//Double_t RMS = Prof->GetBinError(bin);
 	cout<<"Cross check bin_Nr:"<<bin<<endl;
 	cout<<"Content TProfile "<< Prof->GetBinContent(bin) <<endl;
-	for(Int_t i = 1; i<=hist->GetNbinsX(); i++){cout<<"Content 1D hist "<<hist->GetBinContent(i)<<endl;}
+	//for(Int_t i = 1; i<=hist->GetNbinsX(); i++){cout<<"Content 1D hist "<<hist->GetBinContent(i)<<endl;}
 	cout<<" TProfle->GetBinError(bin_Nr) "<<Prof->GetBinError(bin)<<" hist->GetRMS() "<<hist->GetRMS()<<endl;
 	return RMS;
 }//end void
@@ -28,26 +29,33 @@ Double_t RMS[51] = {0.};
 TProfile *Mint = new TProfile("Weighted Bin Content","Weighted Bin Content",11,0,10,"s");
 TProfile *Mdiff = new TProfile("Unweighted Bin Content","Unweighted Bin Content",Nbins,binArr,"s");
 TH1F *rms = new TH1F("rms evolution","rms evolution",Nbins,binArr);
-if(Nbins<50){cout<<"Subsampling pT"<<endl;}
+if(Nbins<50){
+	cout<<"Subsampling pT"<<endl;
+	Nbins = 23;
+}
 else if(Nbins>50){cout<<"Subsampling #eta"<<endl;}
 
 for(Int_t i=1; i<=Nbins; i++){
 	TH1D *hist = new TH1D("CrossCheck","CrossCheck",11,0,10);//"hist","hist",1,binArr[i-1]);
         TH1D *cc = new TH1D();
+	Double_t Rms[11] = {0.};
 	Double_t w[100];
         Double_t wTotal = 0.0;
         Double_t gCombinedValue = 0.0;
         Double_t gCombinedError = 0.0;
         for(Int_t split = 0; split<10;split ++){
+		cc->SetDefaultSumw2(kTRUE);
+		Mdiff->SetDefaultSumw2(kTRUE);
 	        f = new TFile(Form(file+"_split_%d.root",split));
         	TList *l = (TList*) f->Get("FlowQCList;1");
         	h = (TH1F*) l->FindObject(obj);
                 co = (TH1F*)h->Clone("co");
-
 		Mdiff->Fill(binArr[i-1],co->GetBinContent(i));//differential value for all subsamples without weight
 		Mint->Fill(split+1,co->GetBinContent(i),Nbins);//integrated value over all bins, weighted by #bins		
-		hist->Fill(split,co->GetBinContent(i));//For RMS vs split evolution
+		hist->Fill(split,co->GetBinContent(i));//For RMS vs split evolution//ggf without +1
 		cc->Fill(co->GetBinContent(i));//For CrossCheck with Mdiff
+		cout<<"split "<<split<<" content 1D hist cc "<<cc->GetRMS()<<" error TProfile(bin) "<<Mdiff->GetBinError(i)<<endl;
+		Rms[split] = CrossCheck(Mdiff,cc,i);
 
                 w[i] = 1./TMath::Power(co->GetBinError(i),2);
                 wTotal +=w [i];
@@ -56,12 +64,41 @@ for(Int_t i=1; i<=Nbins; i++){
 		
 		delete f;
 	}
+	Double_t min = 1;
+	Double_t max = 0;
+    	for(Int_t j = 1; j < 10; j++){//here I might have to change something too
+       // cout<<"RMS at "<<j<<" value "<<Rms[j]<<endl;
+	 if(Rms[j] < min){
+            min = Rms[j];
+       	 }
+	 if(Rms[j] > max){
+	    max = Rms[j];
+	 }
+    	}
+	TH1D *cs = new TH1D("RMS over splits","RMS over splits",50,min,max);//to search the gaussion
+	for(Int_t s=0;s<10;s++){//the oth split file has an entry...but I cannot access..why ?{
+	//	cout<<"RMS"<<Rms[s]<<" s "<<s<<endl;
+		cs->Fill(Rms[s],s);
+	}
+	TCanvas *S = new TCanvas("RMS","RMS",400,400);
+        S->SetLeftMargin(0.2);
+        cs->GetYaxis()->SetTitleOffset(2.0);
+        if(Nbins<40){hist->GetXaxis()->SetTitle(Form("RMS v_{%d}(p_{T} = %f)",harm+1,binArr[i]));}
+        else if(Nbins>40){hist->GetXaxis()->SetTitle(Form("RMS v_{%d}(#eta = %f)",harm+1,binArr[i]));}
+        cs->GetYaxis()->SetTitle("Splitfile");
+        cs->SetLineColor(c+harm);
+        cs->DrawCopy();
+        S->SaveAs(Form("v%d/splitRMS_bin%d_c%d_"+obj+".pdf",harm+1,i,c));
+        delete S;
+	delete cs;
+
         gCombinedValue /= wTotal;
         gCombinedError = (1./wTotal)*TMath::Sqrt(gCombinedError);
         if(fabs(gCombinedValue)>0){
                 result->SetBinContent(i, gCombinedValue);
                 result->SetBinError(i, gCombinedError);
         }
+	//cout<<"after loop"<<endl;
 	RMS[i] = CrossCheck(Mdiff,cc,i);
 	
 	if(RMS[i]<RMS[i-1]){//Checking the drops in RMS pT evolution
