@@ -972,7 +972,7 @@ void CalculateFlowCME::Make(Event* anEvent) {
 	
 	Int_t q = 0;// q = 0 for positively charged particles
 	if(dCharge < 0){q=1.;}//1 for negatively charged
-	fFlowQCQv1[q][fCenBin][0]->Fill(dPt,TMath::Cos(dPhi));
+	fFlowQCQv1[q][fCenBin][0]->Fill(dPt,TMath::Cos(dPhi));//shouldn't we add the nCharged particles for the weight ?
 	//fFlowQCQv1[q][fCenBin][0]->Sumw2();
 	fFlowQCQv1[q][fCenBin][1]->Fill(dEta,TMath::Cos(dPhi));
 	//fFlowQCQv1[q][fCenBin][1]->Sumw2();
@@ -1710,7 +1710,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
 			}
 		//to get v1 with only cos(dPhhi)
                  if(hr==0){
-                 fFlowQCFinalPtDifHist[q][h][hr][0]->SetBinContent(pt+1,fFlowQCQv1[q][h][0]->GetBinContent(pt+1));
+                 fFlowQCFinalPtDifHist[q][h][hr][0]->SetBinContent(pt+1,fFlowQCQv1[q][h][0]->GetBinContent(pt+1));//maybe add the nCharged partciles in makevenet?
                  fFlowQCFinalPtDifHist[q][h][hr][0]->SetBinError(pt+1,fFlowQCQv1[q][h][0]->GetBinError(pt+1));
                  }
 

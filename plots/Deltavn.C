@@ -9,96 +9,146 @@
 //Little helps
 //
 //======================================================================================
+void findSpread(Int_t c, TString obj,Int_t Nbins){//make this work for eta too !
+  TFile *f[10];
+  TList *list[10];
+  TH1D *fHist[10];
+  //cout<<Nbins<<endl;
+  TH1F *fHistSpread[Nbins];
+  for(Int_t i = 0; i < Nbins; i++){
+   if(Nbins<40){ fHistSpread[i] = new TH1F(Form("fHistSpreadPtBin%d",i+1),"",1000,0, 0.3);}
+   else if(Nbins>40){fHistSpread[i] = new TH1F(Form("fHistSpreadEtaBin%d",i+1),"",1000,0, 0.3);}
+   }
+  for(Int_t iFile = 0; iFile < 10; iFile++) {
+    f[iFile] = TFile::Open(Form("/data/alice/jlomker/AVFD/result/dirID-0/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0_split_%d.root",c,c+1,iFile));
+    if((!f[iFile])||(!f[iFile]->IsOpen())) {
+    cout<<"File "<<iFile<<" not found..."<<endl;
+    return;
+    }
+
+    list[iFile] = dynamic_cast<TList *>(f[iFile]->Get("FlowQCList"));
+    if(!list[iFile]) {
+      cout<<"Input list of file "<<iFile<<" not found..."<<endl;
+      return;
+    }
+    fHist[iFile] = dynamic_cast<TH1D *>(list[iFile]->FindObject(obj));
+    if(!fHist[iFile]) {
+      cout<<"Histogram of file "<<iFile<<" not found..."<<endl;
+      return;
+    }
+    if(Nbins<40){
+    fHist[iFile]->GetXaxis()->SetRangeUser(0.2,5);}//if
+    if(Nbins>40){
+    fHist[iFile]->GetXaxis()->SetRangeUser(-0.9,0.9);}//if
+    fHist[iFile]->SetMarkerColor(iFile+1);
+    fHist[iFile]->SetLineColor(iFile+1);
+    fHist[iFile]->Draw("ESAME");
+    for(Int_t iBin = 1; iBin <= fHist[iFile]->GetNbinsX(); iBin++){//<=
+      fHistSpread[iBin-1]->Fill(fHist[iFile]->GetBinContent(iBin));}
+  }//loop over files
+  TFile *fOutput = new TFile(Form("output_findSpread/spread_"+obj+"_c%d0_%d0.root",c,c+1),"recreate");
+  for(Int_t iBin = 1; iBin <= fHist[0]->GetNbinsX(); iBin++){
+    fHistSpread[iBin-1]->Write();}
+    fOutput->Close();
+//cout<<"file closed"<<endl;
+  //for(Int_t iFile = 0; iFile<10; iFile++){
+   // delete f[iFile];}
+  for(Int_t i = 0; i < Nbins; i++){
+    delete fHistSpread[i];}
+
+}
+
 double CrossCheck(TProfile *Prof, TH1D *hist, Int_t bin){//calculate spread for Profile and std from TH1D
 	Double_t N = Prof->GetNbinsX();
 	Double_t RMS = hist->GetRMS();
 	//Double_t RMS = Prof->GetBinError(bin);
-	cout<<"Cross check bin_Nr:"<<bin<<endl;
-	cout<<"Content TProfile "<< Prof->GetBinContent(bin) <<endl;
 	//for(Int_t i = 1; i<=hist->GetNbinsX(); i++){cout<<"Content 1D hist "<<hist->GetBinContent(i)<<endl;}
-	cout<<" TProfle->GetBinError(bin_Nr) "<<Prof->GetBinError(bin)<<" hist->GetRMS() "<<hist->GetRMS()<<endl;
+//	cout<<" TProfle->GetBinError(bin_Nr) "<<Prof->GetBinError(bin)<<" hist->GetRMS() "<<hist->GetRMS()<<endl;
 	return RMS;
 }//end void
 
-TH1F *Subsampling(TString file, TString obj, Double_t binArr[], TH1F *result, Int_t c, Int_t harm){
-TFile *f;
-TH1F *co, *h;
-Int_t Nbins = result->GetNbinsX();
-Double_t RMS[51] = {0.};
+TH1F *Subsampling(TString file, TString obj, Double_t binArr[], TH1F *result, Int_t c, Int_t harm, TProfile *mint, TProfile *mdiff, TH1F *RMs, TH1D *CC, TH1D *Hist){
+	TFile *f, *t;
+	TFile *spread, *output;
+	TList *l;
+	TH1F *h, *o;
 
-TProfile *Mint = new TProfile("Weighted Bin Content","Weighted Bin Content",11,0,10,"s");
-TProfile *Mdiff = new TProfile("Unweighted Bin Content","Unweighted Bin Content",Nbins,binArr,"s");
-TH1F *rms = new TH1F("rms evolution","rms evolution",Nbins,binArr);
-if(Nbins<50){
-	cout<<"Subsampling pT"<<endl;
-	Nbins = 23;
-}
-else if(Nbins>50){cout<<"Subsampling #eta"<<endl;}
+	Int_t Nbins = result->GetNbinsX();
+	Int_t MinBin, MaxBin;
+	Double_t RMS[51] = {0.};
+	TProfile *Mint = (TProfile*)mint->Clone("Mint");
+	TProfile *Mdiff = (TProfile*)mdiff->Clone("Mdiff");
 
-for(Int_t i=1; i<=Nbins; i++){
-	TH1D *hist = new TH1D("CrossCheck","CrossCheck",11,0,10);//"hist","hist",1,binArr[i-1]);
-        TH1D *cc = new TH1D();
-	Double_t Rms[11] = {0.};
-	Double_t w[100];
-        Double_t wTotal = 0.0;
-        Double_t gCombinedValue = 0.0;
-        Double_t gCombinedError = 0.0;
-        for(Int_t split = 0; split<10;split ++){
-		cc->SetDefaultSumw2(kTRUE);
-		Mdiff->SetDefaultSumw2(kTRUE);
-	        f = new TFile(Form(file+"_split_%d.root",split));
-        	TList *l = (TList*) f->Get("FlowQCList;1");
-        	h = (TH1F*) l->FindObject(obj);
-                co = (TH1F*)h->Clone("co");
-		Mdiff->Fill(binArr[i-1],co->GetBinContent(i));//differential value for all subsamples without weight
-		Mint->Fill(split+1,co->GetBinContent(i),Nbins);//integrated value over all bins, weighted by #bins		
-		hist->Fill(split,co->GetBinContent(i));//For RMS vs split evolution//ggf without +1
-		cc->Fill(co->GetBinContent(i));//For CrossCheck with Mdiff
-		cout<<"split "<<split<<" content 1D hist cc "<<cc->GetRMS()<<" error TProfile(bin) "<<Mdiff->GetBinError(i)<<endl;
-		Rms[split] = CrossCheck(Mdiff,cc,i);
+	TH1F *rms = (TH1F*)RMs->Clone("rms");
+	TH1D *cc = (TH1D*)CC->Clone("cc");
+	TH1D *hist = (TH1D*)Hist->Clone("hist");
+	//settng for pT/eta
+	if(Nbins<40){
+		cout<<"Subsampling pT"<<endl;
+		Nbins = 23;
+		MinBin = 1;
+		MaxBin = Nbins;
+	}else if(Nbins>40){
+		MinBin = 18;
+		MaxBin = 34;
+		cout<<"Subsampling #eta"<<endl;}
 
-                w[i] = 1./TMath::Power(co->GetBinError(i),2);
-                wTotal +=w [i];
-                gCombinedValue += co->GetBinContent(i)*w[i];
-                gCombinedError += TMath::Power(co->GetBinError(i)*w[i],2);
+	for(Int_t i=MinBin; i<=MaxBin; i++){
+		//Double_t Rms[11] = {0.};
+		Double_t sigma = 0.;
+		Double_t mean = 0.;
+		Double_t w[100];
+	        Double_t wTotal = 0.0;
+        	Double_t gCombinedValue = 0.0;
+	        Double_t gCombinedError = 0.0;
+		TString spreadstring;
+		output = spread->Open(Form("output_findSpread/spread_"+obj+"_c%d0_%d0.root",c,c+1));
+		if(Nbins<40){spreadstring = Form("fHistSpreadPtBin%d",i);}
+		else if(Nbins>40){spreadstring = Form("fHistSpreadEtaBin%d",i);}
+		o = (TH1F*) output->Get(spreadstring);
+		sigma = o->GetRMS();
+		mean = o->GetMean();//take the file check the values fro 3*sigma
+	        for(Int_t split = 0; split<10;split ++){
+		        t = f->Open(Form(file+"_split_%d.root",split));//close files again !
+        		l = (TList*) t->Get("FlowQCList;1");
+	        	h = (TH1F*) l->FindObject(obj);
 		
-		delete f;
-	}
-	Double_t min = 1;
-	Double_t max = 0;
-    	for(Int_t j = 1; j < 10; j++){//here I might have to change something too
-       // cout<<"RMS at "<<j<<" value "<<Rms[j]<<endl;
-	 if(Rms[j] < min){
-            min = Rms[j];
-       	 }
-	 if(Rms[j] > max){
-	    max = Rms[j];
-	 }
-    	}
-	TH1D *cs = new TH1D("RMS over splits","RMS over splits",50,min,max);//to search the gaussion
-	for(Int_t s=0;s<10;s++){//the oth split file has an entry...but I cannot access..why ?{
-	//	cout<<"RMS"<<Rms[s]<<" s "<<s<<endl;
-		cs->Fill(Rms[s],s);
-	}
-	TCanvas *S = new TCanvas("RMS","RMS",400,400);
-        S->SetLeftMargin(0.2);
-        cs->GetYaxis()->SetTitleOffset(2.0);
-        if(Nbins<40){hist->GetXaxis()->SetTitle(Form("RMS v_{%d}(p_{T} = %f)",harm+1,binArr[i]));}
-        else if(Nbins>40){hist->GetXaxis()->SetTitle(Form("RMS v_{%d}(#eta = %f)",harm+1,binArr[i]));}
-        cs->GetYaxis()->SetTitle("Splitfile");
-        cs->SetLineColor(c+harm);
-        cs->DrawCopy();
-        S->SaveAs(Form("v%d/splitRMS_bin%d_c%d_"+obj+".pdf",harm+1,i,c));
-        delete S;
-	delete cs;
-
-        gCombinedValue /= wTotal;
-        gCombinedError = (1./wTotal)*TMath::Sqrt(gCombinedError);
-        if(fabs(gCombinedValue)>0){
-                result->SetBinContent(i, gCombinedValue);
-                result->SetBinError(i, gCombinedError);
-        }
-	//cout<<"after loop"<<endl;
+			Double_t val = h->GetBinContent(i);
+			Double_t center = h->GetBinCenter(i);
+			//cout<<" rms("<<i<<") from split histogram "<<h->GetBinError(i)<<" from find spread: 3* sigma "<<3*sigma<<" mean "<<mean<<endl;
+			if(fabs(h->GetBinError(i))>=fabs(3*sigma)){cout << "left out flow value: "<< val<<" and error "<<h->GetBinError(i)<<" with bin Nr. "<<i<<" from splitfile: "<<split<<endl;}
+			if(fabs(h->GetBinError(i))<=fabs(3*sigma)){
+			//cout << "val "<< val<<" split "<<split<<endl;	
+				Mdiff->Fill(center,val);//differential value for all subsamples without weight
+				Mint->Fill(split+1,h->GetBinContent(i),Nbins);//integrated value over all bins, weighted by #bins		
+				hist->Fill(split,h->GetBinContent(i));//For RMS vs split evolution//ggf without +1
+				cc->Fill(val);//For CrossCheck with Mdiff
+				Int_t len = Mdiff->GetNbinsX();
+				Mdiff->GetXaxis()->SetRange(i,i);
+				//cout<<"split "<<split<<",  error 1D cc: "<<cc->GetRMS()<<", content 1D hist: "<<hist->GetRMS()<<", error TProfile(bin): "<<Mdiff->GetBinError(i)<<", center: "<<Mdiff->GetBinCenter(i)<<endl;
+				//Rms[split] = CrossCheck(Mdiff,cc,i);
+				Mdiff->GetXaxis()->SetRange(0,len);
+               			w[i] = 1./TMath::Power(h->GetBinError(i),2);
+                		wTotal +=w [i];
+	                	gCombinedValue += h->GetBinContent(i)*w[i];
+        	        	gCombinedError += TMath::Power(h->GetBinError(i)*w[i],2);
+			}//end if (...)
+			cc->Reset();
+			h->Reset();
+			f->Close();
+			t->Close();
+		}//end split
+        	gCombinedValue /= wTotal;
+        	gCombinedError = (1./wTotal)*TMath::Sqrt(gCombinedError);
+	        if(fabs(gCombinedValue)>0){
+        	        result->SetBinContent(i, gCombinedValue);
+                	result->SetBinError(i, gCombinedError);
+        	}
+	}//end Nbins
+return result;
+}//end subsampling
+/*
+	cout<<"after loop"<<endl;
 	RMS[i] = CrossCheck(Mdiff,cc,i);
 	
 	if(RMS[i]<RMS[i-1]){//Checking the drops in RMS pT evolution
@@ -125,9 +175,11 @@ for(Int_t i=1; i<=Nbins; i++){
         D->SaveAs(Form("v%d/rise_bin%d_c%d_"+obj+".pdf",harm+1,i,c));
         delete D;
 	}//end of else if -> rising RMS pT evolution
-	delete hist;
+	//delete hist;
 	rms->SetBinContent(i,RMS[i]);//RMS vs bin evolution
-}//end Nbins
+//}//end Nbins
+delete hist;
+
 TCanvas *R = new TCanvas("R","R",400,400);
 R->SetLeftMargin(0.2);
 rms->GetYaxis()->SetTitleOffset(2.0);
@@ -173,18 +225,41 @@ Mint->DrawCopy();
 Mi ->SaveAs(Form("v%d/Mint_c%d_"+obj+".pdf",harm+1,c));
 delete Mi;
 delete Mint;
-return result;
-}//end Subsampling
+return result;*/
+//}//end Subsampling
 
-TH1F *Subsample_Dv(TString file, TString obj1,TString obj2, Double_t binArr[], TH1F *result, Int_t c, Int_t harm){
-TFile *f;
+TH1F *Dv(TH1F *P, TH1F *N,Double_t binArr[], TH1F *result){//to get delta vn from subsampled vn(+/-q)
+	Int_t Nbins = result->GetNbinsX();
+	Double_t vpos, vneg, vposError, vnegError, deltav, deltavError;
+	for(Int_t i=1; i<=Nbins; i++){
+		vpos = P->GetBinContent(i);
+        	vneg = N->GetBinContent(i);
+	        vposError = P->GetBinError(i);
+        	vnegError = N->GetBinError(i);
+	        deltav = vpos - vneg;
+        	if(fabs(vpos)>0.&&fabs(vneg)>0.){
+        		deltavError = sqrt(abs(pow(vposError,2)+pow(vnegError,2)-2*vnegError*vposError));
+               		result->SetBinContent(i,deltav);
+                	result->SetBinError(i, deltavError);
+        	}//end if
+  	}//end for	
+  return result;
+}//end Dv
+
+TH1F *Subsample_Dv(TString file, TString obj1,TString obj2, Double_t binArr[], TH1F *result, Int_t c, Int_t harm,TProfile *mint, TProfile *mdiff, TH1F *RMs, TH1D *CC, TH1D *Hist){
+TFile *f, *t;
 TH1F *Dv = (TH1F*)result;
 Int_t Nbins = result->GetNbinsX();
-TH1D *MeanD = new TH1D("Unweighted Bin Difference","Unweighted Bin Difference",11,0,10);
-TProfile *Dint = new TProfile("Weighted Bin Content","Weighted Bin Content",11,0,10,"s");
-TProfile *Diff = new TProfile("Unweighted Bin Content","Unweighted Bin Content",Nbins,binArr);
+
+//Double_t RMS[51] = {0.};
+TProfile *Dint = (TProfile*)mint->Clone("Mint");
+TProfile *Diff = (TProfile*)mdiff->Clone("Mdiff");
+
+//TH1D *MeanD = new TH1D("Unweighted Bin Difference","Unweighted Bin Difference",11,0,10);
+//TProfile *Dint = new TProfile("Weighted Bin Content","Weighted Bin Content",11,0,10,"s");
+//TProfile *Diff = new TProfile("Unweighted Bin Content","Unweighted Bin Content",Nbins,binArr);
 TH1F *P, *N;
-if(Nbins<50){cout<<"Subsampling pT"<<endl;}
+if(Nbins<50){cout<<"Subsampling delta pT"<<endl;}
 else if(Nbins>50){cout<<"Subsampling #eta"<<endl;}
 
 for(Int_t i=1; i<=Nbins; i++){
@@ -200,7 +275,7 @@ for(Int_t i=1; i<=Nbins; i++){
         Double_t vnegError = 0.;
         Double_t deltavError = 0.;
 	for(Int_t split = 0; split<10;split ++){
-        	f = new TFile(Form(file+"_split_%d.root",split));
+        	t = f->Open(Form(file+"_split_%d.root",split));
         	TList *l = (TList*) f->Get("FlowQCList;1");
         	P = (TH1F*) l->FindObject(obj1);
         	N = (TH1F*) l->FindObject(obj2);
@@ -223,7 +298,8 @@ for(Int_t i=1; i<=Nbins; i++){
 	gCombinedValue += Dv->GetBinContent(i)*w[i];
 	gCombinedError += TMath::Power(Dv->GetBinError(i)*w[i],2);
 
-	delete f;
+	f->Close();
+	t->Close();
 	}//end of split		
 	gCombinedValue /= wTotal;
 	gCombinedError = (1./wTotal)*TMath::Sqrt(gCombinedError);
@@ -232,6 +308,10 @@ for(Int_t i=1; i<=Nbins; i++){
 		result->SetBinError(i, gCombinedError);
 	}	
 }//end Nbins
+return result;
+
+}//end subsampling
+/*
 TCanvas *M = new TCanvas("M","M",400,400);
 M->SetLeftMargin(0.2);
 Diff->GetYaxis()->SetTitleOffset(2.0);
@@ -261,7 +341,8 @@ Mi ->SaveAs(Form("v%d/Dint_c%d_"+obj1+".pdf",harm+1,c));
 delete Mi;
 delete Dint;
 return result;
-}//end Subsample
+*/
+//}//end Subsample
 
 void PlotpT(TH1F *PvpT, TH1F *NvpT, TH1F *DvpT, Int_t c, Int_t harm){
         //Plotting the subsampled pos/neg and their difference as in Multiplot.C for every harmonic==========
@@ -306,27 +387,29 @@ void PlotpT(TH1F *PvpT, TH1F *NvpT, TH1F *DvpT, Int_t c, Int_t harm){
         DvpT->GetYaxis()->SetTitle(Form("#Delta v_{%d} = v_{%d}(+h) - v_{%d}(-h)",harm+1,harm+1,harm+1));
         DvpT->DrawCopy();
         c1->SaveAs(Form("v%d/pT_c%d.pdf",harm+1,c));
- 
        delete c1;
 }
 
 void PlotEta(TH1F *PvEta, TH1F *NvEta, TH1F *DvEta,Int_t c, Int_t harm){
+	Double_t y = PvEta->GetBinContent(21);//to set the y range automatically 
+	cout<<y<<endl;
         //Plotting the subsampled pos/neg and their difference as in Multiplot.C for every harmonic==========
         TCanvas *cEta = new TCanvas("ceta", "etacanvas", 800, 800);
         TPad *padeta1 = new TPad("padeta1", "padeta1", 0, 0.5, 1., 1.);
-        padeta1->SetBottomMargin(0);
+	padeta1->SetBottomMargin(0);
         padeta1->SetLeftMargin(0.2);
         padeta1->Draw();
         padeta1->cd();
         PvEta->GetXaxis()->SetRangeUser(-0.9,0.9);
-	PvEta->GetXaxis()->SetNdivisions(4);
-        PvEta->SetLineColor(c+1);
+	//PvEta->GetYaxis()->SetNdivisions(4);
+        PvEta->GetYaxis()->SetRangeUser(y-y*0.35,y+y*0.35);
+	PvEta->SetLineColor(c+1);
         PvEta->SetLineWidth(2);
         PvEta->GetYaxis()->SetTitle(Form("differential flow v_{%d}",harm+1));
         PvEta->SetStats(0);
 	PvEta->SetTitle(" ");
         PvEta->DrawCopy();
-	NvEta->GetXaxis()->SetNdivisions(4);
+	//NvEta->GetYaxis()->SetNdivisions(4);
         NvEta->SetLineColor(c+2);
         NvEta->SetLineWidth(2);
 	NvEta->SetTitle(" ");
@@ -354,9 +437,7 @@ void PlotEta(TH1F *PvEta, TH1F *NvEta, TH1F *DvEta,Int_t c, Int_t harm){
         DvEta->GetYaxis()->SetTitle(Form("#Delta v_{%d} = v_{%d}(+h) - v_{%d}(-h)",harm+1,harm+1,harm+1));
         DvEta->DrawCopy();
         cEta->SaveAs(Form("v%d/eta_c%d.pdf",harm+1,c));
-
         delete cEta;
-
 }
 
 //from subsampled histos -> calculate diff pos - neg and propagate final error magically without knowledge of the degree of correlation ...
@@ -386,14 +467,23 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
 	Double_t fCRCEtaBins[51]={0};
 	Double_t etabinEdge[51] = {-3.5,-3.25,-3,-2.75,-2.5,-2.25,-2,-1.8,-1.7,-1.6,-1.5,-1.4,-1.3,-1.2,-1.1,-1,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,2,2.25,2.5,2.75,3,3.25,3.5};
 	for(Int_t i=0; i<51; i++){fCRCEtaBins[i] = etabinEdge[i];}
-
+		//hists for crosscheck
+		TProfile *mdiff;
+		TH1F* RMs;
+		if(pT == true){
+			 mdiff = new TProfile("Unweighted Bin Content","Unweighted Bin Content",fPtDiffNBins,fCRCPtBins,"s");
+			// mdiff->SetDefaultSumw2(kTRUE);
+        		//Mdiff->SetDefaultSumw2(kTRUE);
+        		 RMs = new TH1F("rms evolution","rms evolution",fPtDiffNBins,fCRCPtBins);	 	
+		}else if(pT == false){
+                	 mdiff = new TProfile("Unweighted Bin Content","Unweighted Bin Content",fEtaDiffNBins,fCRCEtaBins,"s");
+                	 RMs = new TH1F("rms evolution","rms evolution",fEtaDiffNBins,fCRCEtaBins);
+		}
+	TProfile *mint = new TProfile("Weighted Bin Content","Weighted Bin Content",10,0,9,"s");
+	TH1D *CC = new TH1D();
+	TH1D *Hist = new TH1D("CrossCheck","CrossCheck",10,0,9);
 //================================================================================================
-	//generate empty canvas for multiple centrality plots
-        TCanvas *Cen = new TCanvas("Cen","Cen",400,400);//one for pT's and one for eta's
-        Cen->SetLeftMargin(0.2);
-	auto C = new TLegend();
-        C->SetHeader("Pb-Pb, 5.02TeV, pT: 0.2 -5 GeV, #eta: 0.8","C");
-
+	TH1F *copy[cmax];//Multi centrality plots
 	for(Int_t c=cent; c<=cmax;c++){
 	cout<<"Centrality: "<<c<<"0-"<<(c+1)<<"0"<<endl;
 	TString input = Form("/data/alice/jlomker/AVFD/result/dirID-0/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0",c,c+1);
@@ -401,116 +491,76 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
 	//for(Int_t harm=0; harm<3; harm++){
 		cout<<"Harmonic: "<<(harm+1)<<endl;;
 		//apply subsampling to all histograms from pos/neg particles=======================
-		//mean from subsamples:
 		if(pT == true){
-		TH1F *PvpT = new TH1F("pvpT", "pvpT", fPtDiffNBins, fCRCPtBins);
-		PvpT = Subsampling(input,Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm),fCRCPtBins, PvpT, c, harm);
-		TH1F *NvpT = new TH1F("nvpT","nvpT",fPtDiffNBins,fCRCPtBins);
-		NvpT = Subsampling(input,Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm),fCRCPtBins, NvpT, c ,harm);
-		TH1F *DvpT = new TH1F("dvnpT","dvnpT",fPtDiffNBins,fCRCPtBins);
-		DvpT = Subsample_Dv(input, Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm),Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm), fCRCPtBins, DvpT, c, harm);
-	 	//Plot the difference for multiple centralities====================================	
-		if(c == cent){//draw vn difference for multiple centralities       
-			DvpT->GetYaxis()->SetTitleOffset(2.0);
-        		DvpT->GetYaxis()->SetTitle(Form("differential flow #Delta v_{%d}",harm+1));//cen->GetXaxis()->SetRangeUser(0,5);
-        		DvpT->SetStats(0);
-			DvpT->SetTitle(" ");
-			DvpT->GetXaxis()->SetRange(1,22);
-        		DvpT->GetXaxis()->SetTitle("p_{T} [GeV]");
-        		//DvpT->SetAxisRange(0,5,"X");
-			DvpT->SetLineColor(c);
-			C->AddEntry(DvpT,Form("AVFD, Centrality %d0-%d0",c,c+1),"l");
-			DvpT->DrawCopy();
-		   }else if(c>cent){
-			DvpT->GetXaxis()->SetRange(1,22);
-			//DvpT->SetAxisRange(0,5,"X");
-			DvpT->SetLineColor(c);
-			C->AddEntry(DvpT,Form("AVFD, Centrylity %d0-%d0",c,c+1), "l");
-			DvpT->DrawCopy("same");
-		}
-		//Plot the pos/neg with difference================================================= 
-		PlotpT(PvpT, NvpT, DvpT, c, harm);// plot will delete all hists!
+			TH1F *PvpT = new TH1F("pvpT", "pvpT", fPtDiffNBins, fCRCPtBins);
+			findSpread(c,Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm),fPtDiffNBins);
+			PvpT = Subsampling(input,Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm),fCRCPtBins, PvpT, c, harm, mint, mdiff,RMs, CC,Hist);
+			TH1F *NvpT = new TH1F("nvpT","nvpT",fPtDiffNBins,fCRCPtBins);
+			findSpread(c,Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm),fPtDiffNBins);
+			NvpT = Subsampling(input,Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm),fCRCPtBins, NvpT, c ,harm,mint, mdiff,RMs, CC,Hist);
+			TH1F *DvpT = new TH1F("dvnpT","dvnpT",fPtDiffNBins,fCRCPtBins);
+			DvpT = Dv(PvpT, NvpT, fCRCPtBins, DvpT);
+			//DvpT = Subsample_Dv(input,Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm), Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm), fCRCPtBins, DvpT, c, harm,mint, mdiff,RMs, CC,Hist);
+			//Multi centrality plot
+			copy[c] = (TH1F*) DvpT->Clone("copy dvpt");
+			//Plot the pos/neg with difference================================================= 
+			PlotpT(PvpT, NvpT, DvpT, c, harm);// plot will delete all hists!
 		
-        	PvpT->Delete();
-        	NvpT->Delete();
-        	//DvpT->Delete();
+        		PvpT->Delete();
+        		NvpT->Delete();
+        		DvpT->Delete();
 		}//end of pT if
 		else if(pT == false){
-		TH1F *PvEta = new TH1F("pvEta","pvEta",fEtaDiffNBins,fCRCEtaBins);
-		PvEta = Subsampling(input,Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm),fCRCEtaBins, PvEta, c, harm);
-		TH1F *NvEta = new TH1F("nvEta", "nvEta", fEtaDiffNBins, fCRCEtaBins);
-		NvEta = Subsampling(input,Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm),fCRCEtaBins, NvEta, c, harm);
-		TH1F *DvEta = new TH1F("deltavneta","deltavneta",fEtaDiffNBins,fCRCEtaBins);
-		DvEta = Subsample_Dv(input, Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm), Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm), fCRCEtaBins, DvEta, c, harm);
-		//Plot the difference for multiple centralities====================================
-		if(c==cent){ 
-			DvEta->GetYaxis()->SetTitleOffset(2.0);
-			DvEta->GetYaxis()->SetTitle(Form("differential flow #Delta v_{%d}",harm+1));
-        		DvEta->GetXaxis()->SetRangeUser(-0.9,0.9);
-        		DvEta->GetXaxis()->SetTitle("#eta");
-        		DvEta->SetStats(0);
-			DvEta->SetTitle(" ");
-			DvEta->SetLineColor(c);
-			C->AddEntry(DvEta,Form("AVFD, Centrality %d0-%d0",c,c+1),"l");
-	        	DvEta->DrawCopy();
-		   }else if(c>cent){
-                        DvEta->SetLineColor(c);
-			DvEta->GetXaxis()->SetRangeUser(-0.9,0.9);
-                        C->AddEntry(DvEta,Form("AVFD, Centrylity %d0-%d0",c,c+1), "l");
-                        DvEta->DrawCopy("same");
-		}
-
-		//Plot the pos/neg with difference=================================================
-		PlotEta(PvEta, NvEta, DvEta, c, harm);
-		
-        	PvEta->Delete();
-        	NvEta->Delete();
-	        //DvEta->Delete();
+			TH1F *PvEta = new TH1F("pvEta","pvEta",fEtaDiffNBins,fCRCEtaBins);
+			findSpread(c,Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm),fEtaDiffNBins);		
+			PvEta = Subsampling(input,Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm),fCRCEtaBins, PvEta, c, harm,mint, mdiff,RMs, CC,Hist);
+			TH1F *NvEta = new TH1F("nvEta", "nvEta", fEtaDiffNBins, fCRCEtaBins);
+			findSpread(c,Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm),fEtaDiffNBins);
+			NvEta = Subsampling(input,Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm),fCRCEtaBins, NvEta, c, harm,mint, mdiff,RMs, CC,Hist);
+			TH1F *DvEta = new TH1F("deltavneta","deltavneta",fEtaDiffNBins,fCRCEtaBins);
+			DvEta = Dv(PvEta, NvEta, fCRCEtaBins, DvEta);
+			//DvEta = Subsample_Dv(input, Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm), Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm), fCRCEtaBins, DvEta, c, harm,mint, mdiff,RMs, CC,Hist);
+			//Multi centrlity plot
+			copy[c] = (TH1F*) DvEta->Clone("copy dvpt");
+			//Plot the pos/neg with difference=================================================
+			PlotEta(PvEta, NvEta, DvEta, c, harm);
+			
+        		PvEta->Delete();
+	        	NvEta->Delete();
+		        DvEta->Delete();
 		}//end of eta if
-		/*
-      		else if(subsample_deltavn == false){
-		Double_t vpos = 0.;
-        	Double_t vneg = 0.;
-      		Double_t deltav = 0.;
-        	Double_t vposError = 0.;
-        	Double_t vnegError = 0.;
-       	 	Double_t deltavError = 0.;
-		for(Int_t pt=1; pt<=fPtDiffNBins; pt++){
-                    vpos = PvpT->GetBinContent(pt);
-                    vneg = NvpT->GetBinContent(pt);
-                    vposError = PvpT->GetBinError(pt);
-                    vnegError = NvpT->GetBinError(pt);
-                    deltav = vpos - vneg;
-                   	if(fabs(vpos)>0.&&fabs(vneg)>0.){
-				deltavError = sqrt(abs(pow(vposError,2)+pow(vnegError,2)-2*vnegError*vposError));
-                		DvpT->SetBinContent(pt,deltav);
-                		DvpT->SetBinError(pt, deltavError);   
-			}
-		}//end of pt bin
-		for(Int_t eta=1; eta<=fEtaDiffNBins; eta++){
-                    vpos = PvEta->GetBinContent(eta);
-                    vneg = NvEta->GetBinContent(eta);
-                    vposError = PvEta->GetBinError(eta);
-                    vnegError = NvEta->GetBinError(eta);
-                    deltav = vpos - vneg;
-                        if(fabs(vpos)>0.&&fabs(vneg)>0.){
-				deltavError = sqrt(abs(pow(vposError,2)+pow(vnegError,2)-2*vnegError*vposError));
-                                DvEta->SetBinContent(eta,deltav);
-                                DvEta->SetBinError(eta, deltavError);
-			}
-        	}//end of eta bin
-		}//end if false
-		*/
-        //===================================================================================================
+	}//centrality loop
 
-}//centrality loop
-C->Draw();
-if(pT==true){Cen->SaveAs(Form("v%d/Pt_Multi_cen%d_%d.pdf",harm+1,cent,cmax));}
-else if(pT == false){Cen->SaveAs(Form("v%d/Eta_Multi_cen%d_%d.pdf",harm+1,cent,cmax));}
-//delete C;
-delete Cen;
+	//Multi Centrality plot=========================================================
+	TCanvas *Cen = new TCanvas("Cen","Cen",400,400);
+	Cen->SetLeftMargin(0.2);
+	auto C = new TLegend();
+	C->SetHeader("Pb-Pb, 5.02TeV, pT: 0.2 -5 GeV, #eta: 0.8","C");
+	copy[cent]->GetYaxis()->SetTitleOffset(2.0);
+	copy[cent]->GetYaxis()->SetTitle(Form("differential flow #Delta v_{%d}",harm+1));
+	if(pT==true){
+		copy[cent]->GetXaxis()->SetTitle("p_{T} [GeV]");
+		copy[cent]->GetXaxis()->SetRange(1,22);
+	}else if(pT==false){
+        	copy[cent]->GetXaxis()->SetRangeUser(-0.9,0.9);
+        	copy[cent]->GetXaxis()->SetTitle("#eta");
+	}
+	copy[cent]->SetStats(0);
+	copy[cent]->SetTitle(" ");
+	copy[cent]->SetLineColor(cent);
+	C->AddEntry(copy[cent],Form("AVFD, Centrality %d0-%d0",cent,cent+1), "l");
+	copy[cent]->DrawCopy();
+	for(Int_t c = cent+1; c<=cmax; c++){
+		copy[c]->SetLineColor(c);
+                C->AddEntry(copy[c],Form("AVFD, Centrality %d0-%d0",c,c+1), "l");
+		copy[c]->DrawCopy("same");
+	}
+	C->Draw();
+	if(pT==true){Cen->SaveAs(Form("v%d/Pt_Multi_cen%d_%d.pdf",harm+1,cent,cmax));}
+	else if(pT == false){Cen->SaveAs(Form("v%d/Eta_Multi_cen%d_%d.pdf",harm+1,cent,cmax));}
+	delete Cen;
 
-//}//end of hr<fkFlowNHarm
+	//}//end of hr<fkFlowNHarm
 
 }//end void
 
