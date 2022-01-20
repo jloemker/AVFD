@@ -146,6 +146,7 @@ void CalculateFlowCME::InitializeArraysForFlowQC()
 	for (Int_t h=0; h<fCRCMaxnCen; h++) {
 		for(Int_t spec = 0; spec <Nspectrum; spec++){
                 fFlowQCQv1[q][h][spec] = NULL;
+		hFlowQCQv1[q][h][spec] = NULL;
                 }
 		for(Int_t i=0; i<fFlowNHarm; i++) {
 			for(Int_t j=0; j<fFlowQCNPro; j++) {
@@ -519,6 +520,13 @@ void CalculateFlowCME::UserCreateOutputObjects() {
                     fFlowQCQv1[q][h][1] = new TProfile(Form("fFlowQCQv1[%d][%d][1]",q,h),Form("fFlowQCQv1[%d][%d][1]",q,h),fEtaDiffNBins,fCRCEtaBins,"s");
                     fFlowQCQv1[q][h][1]->Sumw2();
                     fFlowQCList->Add(fFlowQCQv1[q][h][1]);
+		    hFlowQCQv1[q][h][0] = new TH1F(Form("hFlowQCQv1[%d][%d][0]",q,h),Form("hFlowQCQv1[%d][%d][0]",q,h),fPtDiffNBins,fCRCPtBins);
+		    hFlowQCQv1[q][h][0]->Sumw2();
+		    fFlowQCList->Add(hFlowQCQv1[q][h][0]);
+		    hFlowQCQv1[q][h][1] = new TH1F(Form("hFlowQCQv1[%d][%d][1]",q,h),Form("hFlowQCQv1[%d][%d][1]",q,h),fEtaDiffNBins,fCRCEtaBins);
+                    hFlowQCQv1[q][h][1]->Sumw2();
+                    fFlowQCList->Add(hFlowQCQv1[q][h][1]);
+
 
 		for(Int_t i=0; i<fFlowNHarm; i++) {
 			for(Int_t j=0; j<fFlowQCNPro; j++) {
@@ -1208,6 +1216,17 @@ void CalculateFlowCME::Make(Event* anEvent) {
 	if (doQA) {
 		fMultChargedParticlesDistribution->Fill(nChargedParticles); // x-axis no. charge particles, y-axis no. of events
 	}
+	/*
+	for(Int_t q = 0; q<=1; q++){
+		for(Int_t i = 1; i<=hFlowQCQv1[0][0][1]->GetNbinsX(); i++){
+		fFlowQCQv1[q][fCenBin][0]->SetBinContent(hFlowQCQv1[q][fCenBin][0]->GetBinCenter(i),hFlowQCQv1[q][fCenBin][0]->GetBinContent(i));//pT
+		
+		fFlowQCQv1[q][fCenBin][0]->SetBinError(hFlowQCQv1[q][fCenBin][0]->GetBinCenter(i),hFlowQCQv1[q][fCenBin][0]->GetBinError(i));
+	        fFlowQCQv1[q][fCenBin][1]->SetBinContent(hFlowQCQv1[q][fCenBin][1]->GetBinCenter(i),hFlowQCQv1[q][fCenBin][1]->GetBinContent(i));//eta
+                fFlowQCQv1[q][fCenBin][1]->SetBinError(hFlowQCQv1[q][fCenBin][1]->GetBinCenter(i),hFlowQCQv1[q][fCenBin][1]->GetBinError(i));
+		}
+	}
+	*/
 	CalculateFlowQC(true,false);//eta, pt
 	CalculateFlowQC(false,true);
         //CalculateFlowQC(false, true);
@@ -1710,6 +1729,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
 			}
 		//to get v1 with only cos(dPhhi)
                  if(hr==0){
+//		cout<<" in cal "<<fFlowQCQv1[q][h][0]->GetBinContent(pt+1)<<"pt +1"<< pt+1<<endl;
                  fFlowQCFinalPtDifHist[q][h][hr][0]->SetBinContent(pt+1,fFlowQCQv1[q][h][0]->GetBinContent(pt+1));//maybe add the nCharged partciles in makevenet?
                  fFlowQCFinalPtDifHist[q][h][hr][0]->SetBinError(pt+1,fFlowQCQv1[q][h][0]->GetBinError(pt+1));
                  }
@@ -2018,8 +2038,8 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
                     vposError = fFlowQCFinalPtDifHist[0][h][hr][0]->GetBinError(pt);
                     vnegError = fFlowQCFinalPtDifHist[1][h][hr][0]->GetBinError(pt);
                     deltav = vpos - vneg;
-                   	if(fabs(vpos)>0.&&fabs(vneg)>0.){//for partially correlated variables..no clue what the degree of correlation might be or how to get it yet.
-                	deltavError = sqrt(abs(pow(vposError,2)+pow(vnegError,2)-2*vnegError*vposError));
+                   	if(fabs(vpos)>0.&&fabs(vneg)>0.){//for completely correlated variables..no clue what the degree of correlation might be or how to get it yet.
+                	deltavError = sqrt(abs(pow(vposError,2)-pow(vnegError,2));
                 	fFlowQCFinalPtDifDeltaHist[h][hr]->SetBinContent(pt,deltav);//centrality, harmonic, cov
                 	fFlowQCFinalPtDifDeltaHist[h][hr]->SetBinError(pt, deltavError);
                      	}
@@ -2034,7 +2054,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
                     deltav = vpos - vneg;
                         if(fabs(vpos)>0.&&fabs(vneg)>0.){
                         //cout<<"works!"<<endl;
-                        deltavError = sqrt(abs(pow(vposError,2)+pow(vnegError,2)-2*vnegError*vposError));
+                        deltavError = sqrt(abs(pow(vposError,2)-pow(vnegError,2)));
                         fFlowQCFinalEtaDifDeltaHist[h][hr]->SetBinContent(eta,deltav);//centrality, harmonic, cov
                         fFlowQCFinalEtaDifDeltaHist[h][hr]->SetBinError(eta, deltavError);
                         }

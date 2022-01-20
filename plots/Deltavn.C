@@ -493,10 +493,14 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
 		//apply subsampling to all histograms from pos/neg particles=======================
 		if(pT == true){
 			TH1F *PvpT = new TH1F("pvpT", "pvpT", fPtDiffNBins, fCRCPtBins);
+			//findSpread(c,Form("fFlowQCQv1[0][%d][0]",c),fPtDiffNBins);
 			findSpread(c,Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm),fPtDiffNBins);
 			PvpT = Subsampling(input,Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm),fCRCPtBins, PvpT, c, harm, mint, mdiff,RMs, CC,Hist);
+			//PvpT = Subsampling(input,Form("fFlowQCQv1[0][%d][0]",c),fCRCPtBins, PvpT, c, harm, mint, mdiff,RMs, CC,Hist);
 			TH1F *NvpT = new TH1F("nvpT","nvpT",fPtDiffNBins,fCRCPtBins);
+			//findSpread(c,Form("fFlowQCQv1[1][%d][0]",c),fPtDiffNBins);
 			findSpread(c,Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm),fPtDiffNBins);
+			//NvpT = Subsampling(input,Form("fFlowQCQv1[1][%d][0]",c),fCRCPtBins, NvpT, c ,harm,mint, mdiff,RMs, CC,Hist);
 			NvpT = Subsampling(input,Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm),fCRCPtBins, NvpT, c ,harm,mint, mdiff,RMs, CC,Hist);
 			TH1F *DvpT = new TH1F("dvnpT","dvnpT",fPtDiffNBins,fCRCPtBins);
 			DvpT = Dv(PvpT, NvpT, fCRCPtBins, DvpT);

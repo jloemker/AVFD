@@ -194,6 +194,7 @@ class CalculateFlowCME
         TH1D *fFlowQCCorEtaHist[Ncharge][fCRCMaxnCen][fFlowNHarm][fFlowQCNPro]; // <<2'>>, [CRCBin][eg]
         TH1D *fFlowQCCorCovEtaHist[Ncharge][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; // histo for covariances
 	//for v1 filled with cos(dPhi)
+	TH1F *hFlowQCQv1[Ncharge][fCRCMaxnCen][Nspectrum];
 	TProfile *fFlowQCQv1[Ncharge][fCRCMaxnCen][Nspectrum]; //for eta and pT
 	//final differential flow
 	TH1D *fFlowQCFinalPtDifHist[Ncharge][fCRCMaxnCen][fFlowNHarm][fFlowQCNCov]; //
