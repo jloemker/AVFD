@@ -2039,7 +2039,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
                     vnegError = fFlowQCFinalPtDifHist[1][h][hr][0]->GetBinError(pt);
                     deltav = vpos - vneg;
                    	if(fabs(vpos)>0.&&fabs(vneg)>0.){//for completely correlated variables..no clue what the degree of correlation might be or how to get it yet.
-                	deltavError = sqrt(abs(pow(vposError,2)-pow(vnegError,2));
+                	deltavError = sqrt(abs(pow(vposError,2)-pow(vnegError,2)) );
                 	fFlowQCFinalPtDifDeltaHist[h][hr]->SetBinContent(pt,deltav);//centrality, harmonic, cov
                 	fFlowQCFinalPtDifDeltaHist[h][hr]->SetBinError(pt, deltavError);
                      	}
@@ -2054,7 +2054,7 @@ void CalculateFlowCME::CalculateFlowQC(bool Eta, bool Pt)
                     deltav = vpos - vneg;
                         if(fabs(vpos)>0.&&fabs(vneg)>0.){
                         //cout<<"works!"<<endl;
-                        deltavError = sqrt(abs(pow(vposError,2)-pow(vnegError,2)));
+                        deltavError = sqrt(abs(pow(vposError,2)-pow(vnegError,2)) );
                         fFlowQCFinalEtaDifDeltaHist[h][hr]->SetBinContent(eta,deltav);//centrality, harmonic, cov
                         fFlowQCFinalEtaDifDeltaHist[h][hr]->SetBinError(eta, deltavError);
                         }

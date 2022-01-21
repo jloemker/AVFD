@@ -9,16 +9,68 @@
 //Little helps
 //
 //======================================================================================
-void findSpread(Int_t c, TString obj,Int_t Nbins){//make this work for eta too !
+void findSpread(Int_t c, Int_t harm, TString obj,Int_t Nbins){//make this work for eta too !
   TFile *f[10];
   TList *list[10];
   TH1D *fHist[10];
-  //cout<<Nbins<<endl;
+  Int_t objID = 0;
+  if(obj == Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm)){
+	objID = 1;//pos pT
+  }else if(obj == Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm)){
+  	objID = 2;//neg pT
+  }else if(obj == Form("fFlowQCFinalPtDifDeltaHist[%d][%d]",c,harm)){
+	objID = 3;//del pT
+  }else if(obj == Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm)){
+	objID = 4;//pos eta
+  }else if(obj == Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm)){
+        objID = 5;//neg eta
+  }else if(obj == Form("fFlowQCFinalEtaDifDeltaHist[%d][%d]",c,harm)){
+        objID = 6;//del eta
+  }
+
   TH1F *fHistSpread[Nbins];
+/*
   for(Int_t i = 0; i < Nbins; i++){
-   if(Nbins<40){ fHistSpread[i] = new TH1F(Form("fHistSpreadPtBin%d",i+1),"",1000,0, 0.3);}
-   else if(Nbins>40){fHistSpread[i] = new TH1F(Form("fHistSpreadEtaBin%d",i+1),"",1000,0, 0.3);}
+	switch(objID){
+        	case 0:
+                	cout<<"No obj to findSpread"<<endl;
+                case 1:
+                	fHistSpread[i] = new TH1F(Form("fHistSpreadPosPtBin%d",i+1),"",1000,0, 0.3);
+                case 2:
+                        fHistSpread[i] = new TH1F(Form("fHistSpreadNegPtBin%d",i+1),"",1000,0, 0.3);
+		case 3:
+                        fHistSpread[i] = new TH1F(Form("fHistSpreadDPtBin%d",i+1),"",1000,0,0.3);
+		case 4:
+                        fHistSpread[i] = new TH1F(Form("fHistSpreadPosEtaBin%d",i+1),"",1000,0, 0.3);
+		case 5:
+                        fHistSpread[i] = new TH1F(Form("fHistSpreadNegEtaBin%d",i+1),"",1000,0,0.3);                
+		case 6:
+                        fHistSpread[i] = new TH1F(Form("fHistSpreadDEtaBin%d",i+1),"",1000,0,0.3);
+        }
    }
+*/
+  for(Int_t i = 0; i < Nbins; i++){
+	TString histo_string;
+	cout << "obj ID"<< objID<<endl;
+                if(objID== 0){
+                        cout<<"No obj to findSpread"<<endl;
+                }else if(objID==1){
+                        histo_string = Form("fHistSpreadPosPtBin%d",i+1);
+                }else if(objID == 2){
+                        histo_string = Form("fHistSpreadNegPtBin%d",i+1);
+                }else if(objID==3){
+                        histo_string = Form("fHistSpreadDPtBin%d",i+1);
+                }else if(objID==4){
+                        histo_string = Form("fHistSpreadPosEtaBin%d",i+1);
+                }else if(objID==5){
+                        histo_string = Form("fHistSpreadNegEtaBin%d",i+1);
+                }else if(objID == 6){
+                        histo_string = Form("fHistSpreadDEtaBin%d",i+1);
+        }
+	fHistSpread[i] = new TH1F(histo_string,"",1000,0,0.3);
+   }
+
+  //fHistSpread[i] = new TH1F(histo_string,"",100,0,0.3);
   for(Int_t iFile = 0; iFile < 10; iFile++) {
     f[iFile] = TFile::Open(Form("/data/alice/jlomker/AVFD/result/dirID-0/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0_split_%d.root",c,c+1,iFile));
     if((!f[iFile])||(!f[iFile]->IsOpen())) {
@@ -50,12 +102,10 @@ void findSpread(Int_t c, TString obj,Int_t Nbins){//make this work for eta too !
   for(Int_t iBin = 1; iBin <= fHist[0]->GetNbinsX(); iBin++){
     fHistSpread[iBin-1]->Write();}
     fOutput->Close();
-//cout<<"file closed"<<endl;
-  //for(Int_t iFile = 0; iFile<10; iFile++){
-   // delete f[iFile];}
-  for(Int_t i = 0; i < Nbins; i++){
-    delete fHistSpread[i];}
-
+ // for(Int_t i = 0; i < Nbins; i++){
+    //delete fHistSpread[i];}
+  for(Int_t i = 0; i<10; i++){
+  f[i]->Close();}
 }
 
 double CrossCheck(TProfile *Prof, TH1D *hist, Int_t bin){//calculate spread for Profile and std from TH1D
@@ -73,6 +123,7 @@ TH1F *Subsampling(TString file, TString obj, Double_t binArr[], TH1F *result, In
 	TList *l;
 	TH1F *h, *o;
 
+	Int_t objID = 0;
 	Int_t Nbins = result->GetNbinsX();
 	Int_t MinBin, MaxBin;
 	Double_t RMS[51] = {0.};
@@ -82,16 +133,38 @@ TH1F *Subsampling(TString file, TString obj, Double_t binArr[], TH1F *result, In
 	TH1F *rms = (TH1F*)RMs->Clone("rms");
 	TH1D *cc = (TH1D*)CC->Clone("cc");
 	TH1D *hist = (TH1D*)Hist->Clone("hist");
-	//settng for pT/eta
-	if(Nbins<40){
-		cout<<"Subsampling pT"<<endl;
-		Nbins = 23;
+	//setting for pT/eta
+	if(obj == Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm) ){
+		cout<<"Subsampling differential pT from positive particles"<<endl;
+		objID = 1;
 		MinBin = 1;
 		MaxBin = Nbins;
-	}else if(Nbins>40){
+	}else if(obj == Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm)){
+                cout<<"Subsampling differential pT from negative particles"<<endl;
+                objID = 2;
+                MinBin = 1;
+                MaxBin = Nbins;
+	}else if(obj == Form("fFlowQCFinalPtDifDeltaHist[%d][%d]",c,harm)){
+                cout<<"Subsampling differential delta pT"<<endl;
+                objID = 3;
+                MinBin = 1;
+                MaxBin = Nbins;
+	}else if(obj == Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm)){
+		cout<<"Subsampling differential eta for positive particles"<<endl;
+		objID = 4;
 		MinBin = 18;
 		MaxBin = 34;
-		cout<<"Subsampling #eta"<<endl;}
+	}else if(obj == Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm)){
+                cout<<"Subsampling differential eta for negative particles"<<endl;
+                objID = 5;
+                MinBin = 18;
+                MaxBin = 34;
+	}else if(obj == Form("fFlowQCFinalEtaDifDeltaHist[%d][%d]",c,harm)){
+                cout<<"Subsampling differential delta eta"<<endl;
+                objID = 6;
+                MinBin = 18;
+                MaxBin = 34;
+	}
 
 	for(Int_t i=MinBin; i<=MaxBin; i++){
 		//Double_t Rms[11] = {0.};
@@ -103,8 +176,22 @@ TH1F *Subsampling(TString file, TString obj, Double_t binArr[], TH1F *result, In
 	        Double_t gCombinedError = 0.0;
 		TString spreadstring;
 		output = spread->Open(Form("output_findSpread/spread_"+obj+"_c%d0_%d0.root",c,c+1));
-		if(Nbins<40){spreadstring = Form("fHistSpreadPtBin%d",i);}
-		else if(Nbins>40){spreadstring = Form("fHistSpreadEtaBin%d",i);}
+		//switch(objID){
+			if(objID==0){
+				cout<<"No obj to subsample"<<endl;
+			}else if(objID==1){
+				spreadstring = Form("fHistSpreadPosPtBin%d",i);
+			}else if(objID ==2){
+				spreadstring = Form("fHistSpreadNegPtBin%d",i);
+			}else if(objID ==3){
+				spreadstring = Form("fHistSpreadDPtBin%d",i);
+			}else if(objID ==4){
+				spreadstring = Form("fHistSpreadPosEtaBin%d",i);
+			}else if(objID ==5){
+				spreadstring = Form("fHistSpreadNegEtaBin%d",i);
+			}else if(objID==6){
+				spreadstring = Form("fHistSpreadDEtaBin%d",i);
+			}	
 		o = (TH1F*) output->Get(spreadstring);
 		sigma = o->GetRMS();
 		mean = o->GetMean();//take the file check the values fro 3*sigma
@@ -138,6 +225,7 @@ TH1F *Subsampling(TString file, TString obj, Double_t binArr[], TH1F *result, In
 			f->Close();
 			t->Close();
 		}//end split
+		o->Reset();//may fix memory problem
         	gCombinedValue /= wTotal;
         	gCombinedError = (1./wTotal)*TMath::Sqrt(gCombinedError);
 	        if(fabs(gCombinedValue)>0){
@@ -237,8 +325,8 @@ TH1F *Dv(TH1F *P, TH1F *N,Double_t binArr[], TH1F *result){//to get delta vn fro
 	        vposError = P->GetBinError(i);
         	vnegError = N->GetBinError(i);
 	        deltav = vpos - vneg;
-        	if(fabs(vpos)>0.&&fabs(vneg)>0.){
-        		deltavError = sqrt(abs(pow(vposError,2)+pow(vnegError,2)-2*vnegError*vposError));
+        	if(fabs(vpos)>0.&&fabs(vneg)>0.){//sewith to completely correlated error
+        		deltavError = sqrt(abs(pow(vposError,2)-pow(vnegError,2)));
                		result->SetBinContent(i,deltav);
                 	result->SetBinError(i, deltavError);
         	}//end if
@@ -494,17 +582,18 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
 		if(pT == true){
 			TH1F *PvpT = new TH1F("pvpT", "pvpT", fPtDiffNBins, fCRCPtBins);
 			//findSpread(c,Form("fFlowQCQv1[0][%d][0]",c),fPtDiffNBins);
-			findSpread(c,Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm),fPtDiffNBins);
+			findSpread(c,harm,Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm),fPtDiffNBins);
 			PvpT = Subsampling(input,Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm),fCRCPtBins, PvpT, c, harm, mint, mdiff,RMs, CC,Hist);
 			//PvpT = Subsampling(input,Form("fFlowQCQv1[0][%d][0]",c),fCRCPtBins, PvpT, c, harm, mint, mdiff,RMs, CC,Hist);
 			TH1F *NvpT = new TH1F("nvpT","nvpT",fPtDiffNBins,fCRCPtBins);
 			//findSpread(c,Form("fFlowQCQv1[1][%d][0]",c),fPtDiffNBins);
-			findSpread(c,Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm),fPtDiffNBins);
+			findSpread(c,harm,Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm),fPtDiffNBins);
 			//NvpT = Subsampling(input,Form("fFlowQCQv1[1][%d][0]",c),fCRCPtBins, NvpT, c ,harm,mint, mdiff,RMs, CC,Hist);
 			NvpT = Subsampling(input,Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm),fCRCPtBins, NvpT, c ,harm,mint, mdiff,RMs, CC,Hist);
 			TH1F *DvpT = new TH1F("dvnpT","dvnpT",fPtDiffNBins,fCRCPtBins);
-			DvpT = Dv(PvpT, NvpT, fCRCPtBins, DvpT);
-			//DvpT = Subsample_Dv(input,Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm), Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm), fCRCPtBins, DvpT, c, harm,mint, mdiff,RMs, CC,Hist);
+			//DvpT = Dv(PvpT, NvpT, fCRCPtBins, DvpT);
+			findSpread(c,harm,Form("fFlowQCFinalPtDifDeltaHist[%d][%d]",c,harm),fPtDiffNBins);
+			DvpT = Subsampling(input,Form("fFlowQCFinalPtDifDeltaHist[%d][%d]",c,harm), fCRCPtBins, DvpT, c, harm,mint, mdiff,RMs, CC,Hist);
 			//Multi centrality plot
 			copy[c] = (TH1F*) DvpT->Clone("copy dvpt");
 			//Plot the pos/neg with difference================================================= 
@@ -516,14 +605,15 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
 		}//end of pT if
 		else if(pT == false){
 			TH1F *PvEta = new TH1F("pvEta","pvEta",fEtaDiffNBins,fCRCEtaBins);
-			findSpread(c,Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm),fEtaDiffNBins);		
+			findSpread(c,harm,Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm),fEtaDiffNBins);		
 			PvEta = Subsampling(input,Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm),fCRCEtaBins, PvEta, c, harm,mint, mdiff,RMs, CC,Hist);
 			TH1F *NvEta = new TH1F("nvEta", "nvEta", fEtaDiffNBins, fCRCEtaBins);
-			findSpread(c,Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm),fEtaDiffNBins);
+			findSpread(c,harm,Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm),fEtaDiffNBins);
 			NvEta = Subsampling(input,Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm),fCRCEtaBins, NvEta, c, harm,mint, mdiff,RMs, CC,Hist);
 			TH1F *DvEta = new TH1F("deltavneta","deltavneta",fEtaDiffNBins,fCRCEtaBins);
-			DvEta = Dv(PvEta, NvEta, fCRCEtaBins, DvEta);
-			//DvEta = Subsample_Dv(input, Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm), Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm), fCRCEtaBins, DvEta, c, harm,mint, mdiff,RMs, CC,Hist);
+			//DvEta = Dv(PvEta, NvEta, fCRCEtaBins, DvEta);
+			findSpread(c, harm,Form("fFlowQCFinalEtaDifDeltaHist[%d][%d]",c,harm),fEtaDiffNBins);
+			DvEta = Subsampling(input, Form("fFlowQCFinalEtaDifDeltaHist[%d][%d]",c,harm), fCRCEtaBins, DvEta, c, harm,mint, mdiff,RMs, CC,Hist);
 			//Multi centrlity plot
 			copy[c] = (TH1F*) DvEta->Clone("copy dvpt");
 			//Plot the pos/neg with difference=================================================
