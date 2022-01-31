@@ -5,7 +5,7 @@ TFile *Published = new TFile("/project/alice/users/jlomker/AVFD/plots/published.
 //the vocab. is a bit unhandy ...
 //
 //producing new file for 5.02TeV with corresponding centrality
-TFile* pT0eta0 = new TFile("/data/alice/jlomker/AVFD/result/dirID-0/new/Result_5.02TeV_pT_0_eta_0_Cent30_40.root");//
+TFile* pT0eta0 = new TFile("/data/alice/jlomker/AVFD/result/dirID-0/new/Result_5.02TeV_pT_0_eta_0_Cent20_30.root");//
 TFile *Pb = new TFile("/data/alice/jlomker/AVFD/result/dirID-0/new/Result_5.44TeV_pT_0_eta_0_Cent20_30.root");//
 
 TKey *p = (TKey*) Published->Get("Table 5;1");
@@ -13,7 +13,7 @@ TList *eta0pT0 = (TList*) pT0eta0->Get("FlowQCList;1");
 TList *pb = (TList*) Pb->Get("FlowQCList;1");
 
 //20 to 30 % [positive = 0][centrality = 2][harmonic = 1 = (v2)][0]
-TH1F *h1 = (TH1F*) eta0pT0->FindObject("fFlowQCFinalPtDifHist[0][3][1][0]");//check 1 in full range->has 36 Entries 
+TH1F *h1 = (TH1F*) eta0pT0->FindObject("fFlowQCFinalPtDifHist[0][2][1][0]");//check 1 in full range->has 36 Entries 
 //TH1F *h2 =  (TH1F*) pb->FindObject("fFlowQCFinalPtDifHist[0][2][1][0]");
 /*
 // The Xe-Xe data 5.44TeV from ALICE 20-30%
@@ -26,7 +26,7 @@ Double_t h2_x[13] = {0.3,0.5,0.7,0.9,1.25,1.375,1.625,1.875,2.25,2.75,3.25,3.75,
 Double_t h2_y[13] = {0.0477,0.0771,0.1024,0.1249,0.1695,0.192,0.2068,0.2225,0.2395,0.2494,0.2448,0.198};
 Double_t h2_err[13] = {0.0021,0.003,0.0038,0.0053,0.0032,0.0039,0.0058,0.0047,0.0049,0.007,0.0057,0.0126,0.016};
 //adjust fitting range and try lower order pol !
-TH1F *h2 = new TH1F("ALICE Fit: Pol 4","ALICE vs AVFD",12,0.3,4.5);
+TH1F *h2 = new TH1F("ALICE Fit: Pol 6","ALICE vs AVFD",12,0.3,4.5);
 TH1F *hErr = new TH1F("ErrFit","ErrFit",12, 0.3,4.5);
 for(int i=1; i < 13; ++i) {
    h2->SetBinContent(i,h2_y[i-1]);
@@ -35,10 +35,10 @@ for(int i=1; i < 13; ++i) {
 }
 
 //fit hist 2 with poln and then difference from fit (poln) to my data 
-TF1 *func = new TF1("func","pol 4",0,5);
+TF1 *func = new TF1("func","pol 6",0,5);
 //TF1 *funcErr = new TF1("funcErr","pol 3",0.,5);
 
-h2->Fit("func","MR");
+h2->Fit("func","R");
 TF1 *func_res2 = h2->GetFunction("func");
 Double_t chi2_h2 = func_res2->GetChisquare();
 Double_t NDF = func_res2 ->GetNDF();
@@ -101,7 +101,7 @@ Double_t arr3[NBins];
 Double_t ErrCorr[NBins];
 Double_t Err1[NBins];
 Double_t Err2[NBins];
-hErr->Fit("func","R");//Fitting errors
+hErr->Fit("func","WLR");//Fitting errors
 TF1 *func_resErr = hErr->GetFunction("func");
 Double_t chi2_hErr = func_resErr->GetChisquare();
 Double_t NDFErr = func_resErr ->GetNDF();
@@ -145,6 +145,6 @@ h3->GetXaxis()->SetTitleOffset(3.1);//otherwise 2.9 was fine
 h3->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
 h3->GetXaxis()->SetLabelSize(18);
 
-c->SaveAs("Fit_compare.pdf");
+c->SaveAs("v2/Fit_compare.pdf");
 }
 // 

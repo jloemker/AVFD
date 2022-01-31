@@ -12,7 +12,7 @@ for(Int_t cen = 1; cen<7; cen++){
 TFile* f = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-0/new/Result_5.02TeV_pT_0_eta_0_Cent%d0_%d0.root",cen,cen+1));
 TList *l = (TList*) f->Get("FlowQCList;1");
 
-for(Int_t harm = 0; harm<3;harm++){
+for(Int_t harm = 0; harm<2;harm++){
 //histograms
 //eta and pt pos/neg
 
@@ -69,8 +69,8 @@ DvpT->SetLineWidth(2);
 DvpT->GetXaxis()->SetTitle("p_{T} [GeV]");
 DvpT->GetYaxis()->SetTitle(Form("#Delta v_{%d} = v_{%d}(+h) - v_{%d}(-h)",harm+1,harm+1,harm+1));
 DvpT->Draw();
-c->SaveAs(Form("v%d_pT_cen%d.pdf",harm+1,cen));
-
+c->SaveAs(Form("v%d/pT_cen%d.pdf",harm+1,cen));
+delete c;
 TCanvas *cEta = new TCanvas("ceta", "canvas", 800, 800);//upper plot in pad1
 TPad *padeta = new TPad("padeta", "padeta", 0, 0.5, 1., 1.0);
 padeta->SetBottomMargin(0); // Upper and lower plot are joined
@@ -102,7 +102,8 @@ DvEta->SetLineColor(kGreen+1);
 DvEta->SetLineWidth(2);
 DvEta->GetYaxis()->SetTitle(Form("#Delta v_{%d} = v_{%d}(+h) - v_{%d}(-h)",harm+1,harm+1,harm+1));
 DvEta->Draw();
-cEta->SaveAs(Form("v%d_Eta_cen%d.pdf",harm+1,cen));
+cEta->SaveAs(Form("v%d/Eta_cen%d.pdf",harm+1,cen));
+delete cEta;
 }//Harm loop
 }//Cent loop
 //delta hists for {1,2,3} and {4,5,6} in eta and pT for different centralities
