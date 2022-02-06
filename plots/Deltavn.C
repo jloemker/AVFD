@@ -556,7 +556,7 @@ void PlotEta(TH1F *PvEta, TH1F *NvEta, TH1F *DvEta,Int_t c, Int_t harm){
         PvEta->DrawCopy();
 	//NvEta->GetYaxis()->SetNdivisions(4);
         NvEta->SetLineColor(c+2);
-        NvEta->SetLineWidth(2);
+        NvEta->SetLineWidth(1);
 	NvEta->SetTitle(" ");
 	NvEta->SetMarkerStyle(23);
 	NvEta->SetMarkerColor(c+2);
@@ -582,7 +582,7 @@ void PlotEta(TH1F *PvEta, TH1F *NvEta, TH1F *DvEta,Int_t c, Int_t harm){
 	DvEta->SetMarkerStyle(20);
 	DvEta->SetMarkerColor(c);
         DvEta->SetLineColor(c);
-        DvEta->SetLineWidth(2);
+        DvEta->SetLineWidth(1);
         DvEta->GetYaxis()->SetTitle(Form("#Delta v_{%d} = v_{%d}(+h) - v_{%d}(-h)",harm+1,harm+1,harm+1));
         DvEta->DrawCopy();
         cEta->SaveAs(Form("v%d/eta_c%d.pdf",harm+1,c));

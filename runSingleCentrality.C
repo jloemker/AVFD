@@ -77,8 +77,8 @@ void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT, Int_t eta){
 		string directory;
 	//here comes the input directory	
 	//string directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality0-5/Baseline/job-%d/particle_distribution_final/%d.dat",ithJob,ithFile);
-		//directory = Form("tree_5.44TeV_Cent%d_%d_%d.root", val1, val2, k);//submit script puts me into dirID/...
-		directory = Form("/dcache/alice/shiqiu/2020_AVFD_5.02TeV/BaselineFinalFactor70/tree_Baseline_5.02TeV_Cent%d_%d_%d.root",val1,val2,k);// /data/alice/jlomker/AVFD/Centrality-%d/dirID-0/tree_5.44TeV_Cent%d_%d_%d.root",centID, val1,val2,k);
+		directory = Form("tree_5.02TeV_Cent%d_%d_%d.root", val1, val2, k);//submit script puts me into dirID/...
+		//directory = Form("/dcache/alice/shiqiu/2020_AVFD_5.02TeV/BaselineFinalFactor70/tree_Baseline_5.02TeV_Cent%d_%d_%d.root",val1,val2,k);// /data/alice/jlomker/AVFD/Centrality-%d/dirID-0/tree_5.44TeV_Cent%d_%d_%d.root",centID, val1,val2,k);
 		TFile *f = TFile::Open(directory.c_str(), "READ");
 		
 		if (!f) {
@@ -126,7 +126,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT, Int_t eta){
  	//For Subsampling method
 	TFile *SplitResult;
 	cout<<"SplitFile ========"<<k<<endl;
-        SplitResult = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/split/Results_5.02TeV_pTrange_%d_eta_%d_Cent%d_%d_split_%d.root",dirID, pT, eta, val1, val2,k), "RECREATE");
+        SplitResult = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/NoBField/split/Results_5.02TeV_pTrange_%d_eta_%d_Cent%d_%d_split_%d.root",dirID, pT, eta, val1, val2,k), "RECREATE");
 	//does not include the Finalize()
         SplitResult->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");
 	
@@ -138,7 +138,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT, Int_t eta){
 	// Save list holding histogram with weights:
 	TFile *ResultsFile;
 	// Here comes the output directory
-	ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/new/Result_5.02TeV_pT_%d_eta_%d_Cent%d_%d.root",dirID, pT, eta, val1, val2), "RECREATE");	  
+	ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/NoBField/Result_5.02TeV_pT_%d_eta_%d_Cent%d_%d.root",dirID, pT, eta, val1, val2), "RECREATE");	  
 
 	ResultsFile->WriteObject(fQC->GetQAList(),"QAList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");

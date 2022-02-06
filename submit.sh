@@ -3,12 +3,12 @@ SCRIPT="runAnalysis.sh"
 dirID=0
 #while [ $dirID -le 0 ]; do
 echo "Directory ID: $dirID"
-centID=1
-while [ $centID -le 7 ]; do
+centID=4 
+#while [ $centID -le 7 ]; do
 pTiD=0
 while [ $pTiD -le 5 ]; do
 etaID=0
-while [ $etaID -le 2 ]; do
+#while [ $etaID -le 2 ]; do
 echo "Opening the script for centrality ID: $centID , pT ID: $pTiD and eta ID: $etaID"
 #make the script to submit
     (#echo "#!/bin/bash"
@@ -16,8 +16,8 @@ echo "source /cvmfs/alice.cern.ch/etc/login.sh"
 echo "eval $(alienv printenv VO_ALICE@AliPhysics::vAN-20210923_ROOT6-1)"
 #echo "eval $(alienv printenv VO_ALICE@ROOT::v6-24-06-1)"
 #echo "which aliroot || exit 1"
-echo "mkdir -p /data/alice/jlomker/AVFD/Centrality-$centID/dirID-$dirID"
-echo "cd /data/alice/jlomker/AVFD/Centrality-$centID/dirID-$dirID"
+echo "mkdir -p /data/alice/jlomker/AVFD/NoBField/Centrality-$centID/dirID-$dirID"
+echo "cd /data/alice/jlomker/AVFD/NoBField/Centrality-$centID/dirID-$dirID"
 echo "pwd"
 echo "if [ -f *.root ]"
 echo "  then "
@@ -53,17 +53,17 @@ echo "exec root -b -q CalculateFlowCME.cxx++ runSingleCentrality.C++'($centID, $
 
 qsub -q generic $SCRIPT 
 
-let etaID++
+#let etaID++
 
-done 
+#done 
 
 let pTiD++
 
 done
 
-let centID++
+#let centID++
 
-done
+#done
 
 #let dirID++
 

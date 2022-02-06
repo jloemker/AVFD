@@ -67,9 +67,9 @@ dir = "a-0.1";
  std::cout <<"Centrality ID: " << centID << " and directory: " << dir << std::endl;
  //Int_t centID = {0,1,2,3,4,5,6,7}; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70%
 
-  int nJob = 200;//was 2000 but panos has only 999 jobs in baseline tir
-  int nFile = 20;//was 201
-  int nFinalFiles =10;//was 10
+  int nJob = 999;//was 2000 but panos has only 999 jobs in baseline tir
+  int nFile = 50;//was 201
+  int nFinalFiles =20;//was 10
   // map to convert UrQMD pid to PDG pid
   std::map<int, int> pid_conversion_map;
   for (int ithPid = 0; ithPid < nPid; ithPid++) {  
@@ -101,11 +101,12 @@ dir = "a-0.1";
 	  TTree tree("events", "event");
 	  Event ev;
 	  tree.Branch("event", &ev);
-	  for (int ithJob = jobNum; ithJob <= jobNum+(nJob/nFinalFiles)+(nJob%nFinalFiles); ithJob++) {
+	  for (int ithJob = jobNum; ithJob <= nJob; ithJob++){ //jobNum+(nJob/nFinalFiles)+(nJob%nFinalFiles); ithJob++) {
 		for (int ithFile = 1; ithFile <= nFile; ithFile++) {
 		  std::ifstream file_dat;
-		if(dirID == 0){
-		  directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.02TeV/Centrality%d-%d/Baseline/job-%d/particle_distribution_final/%d.dat",val1, val2, ithJob,ithFile);
+		if(dirID == 0){//only 30_40 exists!
+		  directory = Form("/dcache/alice/jlomker/sim/NoBField/5.02TeV/Centrality%d_%d/job-%d/Result/event-1/particle_distribution_final/%d.dat",val1,val2,ithJob,ithFile);
+		  //directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.02TeV/Centrality%d-%d/Baseline/job-%d/particle_distribution_final/%d.dat",val1, val2, ithJob,ithFile);
                   }else{
 		  directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.02TeV/Centrality%d-%d/a-0.1/job-%d/particle_distribution_final/%d.dat",val1, val2, ithJob,ithFile);
   		  }	
