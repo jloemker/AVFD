@@ -65,7 +65,8 @@ void findSpread(Int_t c, Int_t harm,TString spectrum){
  	fHistSpreadDiff[i] = new TH1F(Form("fHistSpreadDiff"+spectrum+"Bin%d",i+1),"",1000,-0.3,0.3);
  }
   for(Int_t iFile = 0; iFile < 10; iFile++) {
-    f[iFile] = TFile::Open(Form("/data/alice/jlomker/AVFD/result/dirID-0/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0_split_%d.root",c,c+1,iFile));
+    //f[iFile] = TFile::Open(Form("/data/alice/jlomker/AVFD/result/dirID-0/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0_split_%d.root",c,c+1,iFile));
+    f[iFile] = TFile::Open(Form("/data/alice/jlomker/AVFD/result/dirID-0/NoBField/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0_split_%d.root",c,c+1,iFile));
     if((!f[iFile])||(!f[iFile]->IsOpen())) {
     cout<<"File "<<iFile<<" not found..."<<endl;
     return;
@@ -635,7 +636,8 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
 	TH1F *copy[cmax];//Multi centrality plots
 	for(Int_t c=cent; c<=cmax;c++){
 	cout<<"Centrality: "<<c<<"0-"<<(c+1)<<"0"<<endl;//actually 5.02
-	TString input = Form("/data/alice/jlomker/AVFD/result/dirID-0/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0",c,c+1);
+	//TString input = Form("/data/alice/jlomker/AVFD/result/dirID-0/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0",c,c+1);
+	TString input = Form("/data/alice/jlomker/AVFD/result/dirID-0/NoBField/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0",c,c+1);
 	// !!! For harm = 0 we could also try to use the fFlowQCQv1[pos=0, neg=1][cen][pt = 0, eta = 1] !!!
 	//for(Int_t harm=0; harm<3; harm++){
 		cout<<"Harmonic: "<<(harm+1)<<endl;;

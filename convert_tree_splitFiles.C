@@ -101,7 +101,7 @@ dir = "a-0.1";
 	  TTree tree("events", "event");
 	  Event ev;
 	  tree.Branch("event", &ev);
-	  for (int ithJob = jobNum; ithJob <= nJob; ithJob++){ //jobNum+(nJob/nFinalFiles)+(nJob%nFinalFiles); ithJob++) {
+	  for (int ithJob = jobNum; ithJob <= jobNum+(nJob/nFinalFiles)+(nJob%nFinalFiles); ithJob++) {
 		for (int ithFile = 1; ithFile <= nFile; ithFile++) {
 		  std::ifstream file_dat;
 		if(dirID == 0){//only 30_40 exists!
