@@ -74,51 +74,6 @@ vEta->SetLineColor(kRed);
 vEta->Draw("same");
 VEta ->SaveAs(Form("Netav1_%d.pdf",c));
 /*
-TCanvas *V2 = new TCanvas("v2","pT",400,400);
-V2->SetLeftMargin(0.2);
-v1->GetYaxis() -> SetTitleOffset(2.0);
-v1->GetYaxis()->SetTitle("differential flow v_{3}");
-v1->GetXaxis()->SetTitle("p_{T} [GeV]");
-v1->GetXaxis()->SetRangeUser(0.,5);
-v1->SetLineColor(kRed);
-v1->Draw("same");
-V2 ->SaveAs(Form("ptv3_%d.pdf",c));
-
-
-TCanvas *V1 = new TCanvas("v2","pT",400,400);
-V1->SetLeftMargin(0.2);
-v1e->GetYaxis() -> SetTitleOffset(2.0);
-v1e ->GetYaxis()->SetTitle("differential flow v_3}");
-v1e->GetXaxis()->SetTitle("#eta");
-v1e->GetYaxis()->SetRangeUser(-0.3,0.3);
-v1e->GetXaxis()->SetRangeUser(-1,1);
-v1e->SetLineColor(kRed);
-v1e->Draw("same");
-V1 ->SaveAs(Form("etav3_%d.pdf",c));
-
-TCanvas *W1 = new TCanvas("v2","pT",400,400);
-W1->SetLeftMargin(0.2);
-w1->GetYaxis() -> SetTitleOffset(2.0);
-w1->GetYaxis()->SetTitle("differential flow v_{2}");
-w1->GetXaxis()->SetRangeUser(0.,5);
-w1->GetXaxis()->SetTitle("p_{T} [GeV]");
-w1->SetLineColor(kRed);
-w1->Draw("same");
-W1 ->SaveAs(Form("ptv2_%d.pdf",c));
-
-
-TCanvas *W2 = new TCanvas("v2","pT",400,400);
-W2->SetLeftMargin(0.2);
-v2e->GetYaxis() -> SetTitleOffset(2.0);
-v2e ->GetYaxis()->SetTitle("differential flow v_{2}");
-v2e->GetXaxis()->SetTitle("#eta");
-v2e->GetYaxis()->SetRangeUser(-0.3,0.3);
-v2e->GetXaxis()->SetRangeUser(-1,1);
-v2e->SetLineColor(kRed);
-v2e->Draw("same");
-W2 ->SaveAs(Form("etav2_%d.pdf",c));
-*/
-}
 ////**********************************************************/////
 ////*********************************************************/////
 //							    /////

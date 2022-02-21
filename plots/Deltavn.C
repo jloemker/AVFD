@@ -22,48 +22,11 @@ void findSpread(Int_t c, Int_t harm,TString spectrum){
   TH1F *fHistSpreadPos[Nbins];
   TH1F *fHistSpreadNeg[Nbins];
   TH1F *fHistSpreadDiff[Nbins];
-/*
-  if(obj == Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm)){
-	objID = 1;//pos pT
-  }else if(obj == Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm)){
-  	objID = 2;//neg pT
-  }else if(obj == Form("fFlowQCFinalPtDifDeltaHist[%d][%d]",c,harm)){
-	objID = 3;//del pT
-  }else if(obj == Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm)){
-	objID = 4;//pos eta
-  }else if(obj == Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm)){
-        objID = 5;//neg eta
-  }else if(obj == Form("fFlowQCFinalEtaDifDeltaHist[%d][%d]",c,harm)){
-        objID = 6;//del eta
-  }
-
-  TH1F *fHistSpread[Nbins];
-
-  for(Int_t i = 0; i < Nbins; i++){
-	TString histo_string;
-                if(objID== 0){
-                        cout<<"No obj to findSpread"<<endl;
-                }else if(objID==1){
-                        histo_string = Form("fHistSpreadPosPtBin%d",i+1);
-		}else if(objID == 2){
-                        histo_string = Form("fHistSpreadNegPtBin%d",i+1);
-                }else if(objID==3){
-                        histo_string = Form("fHistSpreadDPtBin%d",i+1);
-                }else if(objID==4){
-                        histo_string = Form("fHistSpreadPosEtaBin%d",i+1);
-                }else if(objID==5){
-                        histo_string = Form("fHistSpreadNegEtaBin%d",i+1);
-                }else if(objID == 6){
-                        histo_string = Form("fHistSpreadDEtaBin%d",i+1);
-        }
-	fHistSpread[i] = new TH1F(histo_string,"",1000,-0.3,0.3);
-   }
-*/
  for(Int_t i = 0; i< Nbins; i++){
 	fHistSpreadPos[i] = new TH1F(Form("fHistSpreadPos"+spectrum+"Bin%d",i+1),"",1000,0,0.3);
 	fHistSpreadNeg[i] = new TH1F(Form("fHistSpreadNeg"+spectrum+"Bin%d",i+1),"",1000,0,0.3);
  	fHistSpreadDiff[i] = new TH1F(Form("fHistSpreadDiff"+spectrum+"Bin%d",i+1),"",1000,-0.3,0.3);
- }
+  }
   for(Int_t iFile = 0; iFile < 10; iFile++) {
     //f[iFile] = TFile::Open(Form("/data/alice/jlomker/AVFD/result/dirID-0/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0_split_%d.root",c,c+1,iFile));
     f[iFile] = TFile::Open(Form("/data/alice/jlomker/AVFD/result/dirID-0/NoBField/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0_split_%d.root",c,c+1,iFile));
@@ -88,15 +51,6 @@ void findSpread(Int_t c, Int_t harm,TString spectrum){
       return;
     }
 
-/*
-    if(Nbins<40){
-    fHist[iFile]->GetXaxis()->SetRangeUser(0.2,5);}//if
-    if(Nbins>40){
-    fHist[iFile]->GetXaxis()->SetRangeUser(-0.9,0.9);}//if
-    fHist[iFile]->SetMarkerColor(iFile+1);
-    fHist[iFile]->SetLineColor(iFile+1);
-    fHist[iFile]->Draw("ESAME");
-*/
     for(Int_t iBin = 1; iBin <= fHistPos[iFile]->GetNbinsX(); iBin++){
       fHistSpreadPos[iBin-1]->Fill(fHistPos[iFile]->GetBinContent(iBin));}
     for(Int_t iBin = 1; iBin <= fHistNeg[iFile]->GetNbinsX(); iBin++){
@@ -137,72 +91,11 @@ TH1F *Subsampling(TString file, TString spectrum, TString charge, TH1F *result, 
 	Int_t objID = 0;
 	Int_t Nbins = result->GetNbinsX();
 	Int_t MinBin, MaxBin;
-	//Double_t RMS[51] = {0.};
-	//TProfile *Mint = (TProfile*)mint->Clone("Mint");
-	//TProfile *Mdiff = (TProfile*)mdiff->Clone("Mdiff");
-
-	//TH1F *rms = (TH1F*)RMs->Clone("rms");
-	//TH1D *cc = (TH1D*)CC->Clone("cc");
-	//TH1D *hist = (TH1D*)Hist->Clone("hist");
-	//setting for pT/eta
-	/*
-	if(obj == Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm) ){
-		cout<<"Subsampling differential pT from positive particles"<<endl;
-		objID = 1;
-		MinBin = 1;
-		MaxBin = Nbins;
-	}else if(obj == Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm)){
-                cout<<"Subsampling differential pT from negative particles"<<endl;
-                objID = 2;
-                MinBin = 1;
-                MaxBin = Nbins;
-	}else if(obj == Form("fFlowQCFinalPtDifDeltaHist[%d][%d]",c,harm)){
-                cout<<"Subsampling differential delta pT"<<endl;
-                objID = 3;
-                MinBin = 1;
-                MaxBin = Nbins;
-	}else if(obj == Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm)){
-		cout<<"Subsampling differential eta for positive particles"<<endl;
-		objID = 4;
-		MinBin = 18;
-		MaxBin = 34;
-	}else if(obj == Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm)){
-                cout<<"Subsampling differential eta for negative particles"<<endl;
-                objID = 5;
-                MinBin = 18;
-                MaxBin = 34;
-	}else if(obj == Form("fFlowQCFinalEtaDifDeltaHist[%d][%d]",c,harm)){
-                cout<<"Subsampling differential delta eta"<<endl;
-                objID = 6;
-                MinBin = 18;
-                MaxBin = 34;
-	}
-	*/
 	for(Int_t i=1; i<=Nbins; i++){
 		Double_t sigma = 0.;
 		Double_t mean = 0.;
-		/*Double_t w[100];
-	        Double_t wTotal = 0.0;
-        	Double_t gCombinedValue = 0.0;
-	        Double_t gCombinedError = 0.0;
-		*/
 		TString spreadstring;
 		output = spread->Open(Form("output_findSpread/spread_"+spectrum+"_c%d0_%d0.root",c,c+1));
-			/*if(objID==0){
-				cout<<"No obj to subsample"<<endl;
-			}else if(objID==1){
-				spreadstring = Form("fHistSpreadPosPtBin%d",i);
-			}else if(objID ==2){
-				spreadstring = Form("fHistSpreadNegPtBin%d",i);
-			}else if(objID ==3){
-				spreadstring = Form("fHistSpreadDPtBin%d",i);
-			}else if(objID ==4){
-				spreadstring = Form("fHistSpreadPosEtaBin%d",i);
-			}else if(objID ==5){
-				spreadstring = Form("fHistSpreadNegEtaBin%d",i);
-			}else if(objID==6){
-				spreadstring = Form("fHistSpreadDEtaBin%d",i);
-			}*/
 		spreadstring = Form("fHistSpread"+charge+spectrum+"Bin%d",i);	
 		//cout<<spreadstring<<"string"<<endl;
 		o = (TH1F*) output->Get(spreadstring);
@@ -211,134 +104,9 @@ TH1F *Subsampling(TString file, TString spectrum, TString charge, TH1F *result, 
 		result->SetBinContent(i, mean);
 		result->SetBinError(i, sigma);
 		o->Reset();
-		/*
-	        for(Int_t split = 0; split<10;split ++){
-		        t = f->Open(Form(file+"_split_%d.root",split));//close files again !
-        		l = (TList*) t->Get("FlowQCList;1");
-	        	h = (TH1F*) l->FindObject(obj);
-		
-			Double_t val = h->GetBinContent(i);
-			Double_t center = h->GetBinCenter(i);
-			//cout<<" rms("<<i<<") from split histogram "<<h->GetBinError(i)<<" from find spread: 3* sigma "<<3*sigma<<" mean "<<mean<<endl;
-			if(fabs(h->GetBinError(i))>fabs(3*sigma)){cout << "left out flow value: "<< val<<" and error "<<h->GetBinError(i)<<" with bin Nr. "<<i<<" from splitfile: "<<split<<endl;}
-			if(fabs(h->GetBinError(i))<=fabs(3*sigma)){
-				//Mdiff->Fill(center,val);//differential value for all subsamples without weight
-				//Mint->Fill(split+1,h->GetBinContent(i),Nbins);//integrated value over all bins, weighted by #bins		
-				//hist->Fill(split,h->GetBinContent(i));//For RMS vs split evolution//ggf without +1
-				//cc->Fill(val);//For CrossCheck with Mdiff
-				//Int_t len = Mdiff->GetNbinsX();
-				//Mdiff->GetXaxis()->SetRange(i,i);
-				//cout<<"split "<<split<<",  error 1D cc: "<<cc->GetRMS()<<", content 1D hist: "<<hist->GetRMS()<<", error TProfile(bin): "<<Mdiff->GetBinError(i)<<", center: "<<Mdiff->GetBinCenter(i)<<endl;
-				//Rms[split] = CrossCheck(Mdiff,cc,i);
-				//Mdiff->GetXaxis()->SetRange(0,len);
-               			w[i] = 1./TMath::Power(h->GetBinError(i),2);
-                		wTotal +=w [i];
-	                	gCombinedValue += h->GetBinContent(i)*w[i];
-        	        	gCombinedError += TMath::Power(h->GetBinError(i)*w[i],2);
-			}//end if (...)
-			//cc->Reset();
-			h->Reset();
-			f->Close();
-			t->Close();
-		}//end split
-		o->Reset();//may fix memory problem
-        	gCombinedValue /= wTotal;
-        	gCombinedError = (1./wTotal)*TMath::Sqrt(gCombinedError);
-		t = f->Open(Form("/data/alice/jlomker/AVFD/result/dirID-0/new/Result_5.02TeV_pT_0_eta_0_Cent%d0_%d0.root",c,c+1));
-	        
-                l = (TList*) t->Get("FlowQCList;1");
-                h = (TH1F*) l->FindObject(obj);
-		if(fabs(gCombinedError)>0&&fabs(h->GetBinContent(i)>0)){
-        	        result->SetBinContent(i, h->GetBinContent(i));
-                	result->SetBinError(i, gCombinedError);
-        	}
-		h->Reset();
-		f->Close();
-		t->Close();
-		*/
 	}//end Nbins
 return result;
 }//end subsampling
-/*
-	cout<<"after loop"<<endl;
-	RMS[i] = CrossCheck(Mdiff,cc,i);
-	
-	if(RMS[i]<RMS[i-1]){//Checking the drops in RMS pT evolution
-	TCanvas *D = new TCanvas("Drops","Drops",400,400);
-	D->SetLeftMargin(0.2);
-	hist->GetYaxis()->SetTitleOffset(2.0);
-	if(Nbins<40){hist->GetYaxis()->SetTitle(Form("Differential flow v_{%d}(p_{T} = %f)",harm+1,binArr[i]));}
-	else if(Nbins>40){hist->GetYaxis()->SetTitle(Form("Differential flow v_{%d}(#eta = %f)",harm+1,binArr[i]));}
-	hist->GetXaxis()->SetTitle("Splitfile");
-	hist->SetLineColor(c+harm);
-	hist->DrawCopy();
-	D->SaveAs(Form("v%d/drop_bin%d_c%d_"+obj+".pdf",harm+1,i,c));
-	delete D;
-	}//end of single bin subsample plots for strange pT drops
-	else if(RMS[i]>=RMS[i-1]){
-        TCanvas *D = new TCanvas("Drops","Drops",400,400);
-        D->SetLeftMargin(0.2);
-        hist->GetYaxis()->SetTitleOffset(2.0);
-        if(Nbins<40){hist->GetYaxis()->SetTitle(Form("Differential flow v_{%d}(p_{T} = %f)",harm+1,binArr[i]));}
-        else if(Nbins>40){hist->GetYaxis()->SetTitle(Form("Differential flow v_{%d}(#eta = %f)",harm+1,binArr[i]));}
-        hist->GetXaxis()->SetTitle("Splitfile");
-        hist->SetLineColor(c+harm);
-        hist->DrawCopy();
-        D->SaveAs(Form("v%d/rise_bin%d_c%d_"+obj+".pdf",harm+1,i,c));
-        delete D;
-	}//end of else if -> rising RMS pT evolution
-	//delete hist;
-	rms->SetBinContent(i,RMS[i]);//RMS vs bin evolution
-//}//end Nbins
-delete hist;
-
-TCanvas *R = new TCanvas("R","R",400,400);
-R->SetLeftMargin(0.2);
-rms->GetYaxis()->SetTitleOffset(2.0);
-rms->GetYaxis()->SetTitle(Form("RMS of 1D Hist from all splitfiles v_{%d}",harm+1));
-if(Nbins<40){//pT bins
-rms->GetXaxis()->SetTitle("p_{T} [GeV]");
-rms->GetXaxis()->SetRange(1,22);//range in bins !
-}else if(Nbins>40){
-rms->GetXaxis()->SetTitle("#eta");
-rms->GetXaxis()->SetRangeUser(-0.9,0.9);
-}
-rms->SetLineColor(c+harm);
-rms->DrawCopy();
-R->SaveAs(Form("v%d/RMS_c%d_"+obj+".pdf",harm+1,c));
-delete R;
-delete rms;
-
-TCanvas *M = new TCanvas("M","M",400,400);
-M->SetLeftMargin(0.2);
-Mdiff->GetYaxis()->SetTitleOffset(2.0);
-Mdiff->GetYaxis()->SetTitle(Form("differential flow v_{%d} from all splitfiles",harm+1));
-if(Nbins<40){//pT bins
-Mdiff->GetXaxis()->SetTitle("p_{T} [GeV]");
-Mdiff->GetXaxis()->SetRange(1,22);//range in bins !
-}else if(Nbins>40){
-Mdiff->GetXaxis()->SetTitle("#eta");
-Mdiff->GetXaxis()->SetRangeUser(-0.9,0.9);
-}
-Mdiff->SetLineColor(c+harm);
-Mdiff->DrawCopy();
-M ->SaveAs(Form("v%d/Mdiff_c%d_"+obj+".pdf",harm+1,c));
-delete M;
-delete Mdiff;
-
-TCanvas *Mi = new TCanvas("Mi","Mi",400,400);
-Mi->SetLeftMargin(0.2);
-Mint->GetYaxis()->SetTitleOffset(2.0);
-Mint->GetYaxis()->SetTitle(Form("differential flow v_{%d} from all bins",harm+1));
-Mint->GetXaxis()->SetTitle("Split file");
-Mint->GetXaxis()->SetRangeUser(0,10);
-Mint->SetLineColor(c+harm);
-Mint->DrawCopy();
-Mi ->SaveAs(Form("v%d/Mint_c%d_"+obj+".pdf",harm+1,c));
-delete Mi;
-delete Mint;
-return result;*/
-//}//end Subsampling
 
 TH1F *Dv(Int_t c, Int_t harm, TH1F *P, TH1F *N, TString obj, TH1F *result){//to get delta vn from subsampled vn(+/-q)
 	Int_t Nbins = result->GetNbinsX();
@@ -372,11 +140,8 @@ TH1F *Dv(Int_t c, Int_t harm, TH1F *P, TH1F *N, TString obj, TH1F *result){//to 
                 deltavError = o->GetRMS();// average error on spread from the delta vn analysis results
 		vpos = P->GetBinContent(i);// contents from subsampled results, weighted by combined (over all splits) inverse errors suqared for each bin
         	vneg = N->GetBinContent(i);
-	        //vposError = P->GetBinError(i);
-        	//vnegError = N->GetBinError(i);
 	        deltav = fabs(vpos) - fabs(vneg);
         	if(fabs(vpos)>0.&&fabs(vneg)>0.){//switch to completely correlated error
-        		//deltavError = sqrt(abs(pow(vposError,2)-pow(vnegError,2)));
                		result->SetBinContent(i,deltav);
                 	result->SetBinError(i, deltavError);
         	}//end if
@@ -450,38 +215,6 @@ for(Int_t i=1; i<=Nbins; i++){
 return result;
 
 }//end subsampling
-/*
-TCanvas *M = new TCanvas("M","M",400,400);
-M->SetLeftMargin(0.2);
-Diff->GetYaxis()->SetTitleOffset(2.0);
-Diff->GetYaxis()->SetTitle(Form("#Delta v_{%d} from all splitfiles",harm+1));
-if(Nbins<40){//pT bins
-Diff->GetXaxis()->SetTitle("p_{T} [GeV]");
-Diff->GetXaxis()->SetRange(1,22);//range in bins !
-}else if(Nbins>40){
-Diff->GetXaxis()->SetTitle("#eta");
-Diff->GetXaxis()->SetRangeUser(-0.9,0.9);
-}
-Diff->SetLineColor(c+harm);
-Diff->DrawCopy();
-M ->SaveAs(Form("v%d/Diff_c%d_"+obj1+".pdf",harm+1,c));
-delete M;
-delete Diff;
-
-TCanvas *Mi = new TCanvas("Mi","Mi",400,400);
-Mi->SetLeftMargin(0.2);
-Dint->GetYaxis()->SetTitleOffset(2.0);
-Dint->GetYaxis()->SetTitle(Form("#Delta v_{%d} from all bins",harm+1));
-Dint->GetXaxis()->SetTitle("Split file");
-Dint->GetXaxis()->SetRangeUser(0,10);
-Dint->SetLineColor(c+harm);
-Dint->DrawCopy();
-Mi ->SaveAs(Form("v%d/Dint_c%d_"+obj1+".pdf",harm+1,c));
-delete Mi;
-delete Dint;
-return result;
-*/
-//}//end Subsample
 
 void PlotpT(TH1F *PvpT, TH1F *NvpT, TH1F *DvpT, Int_t c, Int_t harm){
         //Plotting the subsampled pos/neg and their difference as in Multiplot.C for every harmonic==========
@@ -605,7 +338,7 @@ void PlotEta(TH1F *PvEta, TH1F *NvEta, TH1F *DvEta,Int_t c, Int_t harm){
 // 2) Filling of hists at right place in the ClaculateFlowCME.cxx - maybe a loop earlier ? 
 // 3) Change limits/ranges and make things pretty
 //=================================================================================================
-void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){
+void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){//add writing to external file to later calcuate the difference for B vs noB
 	gROOT->SetBatch();//to avoid opening the plots ak bad wifi struggle
 	//Bins from CalculateFlowCME.cxx, for the not yet initialized histograms (\Delta vn)=======
         Double_t fPtDiffNBins = 29;

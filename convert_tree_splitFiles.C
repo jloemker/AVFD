@@ -107,7 +107,7 @@ dir = "a-0.1";
 		if(dirID == 0){//only 30_40 exists!
 		  directory = Form("/dcache/alice/jlomker/sim/NoBField/5.02TeV/Centrality%d_%d/job-%d/Result/event-1/particle_distribution_final/%d.dat",val1,val2,ithJob,ithFile);
 		  //directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.02TeV/Centrality%d-%d/Baseline/job-%d/particle_distribution_final/%d.dat",val1, val2, ithJob,ithFile);
-                  }else{
+                  }else{//short heart attack, but I only work in dirID-0 puh!
 		  directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.02TeV/Centrality%d-%d/a-0.1/job-%d/particle_distribution_final/%d.dat",val1, val2, ithJob,ithFile);
   		  }	
 		  file_dat.open(directory.c_str());
