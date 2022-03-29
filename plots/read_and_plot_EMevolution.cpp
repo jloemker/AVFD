@@ -12,9 +12,9 @@ using namespace std;
 
 void read_and_plot_EMevolution() {
 	const Int_t nTau = 500;
-	const Int_t nCentBin = 8;
+	const Int_t nCentBin = 4;//Bc i have only 20-30 = centbin 3
 	const Int_t nEta = 3; //0: n_s < 0; 1: n_s = 0; 2: n_s > 0
-	Double_t CentBinEdge[nCentBin+1] = {0, 5, 10, 20, 30, 40, 50, 60, 70};
+	//Double_t CentBinEdge[nCentBin+1] = {0, 5, 10, 20};//, 30, 40, 50, 60, 70};
 
 	TProfile2D *feBxfield2D[nCentBin][nEta][nTau];//add calculation nTau
 	TProfile2D *feByfield2D[nCentBin][nEta][nTau];//add definition nEta
@@ -32,18 +32,18 @@ void read_and_plot_EMevolution() {
 	for (int centID = 0; centID < nCentBin; centID++) {
 		for (int etaID = 0; etaID < 3; etaID++) {
 				for (int tauID = 0; tauID < nTau; tauID++) {
-					feBxfield2D[centID][etaID][tauID] = new TProfile2D(Form("feBxfield2D_eta%d_tau%d_cent%d0_%d0", etaID, tauID, centID, centID + 1), Form("feBxfield2D_eta%d_tau%d_cent%d0_%d0", etaID, tauID, centID, centID + 1), 100, -13, 13, 100, -13, 13);
-					feByfield2D[centID][etaID][tauID] = new TProfile2D(Form("feByfield2D_eta%d_tau%d_cent%d0_%d0", etaID, tauID, centID, centID + 1), Form("feByfield2D_eta%d_tau%d_cent%d0_%d0", etaID, tauID, centID, centID + 1), 100, -13, 13, 100, -13, 13);
-					feExfield2D[centID][etaID][tauID] = new TProfile2D(Form("feExfield2D_eta%d_tau%d_cent%d0_%d0", etaID, tauID, centID, centID + 1), Form("feExfield2D_eta%d_tau%d_cent%d0_%d0", etaID, tauID, centID, centID + 1), 100, -13, 13, 100, -13, 13);
-					feEyfield2D[centID][etaID][tauID] = new TProfile2D(Form("feEyfield2D_eta%d_tau%d_cent%d0_%d0", etaID, tauID, centID, centID + 1), Form("feEyfield2D_eta%d_tau%d_cent%d0_%d0", etaID, tauID, centID, centID + 1), 100, -13, 13, 100, -13, 13);
+					feBxfield2D[centID][etaID][tauID] = new TProfile2D(Form("feBxfield2D_eta%d_tau%d_cent%d0_%d0", etaID, tauID, centID, centID + 1), Form("feBxfield2D_eta%d_tau%d_cent%d0_%d0", etaID, tauID, centID, centID + 1), 50, -13, 13, 100, -13, 13);
+					feByfield2D[centID][etaID][tauID] = new TProfile2D(Form("feByfield2D_eta%d_tau%d_cent%d0_%d0", etaID, tauID, centID, centID + 1), Form("feByfield2D_eta%d_tau%d_cent%d0_%d0", etaID, tauID, centID, centID + 1), 50, -13, 13, 100, -13, 13);
+					feExfield2D[centID][etaID][tauID] = new TProfile2D(Form("feExfield2D_eta%d_tau%d_cent%d0_%d0", etaID, tauID, centID, centID + 1), Form("feExfield2D_eta%d_tau%d_cent%d0_%d0", etaID, tauID, centID, centID + 1), 50, -13, 13, 100, -13, 13);
+					feEyfield2D[centID][etaID][tauID] = new TProfile2D(Form("feEyfield2D_eta%d_tau%d_cent%d0_%d0", etaID, tauID, centID, centID + 1), Form("feEyfield2D_eta%d_tau%d_cent%d0_%d0", etaID, tauID, centID, centID + 1), 50, -13, 13, 100, -13, 13);
 				}
-				lrf_Bx[centID][etaID] = new TProfile(Form("lrf_Bxfield_eta%d_cent%d0_%d0", etaID, centID, centID +1 ), Form("lrf_Bxfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), nTau, 0, 3);
-				lrf_By[centID][etaID] = new TProfile(Form("lrf_Byfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), Form("lrf_Byfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), nTau, 0, 3);
-				lrf_Bz[centID][etaID] = new TProfile(Form("lrf_Bzfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), Form("lrf_Bzfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), nTau, 0, 3);
+				lrf_Bx[centID][etaID] = new TProfile(Form("lrf_Bxfield_eta%d_cent%d0_%d0", etaID, centID, centID +1 ), Form("lrf_Bxfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), nTau, 0, 11);
+				lrf_By[centID][etaID] = new TProfile(Form("lrf_Byfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), Form("lrf_Byfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), nTau, 0, 11);
+				lrf_Bz[centID][etaID] = new TProfile(Form("lrf_Bzfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), Form("lrf_Bzfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), nTau, 0, 11);
 
-				lrf_Ex[centID][etaID] = new TProfile(Form("lrf_Exfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), Form("lrf_Exfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), nTau, 0, 3);
-				lrf_Ey[centID][etaID] = new TProfile(Form("lrf_Eyfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), Form("lrf_Eyfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), nTau, 0, 3);
-				lrf_Ez[centID][etaID] = new TProfile(Form("lrf_Ezfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), Form("lrf_Ezfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), nTau, 0, 3);
+				lrf_Ex[centID][etaID] = new TProfile(Form("lrf_Exfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), Form("lrf_Exfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), nTau, 0, 11);
+				lrf_Ey[centID][etaID] = new TProfile(Form("lrf_Eyfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), Form("lrf_Eyfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), nTau, 0, 11);
+				lrf_Ez[centID][etaID] = new TProfile(Form("lrf_Ezfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), Form("lrf_Ezfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), nTau, 0, 11);
 		}
 	}
 	
@@ -54,7 +54,7 @@ void read_and_plot_EMevolution() {
 	for (int centID = 0; centID < nCentBin; centID++) {
 		for (int ithJob = 0; ithJob <= nJob; ithJob++) {
 			string directory;
-			directory = Form("/dcache/alice/jlomker/sim/TestEM/tau_init_0.6/BField0.2/Centrality%d_%d/job-%d/Result/event-1/check_lrf_EMfields.dat", (centID-1)*10, (centID)*10, ithJob);
+			directory = Form("/dcache/alice/jlomker/sim/TestEM/tau_init_0.6/BField0.2/Centrality%d0_%d0/job-%d/Result/event-1/check_lrf_EMfields.dat", centID, centID+1, ithJob);
 			std::ifstream file_dat;
 
 			file_dat.open(directory.c_str());
@@ -98,8 +98,8 @@ void read_and_plot_EMevolution() {
 	}
 
 	TFile *file = new TFile("BField/EM_evolution_5.02TeV_initial0.6_lifetime_0.2.root", "RECREATE");
-	for (int centID = 0; centID < 8; centID++) {
-		for (int etaID = 0; etaID < 4; etaID++) {
+	for (int centID = 0; centID < nCentBin; centID++) {
+		for (int etaID = 0; etaID < nEta; etaID++) {
 			for (int tauID = 0; tauID < nTau; tauID++) {
 				feBxfield2D[centID][etaID][tauID]->Write();
 				feByfield2D[centID][etaID][tauID]->Write();
