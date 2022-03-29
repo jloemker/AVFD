@@ -9,7 +9,7 @@
 //Little helps
 //
 //======================================================================================
-void findSpread(Int_t c, Int_t harm,TString spectrum){
+void findSpread(TString input, Int_t c, Int_t harm,TString spectrum){
   TFile *f[10];
   TList *list[10];
   TH1D *fHist[10];
@@ -29,7 +29,7 @@ void findSpread(Int_t c, Int_t harm,TString spectrum){
   }
   for(Int_t iFile = 0; iFile < 10; iFile++) {
     //f[iFile] = TFile::Open(Form("/data/alice/jlomker/AVFD/result/dirID-0/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0_split_%d.root",c,c+1,iFile));
-    f[iFile] = TFile::Open(Form("/data/alice/jlomker/AVFD/result/dirID-0/NoBField/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0_split_%d.root",c,c+1,iFile));
+    f[iFile] = TFile::Open(input+Form("/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0_split_%d.root",c,c+1,iFile));
     if((!f[iFile])||(!f[iFile]->IsOpen())) {
     cout<<"File "<<iFile<<" not found..."<<endl;
     return;
@@ -82,7 +82,7 @@ double CrossCheck(TProfile *Prof, TH1D *hist, Int_t bin){//calculate spread for 
 	return RMS;
 }//end crosscheck
 //this is where I have to continue after food
-TH1F *Subsampling(TString file, TString spectrum, TString charge, TH1F *result, Int_t c, Int_t harm){
+TH1F *Subsampling(TString spectrum, TString charge, TH1F *result, Int_t c, Int_t harm){
 	TFile *f, *t;
 	TFile *spread, *output;
 	TList *l;
@@ -264,7 +264,7 @@ void PlotpT(TH1F *PvpT, TH1F *NvpT, TH1F *DvpT, Int_t c, Int_t harm){
         DvpT->GetXaxis()->SetTitle("p_{T} [GeV]");
         DvpT->GetYaxis()->SetTitle(Form("#Delta v_{%d} = v_{%d}(+h) - v_{%d}(-h)",harm+1,harm+1,harm+1));
         DvpT->DrawCopy();
-        c1->SaveAs(Form("v%d/pT_c%d.pdf",harm+1,c));
+        c1->SaveAs(Form("vn/BField0.2/tau_init0.1/v%d/pT_c%d.pdf",harm+1,c));
        delete c1;
 }
 
@@ -319,7 +319,7 @@ void PlotEta(TH1F *PvEta, TH1F *NvEta, TH1F *DvEta,Int_t c, Int_t harm){
         DvEta->SetLineWidth(1);
         DvEta->GetYaxis()->SetTitle(Form("#Delta v_{%d} = v_{%d}(+h) - v_{%d}(-h)",harm+1,harm+1,harm+1));
         DvEta->DrawCopy();
-        cEta->SaveAs(Form("v%d/eta_c%d.pdf",harm+1,c));
+        cEta->SaveAs(Form("vn/BField0.2/tau_init0.1/v%d/eta_c%d.pdf",harm+1,c));
         delete cEta;
 }
 
@@ -370,15 +370,16 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){//add writing to exter
 	for(Int_t c=cent; c<=cmax;c++){
 	cout<<"Centrality: "<<c<<"0-"<<(c+1)<<"0"<<endl;//actually 5.02
 	//TString input = Form("/data/alice/jlomker/AVFD/result/dirID-0/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0",c,c+1);
-	TString input = Form("/data/alice/jlomker/AVFD/result/dirID-0/NoBField/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0",c,c+1);
+	TString input = Form("/data/alice/jlomker/AVFD/result/dirID-0/TestEM/tau_init_0.1/BField0.2/split");
+	//("/data/alice/jlomker/AVFD/result/dirID-0/NoBField/split");
 	// !!! For harm = 0 we could also try to use the fFlowQCQv1[pos=0, neg=1][cen][pt = 0, eta = 1] !!!
 	//for(Int_t harm=0; harm<3; harm++){
 		cout<<"Harmonic: "<<(harm+1)<<endl;;
 		//apply subsampling to all histograms from pos/neg particles=======================
 		if(pT == true){
-			findSpread(c,harm,"Pt");//finds spread from the 10 splitfiles for pos, neg and delta histogram as input for the subsampling
+			findSpread(input,c,harm,"Pt");//finds spread from the 10 splitfiles for pos, neg and delta histogram as input for the subsampling
 			TH1F *PvpT = new TH1F("pvpT", "pvpT", fPtDiffNBins, fCRCPtBins);
-			PvpT = Subsampling(input, "Pt", "Pos", PvpT, c, harm);
+			PvpT = Subsampling("Pt", "Pos", PvpT, c, harm);
 			//findSpread(c,Form("fFlowQCQv1[0][%d][0]",c),fPtDiffNBins);
 			//findSpread(c,harm,Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm),fPtDiffNBins);
 			//PvpT = Subsampling(input,Form("fFlowQCFinalPtDifHist[0][%d][%d][0]",c,harm),fCRCPtBins, PvpT, c, harm, mint, mdiff,RMs, CC,Hist);
@@ -387,10 +388,10 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){//add writing to exter
 			//findSpread(c,Form("fFlowQCQv1[1][%d][0]",c),fPtDiffNBins);
 			//findSpread(c,harm,Form("fFlowQCFinalPtDifHist[1][%d][%d][0]",c,harm),fPtDiffNBins);
 			//NvpT = Subsampling(input,Form("fFlowQCQv1[1][%d][0]",c),fCRCPtBins, NvpT, c ,harm,mint, mdiff,RMs, CC,Hist);
-			NvpT = Subsampling(input,"Pt","Neg",NvpT, c ,harm);
+			NvpT = Subsampling("Pt","Neg",NvpT, c ,harm);
 			TH1F *DvpT = new TH1F("dvnpT","dvnpT",fPtDiffNBins,fCRCPtBins);
 			//findSpread(c,harm,Form("fFlowQCFinalPtDifDeltaHist[%d][%d]",c,harm),fPtDiffNBins);
-			DvpT = Subsampling(input,"Pt","Diff", DvpT,c,harm);
+			DvpT = Subsampling("Pt","Diff", DvpT,c,harm);
 			//DvpT = Subsampling(input,Form("fFlowQCFinalPtDifDeltaHist[%d][%d]",c,harm), fCRCPtBins, DvpT, c, harm,mint, mdiff,RMs, CC,Hist);
 			//Multi centrality plot
 			copy[c] = (TH1F*) DvpT->Clone("copy dvpt");
@@ -402,17 +403,17 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){//add writing to exter
         		DvpT->Delete();
 		}//end of pT if
 		else if(pT == false){
-			findSpread(c,harm,"Eta");
+			findSpread(input,c,harm,"Eta");
 			TH1F *PvEta = new TH1F("pvEta", "pvEta", fEtaDiffNBins, fCRCEtaBins);
-			PvEta = Subsampling(input, "Eta", "Pos", PvEta, c, harm);		
+			PvEta = Subsampling("Eta", "Pos", PvEta, c, harm);		
 			//PvEta = Subsampling(input,Form("fFlowQCFinalEtaDifHist[0][%d][%d][0]",c,harm),fCRCEtaBins, PvEta, c, harm,mint, mdiff,RMs, CC,Hist);
 			TH1F *NvEta = new TH1F("nvEta", "nvEta", fEtaDiffNBins, fCRCEtaBins);
 			//findSpread(c,harm,Form("fFlowQCFinalEtaDifHist[1][%d][%d][0]",c,harm),fEtaDiffNBins);
-			NvEta = Subsampling(input, "Eta", "Neg", NvEta, c, harm);
+			NvEta = Subsampling("Eta", "Neg", NvEta, c, harm);
 			TH1F *DvEta = new TH1F("deltavneta","deltavneta",fEtaDiffNBins,fCRCEtaBins);
 			//DvEta = Dv(PvEta, NvEta, fCRCEtaBins, DvEta);
 			//findSpread(c, harm,Form("fFlowQCFinalEtaDifDeltaHist[%d][%d]",c,harm),fEtaDiffNBins);
-			DvEta = Subsampling(input, "Eta", "Diff", DvEta, c, harm);
+			DvEta = Subsampling("Eta", "Diff", DvEta, c, harm);
 			//DvEta = Subsampling(input, Form("fFlowQCFinalEtaDifDeltaHist[%d][%d]",c,harm), fCRCEtaBins, DvEta, c, harm,mint, mdiff,RMs, CC,Hist);
 			//Multi centrality plot
 			copy[c] = (TH1F*) DvEta->Clone("copy dvpt");
@@ -451,8 +452,8 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){//add writing to exter
 		copy[c]->DrawCopy("same");
 	}
 	C->Draw();
-	if(pT==true){Cen->SaveAs(Form("v%d/Pt_Multi_cen%d_%d.pdf",harm+1,cent,cmax));}
-	else if(pT == false){Cen->SaveAs(Form("v%d/Eta_Multi_cen%d_%d.pdf",harm+1,cent,cmax));}
+	if(pT==true){Cen->SaveAs(Form("vn/BField0.2/tau_init0.1/v%d/Pt_Multi_cen%d_%d.pdf",harm+1,cent,cmax));}
+	else if(pT == false){Cen->SaveAs(Form("vn/BField0.2/tau_init0.1/v%d/Eta_Multi_cen%d_%d.pdf",harm+1,cent,cmax));}
 	delete Cen;
 
 	//}//end of hr<fkFlowNHarm

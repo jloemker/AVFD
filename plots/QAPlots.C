@@ -1,9 +1,10 @@
 void QAPlots(Int_t c){
 	gStyle -> SetOptStat(0);
 	//For B tau = 0 baseline
-	TFile *f = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-0/NoBField/Result_5.02TeV_pT_0_eta_0_Cent%d0_%d0.root",c,c+1));
+	//TFile *f = new TFile(Form("// data/alice/jlomker/AVFD/result/dirID-0/NoBField/Result_5.02TeV_pT_0_eta_0_Cent%d0_%d0.root",c,c+1));
+	TFile *f = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-0/TestEM/tau_init_0.6/BField0.2/Result_5.02TeV_pT_0_eta_0_Cent%d0_%d0.root",c,c+1));
 	//For B tau = 0.2 baseline
-	TFile *b = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-0/BField0.2/Result_5.02TeV_pT_0_eta_0_Cent%d0_%d0.root",c,c+1));
+	TFile *b = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-0/TestEM/tau_init_0.1/BField0.2/Result_5.02TeV_pT_0_eta_0_Cent%d0_%d0.root",c,c+1));
 
 	TList *l = (TList*) f->Get("QAList;1");
 	TList *lb = (TList*) b->Get("QAList;1");
@@ -32,9 +33,9 @@ void QAPlots(Int_t c){
 	}
 
         auto L1 = new TLegend();
-        L1->SetHeader("Pb-Pb, 5.02TeV, pT: 0.2 -5 GeV, #eta: 0.8","C");
-        L1->AddEntry(Multiplicity,Form("#tau(B) = 0, Centrality %d0-%d0",c,c+1), "l");
-        L1->AddEntry(Multiplicityb,Form("#tau(B) = 0.2, Centrality %d0-%d0",c,c+1), "l");
+        L1->SetHeader("Pb-Pb, 5.02TeV, pT: 0.2 -5 GeV, #tau B: 0.2","C");
+        L1->AddEntry(Multiplicity,Form("#tau 0 = 0.6, Centrality %d0-%d0",c,c+1), "l");
+        L1->AddEntry(Multiplicityb,Form("#tau 0 = 0.1, Centrality %d0-%d0",c,c+1), "l");
 
 	TCanvas *c1 = new TCanvas("QA","QAHistograms");
 	c1->Divide(2,3);
@@ -54,9 +55,11 @@ void QAPlots(Int_t c){
 	Multiplicity->GetXaxis()->SetRangeUser(0,2000);
 	Multiplicity->GetYaxis()->SetTitle("Normalized Number Of Events");
 	Multiplicity->Scale(1/N->Integral());
+	Multiplicity->Rebin(4);
 	Multiplicity->SetLineColor(2);
 	Multiplicity->Draw("h");
 	Multiplicityb->Scale(1/Nb->Integral());
+	Multiplicityb->Rebin(4);
 	//Multiplicity->SetLineColor(2);
 	Multiplicityb->Draw("SAME");
 	c1->cd(4);
@@ -88,5 +91,5 @@ void QAPlots(Int_t c){
 	Phi->SetLineColor(2);
 	Phi->Scale(1/N->Integral());
 	Phi->Draw("SAME");
-	c1->SaveAs(Form("ControlPlots/QA_C%d0_%d0.pdf",c,c+1));
+	c1->SaveAs(Form("controlPlots/QA_0.6_vs_0.1_C%d0_%d0.pdf",c,c+1));
 }

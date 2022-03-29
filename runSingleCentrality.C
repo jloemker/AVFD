@@ -126,7 +126,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT, Int_t eta){
  	//For Subsampling method
 	TFile *SplitResult;
 	cout<<"SplitFile ========"<<k<<endl;
-        SplitResult = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/NoBField/split/Results_5.02TeV_pTrange_%d_eta_%d_Cent%d_%d_split_%d.root",dirID, pT, eta, val1, val2,k), "RECREATE");
+        SplitResult = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/TestEM/tau_init_0.1/BField0.2/split/Results_5.02TeV_pTrange_%d_eta_%d_Cent%d_%d_split_%d.root",dirID, pT, eta, val1, val2,k), "RECREATE");
 	//does not include the Finalize()
         SplitResult->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");
 	
@@ -138,7 +138,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT, Int_t eta){
 	// Save list holding histogram with weights:
 	TFile *ResultsFile;
 	// Here comes the output directory
-	ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/NoBField/Result_5.02TeV_pT_%d_eta_%d_Cent%d_%d.root",dirID, pT, eta, val1, val2), "RECREATE");	  
+	ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/TestEM/tau_init_0.1/BField0.2/Result_5.02TeV_pT_%d_eta_%d_Cent%d_%d.root",dirID, pT, eta, val1, val2), "RECREATE");	  
 
 	ResultsFile->WriteObject(fQC->GetQAList(),"QAList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");

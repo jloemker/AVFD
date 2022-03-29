@@ -3,8 +3,8 @@ SCRIPT="runAnalysis.sh"
 dirID=0
 #while [ $dirID -le 0 ]; do
 echo "Directory ID: $dirID"
-centID=3 
-while [ $centID -le 4 ]; do
+centID=2
+while [ $centID -le 3 ]; do
 pTiD=0
 #while [ $pTiD -le 2 ]; do
 etaID=0
@@ -16,8 +16,8 @@ echo "source /cvmfs/alice.cern.ch/etc/login.sh"
 echo "eval $(alienv printenv VO_ALICE@AliPhysics::vAN-20210923_ROOT6-1)"
 #echo "eval $(alienv printenv VO_ALICE@ROOT::v6-24-06-1)"
 #echo "which aliroot || exit 1"
-echo "mkdir -p /data/alice/jlomker/AVFD/NoBField/Centrality-$centID/dirID-$dirID"
-echo "cd /data/alice/jlomker/AVFD/NoBField/Centrality-$centID/dirID-$dirID"
+echo "mkdir -p /data/alice/jlomker/AVFD/TestEM/tau_init_0.1/BField0.2/Centrality-$centID/dirID-$dirID"
+echo "cd /data/alice/jlomker/AVFD/TestEM/tau_init_0.1/BField0.2/Centrality-$centID/dirID-$dirID"
 echo "pwd"
 echo "if [ -f *.root ]"
 echo "  then "

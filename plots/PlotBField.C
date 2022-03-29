@@ -8,7 +8,7 @@
 void PlotBField(){
 	gROOT->SetBatch();
 	gStyle->SetOptStat(0);
-	TFile* f = new TFile("/project/alice/users/jlomker/AVFD/plots/BField/B_fields_5.02TeV_lifetime_Panos_BaselineB.root");//B_fields_5.02TeV_lifetime_0.root");
+	TFile* f = new TFile("/project/alice/users/jlomker/AVFD/plots/BField/B_fields_5.02TeV_lifetime_0.8.root");//B_fields_5.02TeV_lifetime_Panos_BaselineB.root");//B_fields_5.02TeV_lifetime_0.root");
         TProfile2D *feBxfield2D;
         TProfile2D *feByfield2D;
         TProfile2D *feExfield2D;
@@ -37,7 +37,7 @@ void PlotBField(){
 		feExfield2D->Draw("COLZ");
 		c1->cd(4);
 		feEyfield2D->Draw("COLZ");
-		c1->SaveAs(Form("BField/Fields_%d0_%d0.pdf", c, c+1));
+		c1->SaveAs(Form("BField/BFields0.8_%d0_%d0.png", c, c+1));
 		feBxfield2D->Reset();
 		feByfield2D->Reset();
 		feExfield2D->Reset();

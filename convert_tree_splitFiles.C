@@ -105,7 +105,7 @@ dir = "a-0.1";
 		for (int ithFile = 1; ithFile <= nFile; ithFile++) {
 		  std::ifstream file_dat;
 		if(dirID == 0){//only 30_40 exists!
-		  directory = Form("/dcache/alice/jlomker/sim/NoBField/5.02TeV/Centrality%d_%d/job-%d/Result/event-1/particle_distribution_final/%d.dat",val1,val2,ithJob,ithFile);
+		  directory = Form("/dcache/alice/jlomker/sim/TestEM/tau_init_0.1/BField0.2/Centrality%d_%d/job-%d/Result/event-1/particle_distribution_final/%d.dat",val1,val2,ithJob,ithFile);
 		  //directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.02TeV/Centrality%d-%d/Baseline/job-%d/particle_distribution_final/%d.dat",val1, val2, ithJob,ithFile);
                   }else{//short heart attack, but I only work in dirID-0 puh!
 		  directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.02TeV/Centrality%d-%d/a-0.1/job-%d/particle_distribution_final/%d.dat",val1, val2, ithJob,ithFile);
