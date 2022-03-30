@@ -11,6 +11,7 @@ using namespace std;
 
 
 void read_and_plot_EMevolution() {
+	const Int_t tauInit = 1;//becomes 0.tauInit
 	const Int_t nTau = 500;
 	const Int_t nCentBin = 4;//Bc i have only 20-30 = centbin 3
 	const Int_t nEta = 3; //0: n_s < 0; 1: n_s = 0; 2: n_s > 0
@@ -54,7 +55,7 @@ void read_and_plot_EMevolution() {
 	for (int centID = 0; centID < nCentBin; centID++) {
 		for (int ithJob = 0; ithJob <= nJob; ithJob++) {
 			string directory;
-			directory = Form("/dcache/alice/jlomker/sim/TestEM/tau_init_0.6/BField0.2/Centrality%d0_%d0/job-%d/Result/event-1/check_lrf_EMfields.dat", centID, centID+1, ithJob);
+			directory = Form("/dcache/alice/jlomker/sim/TestEM/tau_init_0.%d/BField0.2/Centrality%d0_%d0/job-%d/Result/event-1/check_lrf_EMfields.dat", tauInit, centID, centID+1, ithJob);
 			std::ifstream file_dat;
 
 			file_dat.open(directory.c_str());
@@ -97,7 +98,7 @@ void read_and_plot_EMevolution() {
 		}
 	}
 
-	TFile *file = new TFile("BField/EM_evolution_5.02TeV_initial0.6_lifetime_0.2.root", "RECREATE");
+	TFile *file = new TFile(Form("BField/EM_evolution_5.02TeV_initial0.%d_lifetime_0.2.root", tauInit), "RECREATE");
 	for (int centID = 0; centID < nCentBin; centID++) {
 		for (int etaID = 0; etaID < nEta; etaID++) {
 			for (int tauID = 0; tauID < nTau; tauID++) {

@@ -70,7 +70,7 @@ void read_and_plot_localT() {
 		}
 	}
 
-	TFile *file = new TFile("BField/Tevolution_5.02TeV_Blifetime_0.2.root", "RECREATE");
+	TFile *file = new TFile("BField/Tevolution_5.02TeV_tauInitial0.6_Blifetime_0.2.root", "RECREATE");
 	for (int centID = 0; centID < 8; centID++) {
 		for (int tauID = 0; tauID <= nTau; tauID++){
 			Tlocal2D[centID][tauID]->Write();

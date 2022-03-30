@@ -8,7 +8,7 @@
 void PlotLocalT(Int_t snap1,Int_t snap2, Int_t snap3, Int_t snap4){//argument for time stamps ?
 	gROOT->SetBatch();
 	gStyle->SetOptStat(0);
-	TFile* f = new TFile("/project/alice/users/jlomker/AVFD/plots/BField/Tevolution_5.02TeV_Blifetime_0.2.root");
+	TFile* f = new TFile("/project/alice/users/jlomker/AVFD/plots/BField/Tevolution_5.02TeV_tauInitial0.6_Blifetime_0.2.root");
         TProfile2D *T1local2D;
 	TProfile2D *T2local2D;
         TProfile2D *T3local2D;
@@ -39,7 +39,7 @@ void PlotLocalT(Int_t snap1,Int_t snap2, Int_t snap3, Int_t snap4){//argument fo
 		c1->cd(4);
 		T4local2D->SetTitle(Form("local temperature(#tau = %f)",tau4));
 		T4local2D->Draw("COLZ");
-		c1->SaveAs(Form("BField/BField0.2/Tevolution_tauID%d-%d_cent%d0_%d0.pdf",snap1,snap4, c, c+1));//double tau..
+		c1->SaveAs(Form("BField/BField0.2/Tevolution_tauInitial0.6_tauID%d-%d_cent%d0_%d0.pdf",snap1,snap4, c, c+1));//double tau..
 		T1local2D->Reset();
 		T2local2D->Reset();
 		T3local2D->Reset();
