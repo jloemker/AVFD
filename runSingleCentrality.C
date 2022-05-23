@@ -53,7 +53,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT, Int_t eta){
 		etaCut = 2.0;
 	}
 	//should be according to the number of files per centrality
-	const Int_t nSplit = 10;//shi has 9, I had 10
+	const Int_t nSplit = 20;//shi has 9, I have 20 since 4/20
 	//TFile *f[nCentBin][nSplit];
 	CalculateFlowCME *fQC = new CalculateFlowCME("CalculateFlowCME");
 	fQC->UserCreateOutputObjects();
@@ -126,7 +126,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT, Int_t eta){
  	//For Subsampling method
 	TFile *SplitResult;
 	cout<<"SplitFile ========"<<k<<endl;
-        SplitResult = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/TestEM/tau_init_0.1/BField0.2/split/Results_5.02TeV_pTrange_%d_eta_%d_Cent%d_%d_split_%d.root",dirID, pT, eta, val1, val2,k), "RECREATE");
+        SplitResult = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/tau_init0.4/BField0.4/split/Results_5.02TeV_pTrange_%d_eta_%d_Cent%d_%d_split_%d.root",dirID, pT, eta, val1, val2,k), "RECREATE");
 	//does not include the Finalize()
         SplitResult->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");
 	
@@ -138,7 +138,7 @@ void runSingleCentrality(Int_t centID, Int_t dirID, Int_t pT, Int_t eta){
 	// Save list holding histogram with weights:
 	TFile *ResultsFile;
 	// Here comes the output directory
-	ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/TestEM/tau_init_0.1/BField0.2/Result_5.02TeV_pT_%d_eta_%d_Cent%d_%d.root",dirID, pT, eta, val1, val2), "RECREATE");	  
+	ResultsFile = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-%d/tau_init0.4/BField0.4/Result_5.02TeV_pT_%d_eta_%d_Cent%d_%d.root",dirID, pT, eta, val1, val2), "RECREATE");	  
 
 	ResultsFile->WriteObject(fQC->GetQAList(),"QAList","SingleKey");
 	ResultsFile->WriteObject(fQC->GetFlowQCList(),"FlowQCList","SingleKey");

@@ -11,11 +11,10 @@ using namespace std;
 
 
 void read_and_plot_EMevolution() {
-	const Int_t tauInit = 1;//becomes 0.tauInit
+	const Int_t tauInit = 4;//becomes 0.tauInit
 	const Int_t nTau = 500;
-	const Int_t nCentBin = 4;//Bc i have only 20-30 = centbin 3
-	const Int_t nEta = 3; //0: n_s < 0; 1: n_s = 0; 2: n_s > 0
-	//Double_t CentBinEdge[nCentBin+1] = {0, 5, 10, 20};//, 30, 40, 50, 60, 70};
+	const Int_t nCentBin = 8;//Bc i have only 20-30 = centbin 3
+	const Int_t nEta = 3; //0: n_s < 0; 1: n_s = 0; 2: n_s > 0//Double_t CentBinEdge[nCentBin+1] = {0, 5, 10, 20};//, 30, 40, 50, 60, 70};
 
 	TProfile2D *feBxfield2D[nCentBin][nEta][nTau];//add calculation nTau
 	TProfile2D *feByfield2D[nCentBin][nEta][nTau];//add definition nEta
@@ -46,16 +45,13 @@ void read_and_plot_EMevolution() {
 				lrf_Ey[centID][etaID] = new TProfile(Form("lrf_Eyfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), Form("lrf_Eyfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), nTau, 0, 11);
 				lrf_Ez[centID][etaID] = new TProfile(Form("lrf_Ezfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), Form("lrf_Ezfield_eta%d_cent%d0_%d0", etaID, centID, centID + 1), nTau, 0, 11);
 		}
-	}
-	
-
-	//Int_t centID = 0; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70%
+	}//Int_t centID = 0; //0: 0-5%, 1: 5-10%, 2: 10-20%, 3: 20-30%, 4: 30-40%, 5: 40-50%, 6: 50-60%, 7: 60-70%
 	int nJob = 1000;
-	double tauInitial = 0.6; 
+	double tauInitial = 0.1; 
 	for (int centID = 0; centID < nCentBin; centID++) {
 		for (int ithJob = 0; ithJob <= nJob; ithJob++) {
 			string directory;
-			directory = Form("/dcache/alice/jlomker/sim/TestEM/tau_init_0.%d/BField0.2/Centrality%d0_%d0/job-%d/Result/event-1/check_lrf_EMfields.dat", tauInit, centID, centID+1, ithJob);
+			directory = Form("/dcache/alice/jlomker/sim/tau_init0.%d/BField0.2/Centrality%d0_%d0/job-%d/Result/event-1/check_lrf_EMfields.dat", tauInit, centID, centID+1, ithJob);
 			std::ifstream file_dat;
 
 			file_dat.open(directory.c_str());
@@ -68,15 +64,13 @@ void read_and_plot_EMevolution() {
 			Double_t tau = -999, xPos = -999, yPos = -999, eta = -999, eEx = -999, eEy = -999, eEz = -999, eBx = -999, eBy = -999, eBz = -999;//E and B in [1/fm^2]
 			string dummyLine;
 			std::getline(file_dat, dummyLine);
-			while (file_dat >> tau >> xPos >> yPos >> eta >> eEx >> eEy >> eEz >> eBx >> eBy >> eBz){
-			//if(file_dat.eof()){break;}
-			//cout<< tau << "\t" << xPos << "\t" << yPos << "\t" << eBx<< "\t" << eBy <<"\t"<< eBz <<"\t"<< eEx <<"\t"<< eEy  <<"\t"<< eEz << "\t" << endl;
+			while (file_dat >> tau >> xPos >> yPos >> eta >> eEx >> eEy >> eEz >> eBx >> eBy >> eBz){//if(file_dat.eof()){break;}//cout<< tau << "\t" << xPos << "\t" << yPos << "\t" << eBx<< "\t" << eBy <<"\t"<< eBz <<"\t"<< eEx <<"\t"<< eEy  <<"\t"<< eEz << "\t" << endl;
 				/*tau  x  y  eta  Ex[1/fm^2]  Ey[1/fm^2]  Ez[1/fm^2]  Bx[1/fm^2]  By[1/fm^2]  Bz[1/fm^2]
- 				   0   0  0   0 =-ns		0	   0		0	   0		0	   0
- 				   0   0  0   1 = 0		0	   0		0 	   0		0	   0
-    				   0   0  0   2 = ns		0	   0 		0          0		0	   0
- 				dynamically calculate the tauID based on data in dTau = 0.1 steps ...allocate ID's up to tau = 2 
-				*/
+ *  				   0   0  0   0 =-ns		0	   0		0	   0		0	   0
+ *  				    				   0   0  0   1 = 0		0	   0		0 	   0		0	   0
+ *  				    				       				   0   0  0   2 = ns		0	   0 		0          0		0	   0
+ *  				    				       				    				dynamically calculate the tauID based on data in dTau = 0.1 steps ...allocate ID's up to tau = 2 
+ *  				    				       				    								*/
 				int etaID = 1;//set to eta_ns = 0
 				int tauID = (tau - tauInitial) * 100; //dTau is then 0.01 .. not sure if this is ideal though...maybe 0.02 steps are better
 				if(eta < 0){etaID = 0;}

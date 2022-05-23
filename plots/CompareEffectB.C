@@ -11,9 +11,9 @@ TH1F *Difference(TH1F *B, TH1F *NoB, Double_t arr[], TString title){
 
 
 void findSpread(Int_t c, Int_t harm,TString spectrum,TString input){
-  TFile *f[10];
-  TList *list[10];
-  TH1D *fHist[10];
+  TFile *f[20];
+  TList *list[20];
+  TH1D *fHist[20];
   Int_t Nbins = 0;
   if(spectrum == "Pt"){Nbins = 30;}
   else if(spectrum == "Eta"){Nbins = 50;}
@@ -27,7 +27,7 @@ void findSpread(Int_t c, Int_t harm,TString spectrum,TString input){
         fHistSpreadNeg[i] = new TH1F(Form("fHistSpreadNeg"+spectrum+"Bin%d",i+1),"",1000,0,0.3);
         fHistSpreadDiff[i] = new TH1F(Form("fHistSpreadDiff"+spectrum+"Bin%d",i+1),"",1000,-0.3,0.3);
   }
-  for(Int_t iFile = 0; iFile < 10; iFile++) {
+  for(Int_t iFile = 0; iFile < 20; iFile++) {
     f[iFile] = TFile::Open(input+Form("/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0_split_%d.root",c,c+1,iFile));
     if((!f[iFile])||(!f[iFile]->IsOpen())) {
     cout<<"File "<<iFile<<" not found..."<<endl;
@@ -70,6 +70,9 @@ void findSpread(Int_t c, Int_t harm,TString spectrum,TString input){
         delete fHistSpreadNeg[i];
         delete fHistSpreadDiff[i];
  }
+ //for(Int_t i = 0; i<20;i++){
+//	delete fHist[i];	
+ //}
 }//end find spread
 
 
@@ -112,9 +115,10 @@ void CompareEffectB(Int_t cent, Int_t cmax, Int_t harm){//add writing to externa
 		gStyle->SetOptStat(0);
 		TH1F *DiffPospT, *DiffNegpT, *DiffDelpT;
 		TH1F *DiffPosEta, *DiffNegEta, *DiffDelEta;
-        	cout<<"Centrality: "<<c<<"0-"<<(c+1)<<"0"<<endl;//actually 5.02
-        	TString inputB = "/data/alice/jlomker/AVFD/result/dirID-0/BField0.2/split";
-		TString input = "/data/alice/jlomker/AVFD/result/dirID-0/NoBField/split";//something is wrong here too!
+        	cout<<"Centrality: "<<c<<"0-"<<(c+1)<<"0"<<endl;//actually 5.02/data/alice/jlomker/AVFD/result/dirID-0/tau_init0.4/BField0.2
+
+        	TString inputB = "/data/alice/jlomker/AVFD/result/dirID-0/tau_init0.4/BField0.4/split";
+		TString input = "/data/alice/jlomker/AVFD/result/dirID-0/tau_init0.4/BField0.2/split";//something is wrong here too!
                 cout<<"Harmonic: "<<(harm+1)<<endl;//apply subsampling to all histograms from pos/neg particles=======================
 
                 findSpread(c,harm,"Pt",input);//finds spread from the 10 splitfiles for pos, neg and delta histogram as input for the subsampling
@@ -138,22 +142,22 @@ void CompareEffectB(Int_t cent, Int_t cmax, Int_t harm){//add writing to externa
 		TCanvas *p1 = new TCanvas("p1","PtDifferencesB",160,200);
 		p1->Divide(1,3);
 		p1->cd(1);
-		DiffPospT->SetTitle(Form("Centrality %d0 - %d0 #Delta [B(#tau = 0.2) - B(#tau = 0)]",c,c+1));
-                DiffPospT->GetYaxis()->SetTitle(Form("v_{%d}(+h): B(#tau) - B(0)",harm+1));
+		DiffPospT->SetTitle(Form("Centrality %d0 - %d0 #Delta [B(#tau = 0.4) - B(#tau = 0.2)]",c,c+1));
+                DiffPospT->GetYaxis()->SetTitle(Form("v_{%d}(+h): B(0.4) - B(0.2)",harm+1));
                 DiffPospT->GetXaxis()->SetTitle("p_{T} [GeV]");
                 DiffPospT->GetXaxis()->SetRangeUser(0.,3.4);
 		DiffPospT->Draw("h");
 		p1->cd(2);
-                DiffNegpT->GetYaxis()->SetTitle(Form("v_{%d}(-h): B(#tau) - B(0)",harm+1));
+                DiffNegpT->GetYaxis()->SetTitle(Form("v_{%d}(-h): B(0.4) - B(0.2)",harm+1));
                 DiffNegpT->GetXaxis()->SetTitle("p_{T} [GeV]");
 		DiffNegpT->GetXaxis()->SetRangeUser(0.,3.4);
 		DiffNegpT->Draw("h");
 		p1->cd(3);
-                DiffDelpT->GetYaxis()->SetTitle(Form("#Delta v_{%d}(+h - -h): B(#tau) - B(0)",harm+1));
+                DiffDelpT->GetYaxis()->SetTitle(Form("#Delta v_{%d}(+h - -h): B(0.4) - B(0.2)",harm+1));
                 DiffDelpT->GetXaxis()->SetTitle("p_{T} [GeV]");
                 DiffDelpT->GetXaxis()->SetRangeUser(0.,3.4);
 		DiffDelpT->Draw("h");
-		p1->SaveAs(Form("difference/v%d/pT_B0.2_NoB_cen%d.pdf",harm+1,c));
+		p1->SaveAs(Form("difference/v%d/tau_init0.4_pT_B0.2_B0.4_cen%d.pdf",harm+1,c));
 		delete p1;
 
 		DiffPospT->Delete();
@@ -189,22 +193,22 @@ void CompareEffectB(Int_t cent, Int_t cmax, Int_t harm){//add writing to externa
 		TCanvas *e1 = new TCanvas("e1","EtaDifferencesB",160,200);
 		e1->Divide(1,3);
 		e1->cd(1);
-		DiffPosEta->SetTitle(Form("Centrality %d0 - %d0 #Delta [B(#tau = 0.2) - B(#tau = 0)]",c,c+1));
-                DiffPosEta->GetYaxis()->SetTitle(Form("v_{%d}(+h): B(#tau) - B(0)",harm+1));
+		DiffPosEta->SetTitle(Form("Centrality %d0 - %d0 #Delta [B(#tau = 0.4) - B(#tau = 0.2)]",c,c+1));
+                DiffPosEta->GetYaxis()->SetTitle(Form("v_{%d}(+h): B(0.4) - B(0.2)",harm+1));
                 DiffPosEta->GetXaxis()->SetTitle("#eta");
 		DiffPosEta->GetXaxis()->SetRangeUser(-0.9,0.9);
 		DiffPosEta->Draw("h");
 		e1->cd(2);
-                DiffNegEta->GetYaxis()->SetTitle(Form("v_{%d}(-h): B(#tau) - B(0)",harm+1));
+                DiffNegEta->GetYaxis()->SetTitle(Form("v_{%d}(-h): B(0.4) - B(0.2)",harm+1));
                 DiffNegEta->GetXaxis()->SetTitle("#eta");
 		DiffNegEta->GetXaxis()->SetRangeUser(-0.9,0.9);
 		DiffNegEta->Draw("h");
 		e1->cd(3);
-		DiffDelEta->GetYaxis()->SetTitle(Form("#Delta v_{%d}(+h - -h): B(#tau) - B(0)",harm+1));
+		DiffDelEta->GetYaxis()->SetTitle(Form("#Delta v_{%d}(+h - -h): B(0.4) - B(0.2)",harm+1));
 		DiffDelEta->GetXaxis()->SetTitle("#eta");
 		DiffDelEta->GetXaxis()->SetRangeUser(-0.9,0.9);
                 DiffDelEta->Draw("h");
-		e1->SaveAs(Form("difference/v%d/eta_B0.2_NoB_cen%d.pdf",harm+1,c));
+		e1->SaveAs(Form("difference/v%d/tau_init0.4_eta_B0.2_B0.4_cen%d.pdf",harm+1,c));
 		delete e1;
 
 		DiffPosEta->Delete();

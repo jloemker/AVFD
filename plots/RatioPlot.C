@@ -6,14 +6,14 @@ TFile *Published = new TFile("/project/alice/users/jlomker/AVFD/plots/published.
 //
 //producing new file for 5.02TeV with corresponding centrality
 //TFile* pT0eta0 = new TFile("/data/alice/jlomker/AVFD/result/dirID-0/new/Result_5.02TeV_pT_0_eta_0_Cent20_30.root");//
-TFile *Pb = new TFile("/data/alice/jlomker/AVFD/result/dirID-0/BField0.8/Result_5.02TeV_pT_0_eta_0_Cent20_30.root");//
+TFile *Pb = new TFile("/data/alice/jlomker/AVFD/result/dirID-0/tau_init0.3/BField0.6/Result_5.02TeV_pT_0_eta_0_Cent30_40.root");//
 
 TKey *p = (TKey*) Published->Get("Table 5;1");
 ///TList *eta0pT0 = (TList*) pT0eta0->Get("FlowQCList;1");
 TList *pb = (TList*) Pb->Get("FlowQCList;1");
 
 //20 to 30 % [positive = 0][centrality = 2][harmonic = 1 = (v2)][0]
-TH1F *h1 = (TH1F*) pb->FindObject("fFlowQCFinalPtDifHist[1][2][1][0]");//check 1 in full range->has 36 Entries 
+TH1F *h1 = (TH1F*) pb->FindObject("fFlowQCFinalPtDifHist[1][3][1][0]");//check 1 in full range->has 36 Entries 
 //TH1F *h2 =  (TH1F*) pb->FindObject("fFlowQCFinalPtDifHist[0][2][1][0]");
 /*
 // The Xe-Xe data 5.44TeV from ALICE 20-30%
@@ -70,7 +70,7 @@ h2->SetLineWidth(2);
 h2->Draw("same");  
 auto L_Ratio = new TLegend(0.2,0.7,0.48,0.9);
 L_Ratio->SetHeader("Pb-Pb, 5.02TeV, pT: 0.2 -5 GeV, #eta: 0.8","C");
-L_Ratio->AddEntry(h1,"Neg, pos, Centrality 30-40%", "l");
+L_Ratio->AddEntry(h1,"Neg, Centrality 30-40%", "l");
 //L_Ratio->AddEntry(h2,"Pb-Pb 5.02TeV pT: 0.2 - 5 GeV, #eta: 0.8 ","l");
 L_Ratio->AddEntry(h2,"ALICE,charged, Centrality 30-40%", "l");
 L_Ratio->Draw();
@@ -145,6 +145,6 @@ h3->GetXaxis()->SetTitleOffset(3.1);//otherwise 2.9 was fine
 h3->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
 h3->GetXaxis()->SetLabelSize(18);
 
-c->SaveAs("difference/Fit_NegcompareB0.8.pdf");
+c->SaveAs("difference/Fit_NegcompareB0.6_tau_init0.3.pdf");
 }
 // 

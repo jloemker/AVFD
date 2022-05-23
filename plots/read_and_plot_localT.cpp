@@ -10,6 +10,7 @@
 using namespace std;
 
 void read_and_plot_localT() {
+	const Int_t tauInit = 1;// bc ta0 = =0.tauInit
 	const Int_t nCentBin = 8;
 	const Int_t nTau = 300;//from 0.6 to 1 in dtau = 0.01
 	const Double_t dTau = 0.01;
@@ -34,9 +35,9 @@ void read_and_plot_localT() {
 		for (int ithJob = 0; ithJob <= nJob; ithJob++) {
 			string directory;
 			if (centID == 0 || centID == 1) {
-				directory = Form("/dcache/alice/jlomker/sim/TestEM/tau_init_0.6/BField0.2/Centrality%d_%d/job-%d/Result/event-1/VISHNUmovie_evolution.dat", (centID)*5, (centID+1)*5, ithJob);
+				directory = Form("/dcache/alice/jlomker/sim/TestEM/tau_init_0.%d/BField0.2/Centrality%d_%d/job-%d/Result/event-1/VISHNUmovie_evolution.dat",tauInit, (centID)*5, (centID+1)*5, ithJob);
 			} else {
-				directory = Form("/dcache/alice/jlomker/sim/TestEM/tau_init_0.6/BField0.2/Centrality%d_%d/job-%d/Result/event-1/VISHNUmovie_evolution.dat", (centID-1)*10, (centID)*10, ithJob);
+				directory = Form("/dcache/alice/jlomker/sim/TestEM/tau_init_0.%d/BField0.2/Centrality%d_%d/job-%d/Result/event-1/VISHNUmovie_evolution.dat",tauInit, (centID-1)*10, (centID)*10, ithJob);
 			}
 			std::ifstream file_dat;
 
@@ -70,7 +71,7 @@ void read_and_plot_localT() {
 		}
 	}
 
-	TFile *file = new TFile("BField/Tevolution_5.02TeV_tauInitial0.6_Blifetime_0.2.root", "RECREATE");
+	TFile *file = new TFile(Form("BField/Tevolution_5.02TeV_tauInitial0.%d_Blifetime_0.2.root", tauInit), "RECREATE");
 	for (int centID = 0; centID < 8; centID++) {
 		for (int tauID = 0; tauID <= nTau; tauID++){
 			Tlocal2D[centID][tauID]->Write();
@@ -78,4 +79,4 @@ void read_and_plot_localT() {
 	}
 	Tavge->Write();
 	file->Close();
-}
+	}

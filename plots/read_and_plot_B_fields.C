@@ -46,11 +46,11 @@ void read_and_plot_B_fields() {
 		for (int ithJob = 0; ithJob <= nJob; ithJob++) {
 			string directory;
 			if (centID == 0 || centID == 1) {
-				directory = Form("/dcache/alice/jlomker/sim/NoBField/5.02TeV/Centrality%d_%d/job-%d/Result/event-1/EMField.dat", (centID)*5, (centID+1)*5, ithJob);
+				directory = Form("/dcache/alice/jlomker/sim/tau_init0.4/BField0.2/Centrality%d_%d/job-%d/Result/event-1/EMField.dat", (centID)*5, (centID+1)*5, ithJob);
 				//directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.02TeV/Centrality%d-%d/BaselineForBField/job-%d/Result/event-1/EMField.dat", (centID)*5, (centID+1)*5, ithJob);
 				//directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality%d-%d/BaselineForBField/job-%d/Result/event-1/EMField.dat", (centID)*5, (centID+1)*5, ithJob);
 			} else {
-				directory = Form("/dcache/alice/jlomker/sim/NoBField/5.02TeV/Centrality%d_%d/job-%d/Result/event-1/EMField.dat", (centID-1)*10, (centID)*10, ithJob);
+				directory = Form("/dcache/alice/jlomker/sim/tau_init0.4/BField0.2/Centrality%d_%d/job-%d/Result/event-1/EMField.dat", (centID-1)*10, (centID)*10, ithJob);
 				//directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.02TeV/Centrality%d-%d/BaselineForBField/job-%d/Result/event-1/EMField.dat", (centID-1)*10, (centID)*10, ithJob);
 				//directory = Form("/dcache/alice/panosch/alice/sim/2020/AVFD/5.44TeV/Centrality%d-%d/BaselineForBField/job-%d/Result/event-1/EMField.dat", (centID-1)*10, (centID)*10, ithJob);
 			}
@@ -94,7 +94,7 @@ void read_and_plot_B_fields() {
 		}
 	}
 
-	TFile *file = new TFile("BField/B_fields_5.02TeV_lifetime_0.root", "RECREATE");
+	TFile *file = new TFile("BField/B_fields_tauInit0.4_5.02TeV_lifetime_0.2.root", "RECREATE");
 	for (int centID = 0; centID < 8; centID++) {
 		feBxfield2D[centID]->Write();
 		feByfield2D[centID]->Write();

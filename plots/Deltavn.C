@@ -264,7 +264,7 @@ void PlotpT(TH1F *PvpT, TH1F *NvpT, TH1F *DvpT, Int_t c, Int_t harm){
         DvpT->GetXaxis()->SetTitle("p_{T} [GeV]");
         DvpT->GetYaxis()->SetTitle(Form("#Delta v_{%d} = v_{%d}(+h) - v_{%d}(-h)",harm+1,harm+1,harm+1));
         DvpT->DrawCopy();
-        c1->SaveAs(Form("vn/BField0.2/tau_init0.1/v%d/pT_c%d.pdf",harm+1,c));
+        c1->SaveAs(Form("vn/tau_init0.4/BField0.4/v%d_pT_c%d.pdf",harm+1,c));
        delete c1;
 }
 
@@ -279,7 +279,7 @@ void PlotEta(TH1F *PvEta, TH1F *NvEta, TH1F *DvEta,Int_t c, Int_t harm){
         padeta1->cd();
         PvEta->GetXaxis()->SetRangeUser(-0.9,0.9);
 	//PvEta->GetYaxis()->SetNdivisions(4);
-        PvEta->GetYaxis()->SetRangeUser(y-y*0.35,y+y*0.35);
+        //PvEta->GetYaxis()->SetRangeUser(y-y*0.35,y+y*0.35);
 	PvEta->SetLineColor(c+1);
         PvEta->SetLineWidth(1);
         PvEta->GetYaxis()->SetTitle(Form("differential flow v_{%d}",harm+1));
@@ -319,7 +319,7 @@ void PlotEta(TH1F *PvEta, TH1F *NvEta, TH1F *DvEta,Int_t c, Int_t harm){
         DvEta->SetLineWidth(1);
         DvEta->GetYaxis()->SetTitle(Form("#Delta v_{%d} = v_{%d}(+h) - v_{%d}(-h)",harm+1,harm+1,harm+1));
         DvEta->DrawCopy();
-        cEta->SaveAs(Form("vn/BField0.2/tau_init0.1/v%d/eta_c%d.pdf",harm+1,c));
+        cEta->SaveAs(Form("vn/tau_init0.4/BField0.4/v%d_eta_c%d.pdf",harm+1,c));
         delete cEta;
 }
 
@@ -370,7 +370,7 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){//add writing to exter
 	for(Int_t c=cent; c<=cmax;c++){
 	cout<<"Centrality: "<<c<<"0-"<<(c+1)<<"0"<<endl;//actually 5.02
 	//TString input = Form("/data/alice/jlomker/AVFD/result/dirID-0/split/Results_5.02TeV_pTrange_0_eta_0_Cent%d0_%d0",c,c+1);
-	TString input = Form("/data/alice/jlomker/AVFD/result/dirID-0/TestEM/tau_init_0.1/BField0.2/split");
+	TString input = Form("/data/alice/jlomker/AVFD/result/dirID-0/tau_init0.4/BField0.4/split");
 	//("/data/alice/jlomker/AVFD/result/dirID-0/NoBField/split");
 	// !!! For harm = 0 we could also try to use the fFlowQCQv1[pos=0, neg=1][cen][pt = 0, eta = 1] !!!
 	//for(Int_t harm=0; harm<3; harm++){
@@ -452,8 +452,8 @@ void Deltavn(bool pT, Int_t cent, Int_t cmax, Int_t harm){//add writing to exter
 		copy[c]->DrawCopy("same");
 	}
 	C->Draw();
-	if(pT==true){Cen->SaveAs(Form("vn/BField0.2/tau_init0.1/v%d/Pt_Multi_cen%d_%d.pdf",harm+1,cent,cmax));}
-	else if(pT == false){Cen->SaveAs(Form("vn/BField0.2/tau_init0.1/v%d/Eta_Multi_cen%d_%d.pdf",harm+1,cent,cmax));}
+	if(pT==true){Cen->SaveAs(Form("vn/tau_init0.4/BField0.4/v%d_Pt_Multi_cen%d_%d.pdf",harm+1,cent,cmax));}
+	else if(pT == false){Cen->SaveAs(Form("vn/tau_init0.4/BField0.4/v%d_Eta_Multi_cen%d_%d.pdf",harm+1,cent,cmax));}
 	delete Cen;
 
 	//}//end of hr<fkFlowNHarm
