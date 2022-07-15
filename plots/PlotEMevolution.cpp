@@ -223,12 +223,12 @@ void PlotEMevolution(Int_t start, Int_t end) {//add legends and make shape bette
             negEx->GetXaxis()->SetTitle("#tau [fm/c]");
             negEx->GetYaxis()->SetTitleOffset(1.9);
 	    negEx->GetYaxis()->SetRangeUser(ymin,ymax);
-            negEx->SetLineColor(1);
+            negEx->SetLineColor(kBlue+1);
             negEx->GetXaxis()->SetRangeUser(0.0,0.8);
             negEx->Draw("HIST L");
-            negEy->SetLineColor(2);
+            negEy->SetLineColor(kRed+1);
             negEy->Draw("HIST L SAME");
-            negEz->SetLineColor(3);
+            negEz->SetLineColor(kGreen+1);
             negEz->Draw("HIST L SAME");
             
 	    e2->cd();

@@ -3,7 +3,7 @@ SCRIPT="runAnalysis.sh"
 dirID=0
 #while [ $dirID -le 0 ]; do
 echo "Directory ID: $dirID"
-centID=1
+centID=2
 while [ $centID -le 4 ]; do
 pTiD=0
 #while [ $pTiD -le 2 ]; do

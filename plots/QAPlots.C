@@ -5,7 +5,7 @@ void QAPlots(Int_t c){
 	//TFile *f = new TFile(Form("// data/alice/jlomker/AVFD/result/dirID-0/NoBField/Result_5.02TeV_pT_0_eta_0_Cent%d0_%d0.root",c,c+1));
 	TFile *f = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-0/tau_init0.4/BField0.2/Result_5.02TeV_pT_0_eta_0_Cent%d0_%d0.root",c,c+1));
 	//For B tau = 0.2 baseline
-	TFile *b = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-0/tau_init0.4/BField0.4/Result_5.02TeV_pT_0_eta_0_Cent%d0_%d0.root",c,c+1));
+	TFile *b = new TFile(Form("/data/alice/jlomker/AVFD/result/dirID-0/tau_init0.4/BField0.0/Result_5.02TeV_pT_0_eta_0_Cent%d0_%d0.root",c,c+1));
 
 	TList *l = (TList*) f->Get("QAList;1");
 	TList *lb = (TList*) b->Get("QAList;1");
@@ -92,5 +92,5 @@ void QAPlots(Int_t c){
 	Phi->SetLineColor(2);
 	Phi->Scale(1/N->Integral());
 	Phi->Draw("SAME");
-	c1->SaveAs(Form("controlPlots/QA_tau0.4_B0.4_vs_B0.2_C%d0_%d0.pdf",c,c+1));
+	c1->SaveAs(Form("controlPlots/QA_test_C%d0_%d0.pdf",c,c+1));
 }

@@ -147,49 +147,63 @@ void ThesisVn(){
 
         	short Col1,Col2;
         	double ymin, ymax,dmin,dmax;
-        	double x1,x2,y1,y2;
+        	double x1,x11,x2,x22,y1,y11,y2,y22;
         	TString flow;
         	if(harm == 0){
         	Col1 = kOrange;
         	Col2 = kRed;
         	ymin = -0.001;
-        	ymax = 0.023;
-        	dmin = -0.015;
-        	dmax = 0.015;
+        	ymax = 0.024;
+        	dmin = -0.011;
+        	dmax = 0.013;
         	x1 = 0.22;
-        	x2 = 0.72;
-        	y1 = 0.65;
-        	y2 = 0.89;
-        	flow = "direct";}
+        	x2 = 0.68;
+        	y1 = 0.59;
+        	y2 = 0.83;
+		x11 = 0.53;
+		x22 = 0.99;
+		y11 = 0.59;
+		y22 = 0.83;
+        	flow = "directed";}
         	if(harm == 1){
         	Col1 = kMagenta;
         	Col2 = kViolet;
-        	ymin = -0.001;
+        	ymin = -0.01;
         	ymax = 0.31;
         	dmin = -0.031;
-        	dmax = 0.033;
+        	dmax = 0.023;
         	x1 = 0.22;
-        	x2 = 0.72;
-        	y1 = 0.65;
-        	y2 = 0.89;
+        	x2 = 0.58;
+        	y1 = 0.59;
+        	y2 = 0.84;
+                x11 = 0.63;
+                x22 = 0.99;
+                y11 = 0.01;
+                y22 = 0.26;
         	flow = "elliptic";}
         	if(harm == 2){
         	Col1 = kGreen;
         	Col2 = kBlue;
         	ymin = -0.01;
         	ymax = 0.18;
-        	dmin = -0.051;
-        	dmax = 0.051;
-        	x1 = 0.39;
-        	x2 = 0.89;
-        	y1 = 0.01;
-        	y2 = 0.25;
+        	dmin = -0.044;
+        	dmax = 0.034;
+                x1 = 0.22;
+                x2 = 0.58;
+                y1 = 0.59;
+                y2 = 0.84;
+                x11 = 0.63;
+                x22 = 0.99;
+                y11 = 0.01;
+                y22 = 0.26;
         	flow = "triangular";}
 
        		TCanvas *c1= new TCanvas("c1", "canvas", 800, 800);//upper plot in pad1
         	TPad *pad1 = new TPad("pad1", "pad1", 0, 0.4, 1., 1.0);
         	pad1->SetBottomMargin(0); // Upper and lower plot are joined
-        	pad1->SetLeftMargin(0.2);
+        	pad1->SetTopMargin(0.16);
+		pad1->SetLeftMargin(0.2);
+		pad1->SetRightMargin(0.05);
         	pad1->Draw();             // Draw the upper pad: pad1
         	pad1->cd();               // pad1 becomes the current pad//and filled with pos
         	double f1 = (pad1->GetWNDC())*(pad1->GetHNDC());
@@ -198,9 +212,11 @@ void ThesisVn(){
         	PvpT1->SetLineColor(Col1+1);
         	PvpT1->SetLineWidth(1);
         	PvpT1->GetYaxis()->SetTitle("differential "+flow+Form(" flow #nu_{%d}",harm+1));
-       		PvpT1->GetYaxis()->SetTitleSize(0.12*(1-f1));
-        	PvpT1->GetYaxis()->SetLabelSize(0.1*(1-f1));
-        	PvpT1->GetYaxis()->SetTitleOffset((2*f1));
+		PvpT1->GetYaxis()->CenterTitle();
+       		PvpT1->GetYaxis()->SetTitleSize(0.18*(1-f1));
+        	PvpT1->GetYaxis()->SetLabelSize(0.18*(1-f1));
+        	PvpT1->GetYaxis()->SetTitleOffset((1.75-f1));
+		PvpT1->GetYaxis()->SetNdivisions(6);
 		PvpT1->SetStats(0);
         	PvpT1->SetMarkerStyle(22);
         	PvpT1->SetMarkerColor(Col1+1);
@@ -228,30 +244,55 @@ void ThesisVn(){
         	NvpT4->SetTitle(" ");
         	NvpT4->DrawCopy("same");
 
-        	auto L1 = new TLegend(x1,y1,x2,y2);
-        	L1->SetTextSize(0.04);
-        	L1->SetHeader("#bf{AVFD Simulation Pb-Pb} @ #sqrt{s} = 5.02TeV","C");
-        	L1->SetTextSize(0.03);//L2->SetTextAlign(11);//or13
-        	L1->AddEntry((TObject*)0, "p_{T} #in {0.2,5} GeV, |#eta| #leq 0.8"," ");
-        	L1->AddEntry((TObject*)0, "#tau_{0} = 0.4 fm/c, #tau_{B} = 0.2 fm/c"," ");
-        	L1->SetEntrySeparation(0.006);
-        	L1->SetNColumns(2); 
-	        L1->AddEntry(PvpT1,Form("+h, Centrality 10%%-20%%"), "lep");
-        	L1->AddEntry(PvpT4,Form("+h, Centrality 40%%-50%%"), "lep");
-		L1->AddEntry(NvpT1,Form("-h, Centrality 10%%-20%%"), "lep");
-        	L1->AddEntry(NvpT4,Form("-h, Centrality 40%%-50%%"), "lep");
-		L1->AddEntry(DvpT1,Form("#Delta q, Centrality 10%%-20%%"), "lep");
-		L1->AddEntry(DvpT4,Form("#Delta q, Centrality 40%%-50%%"), "lep");
+		auto L0 = new TLegend(0.05,0.9,0.95,1);
+		L0->SetTextSize(0.035);
+		L0->SetHeader("#bf{AVFD Pb-Pb} @ #sqrt{s} = 5.02TeV, #tau_{0} = 0.4 fm/c, #tau_{B} = 0.2 fm/c, |#eta| #leq 0.8 ","C");
+		L0->SetFillStyle(0);
+		L0->SetBorderSize(0);
+
+		auto L01 = new TLegend(x1+0.006,0.3,x2+0.006,0.42);
+		L01->SetNColumns(2);
+		L01->SetTextSize(0.033);//L01->AddEntry(DvpT1,Form("#Delta q, Cent. 10%%-20%%"), "lep");
+                L01->AddEntry(DvpT4,Form("#bf{#Delta q, 40%%-50%%}"), "lep");
+                L01->SetBorderSize(0);
+                L01->SetFillStyle(0);
+
+                auto L011 = new TLegend(x1+0.006,0.06,x2+0.006,0.18);
+                L011->SetNColumns(2);
+                L011->SetTextSize(0.033);
+                L011->AddEntry(DvpT1,Form("#bf{#Delta q, 10%%-20%%}"), "lep");
+                //L011->AddEntry(DvpT4,Form("#Delta q, Cent. 40%%-50%%"), "lep");
+                L011->SetBorderSize(0);
+                L011->SetFillStyle(0);
+
+        	auto L1 = new TLegend(x1,y1,x2,y2);//L1->SetTextSize(0.04);//L1->SetHeader("#bf{AVFD Simulation Pb-Pb} @ #sqrt{s} = 5.02TeV","C");
+        	L1->SetTextSize(0.055);//L2->SetTextAlign(11);//or13 //L1->SetEntrySeparation(0.06);//L1->SetNColumns(2); 
+	        //L1->AddEntry(PvpT1,Form("+h, Cent. 10%%-20%%"), "lep");
+        	L1->AddEntry(PvpT4,Form("#bf{+h, 40%%-50%%}"), "lep");
+		//L1->AddEntry(NvpT1,Form("-h, Cent. 10%%-20%%"), "lep");
+        	L1->AddEntry(NvpT4,Form("#bf{-h, 40%%-50%%}"), "lep");//L1->AddEntry(DvpT1,Form("#Delta q, Centrality 10%%-20%%"), "lep");//L1->AddEntry(DvpT4,Form("#Delta q, Centrality 40%%-50%%"), "lep");
 		L1->SetBorderSize(0);
 	        L1->SetFillStyle(0);
 		L1->Draw();
 
+                auto L11 = new TLegend(x11,y11,x22,y22);//L1->SetTextSize(0.04);//L1->SetHeader("#bf{AVFD Simulation Pb-Pb} @ #sqrt{s} = 5.02TeV","C");
+                L11->SetTextSize(0.055);//L2->SetTextAlign(11);//or13 //L1->SetEntrySeparation(0.06);//L1->SetNColumns(2);
+                L11->AddEntry(PvpT1,Form("#bf{+h, 10%%-20%%}"), "lep");
+                //L11->AddEntry(PvpT4,Form("+h, Cent. 40%%-50%%"), "lep");
+                L11->AddEntry(NvpT1,Form("#bf{-h, 10%%-20%%}"), "lep");
+                //L11->AddEntry(NvpT4,Form("-h, Cent. 40%%-50%%"), "lep");//L1->AddEntry(DvpT1,Form("#Delta q, Centrality 10%%-20%%"), "lep");//L1->AddEntry(DvpT4,Form("#Delta q, Centrality 40%%-50%%"), "lep");
+                L11->SetBorderSize(0);
+                L11->SetFillStyle(0);
+                L11->Draw();
+
         	c1->cd();          // Go back to the main canvas before defining pad2
-        	TPad *pad2 = new TPad("pad2", "pad2", 0, 0., 1, 0.4);
+        	L0->Draw();
+		TPad *pad2 = new TPad("pad2", "pad2", 0, 0., 1, 0.4);
         	pad2->SetTopMargin(0);
         	pad2->SetLeftMargin(0.2);      //pad2->SetRightMargin(4.);
-        	pad2->SetBottomMargin(0.2);
-        	pad2->SetGridx(); // vertical grid
+        	pad2->SetBottomMargin(0.23);
+		pad2->SetRightMargin(0.05);
+        	//pad2->SetGridx(); // vertical grid
         	pad2->Draw();
         	pad2->cd();
 		double f2 = (pad2->GetWNDC())*(pad2->GetHNDC());
@@ -264,13 +305,14 @@ void ThesisVn(){
         	DvpT1->SetLineColor(Col1+2);
         	DvpT1->SetLineWidth(1);
         	DvpT1->GetXaxis()->SetTitle("p_{T} [GeV]");
-        	DvpT1->GetYaxis()->SetTitle(Form("difference #nu_{%d}(+h) - #nu_{%d}(-h)",harm+1,harm+1));
-        	DvpT1->GetYaxis()->SetTitleSize(0.12*(1-f2));
-        	DvpT1->GetYaxis()->SetLabelSize(0.1*(1-f2));
-	        DvpT1->GetYaxis()->SetNdivisions(7);
-        	DvpT1->GetXaxis()->SetTitleSize(0.12*(1-f2));
-	        DvpT1->GetXaxis()->SetLabelSize(0.1*(1-f2));
-	        DvpT1->GetYaxis()->SetTitleOffset((1.15-f2));
+        	DvpT1->GetYaxis()->SetTitle(Form("#nu_{%d}(+h) - #nu_{%d}(-h)",harm+1,harm+1));
+        	DvpT1->GetYaxis()->CenterTitle();
+		DvpT1->GetYaxis()->SetTitleSize(0.17*(1-f2));
+        	DvpT1->GetYaxis()->SetLabelSize(0.18*(1-f2));
+	        DvpT1->GetYaxis()->SetNdivisions(4);
+        	DvpT1->GetXaxis()->SetTitleSize(0.16*(1-f2));
+	        DvpT1->GetXaxis()->SetLabelSize(0.18*(1-f2));
+	        DvpT1->GetYaxis()->SetTitleOffset((1.17-f2));
 		DvpT1->DrawCopy();
         
 		DvpT4->SetMarkerStyle(24);
@@ -279,6 +321,9 @@ void ThesisVn(){
         	DvpT4->SetLineColor(Col2+2);
         	DvpT4->SetLineWidth(1);
         	DvpT4->DrawCopy("same");
+		c1->cd();
+		L01->Draw();
+		L011->Draw();
         	c1->SaveAs(Form("vn/v%d_pT.pdf",harm+1));
        		delete c1;
 
@@ -317,15 +362,15 @@ void ThesisVn(){
 		if(harm == 0){
         	Col1 = kOrange;
         	Col2 = kRed;
-        	ymin = -0.001;
-        	ymax = 0.006;
+        	ymin = -0.0005;
+        	ymax = 0.0055;
         	dmin = -0.0081;
 	        dmax = 0.0081;
         	x1 = 0.22;
 	        x2 = 0.72;
-        	y1 = 0.65;
-	        y2 = 0.89;
-		flow = "direct";}
+        	y1 = 0.59;
+	        y2 = 0.83;
+		flow = "directed";}
 	        if(harm == 1){
         	Col1 = kMagenta;
         	Col2 = kViolet;
@@ -335,26 +380,28 @@ void ThesisVn(){
         	dmax = 0.011;
         	x1 = 0.22;
         	x2 = 0.72;
-        	y1 = 0.36;
-        	y2 = 0.60;
+        	y1 = 0.26;
+        	y2 = 0.50;
 		flow = "elliptic";}
         	if(harm == 2){
         	Col1 = kGreen;
         	Col2 = kBlue;
         	ymin = 0.015;
         	ymax = 0.055;
-        	dmin = -0.021;
-        	dmax = 0.021;
+        	dmin = -0.022;
+        	dmax = 0.023;
         	x1 = 0.22;
         	x2 = 0.72;
-        	y1 = 0.64;
-        	y2 = 0.88;
+        	y1 = 0.60;
+        	y2 = 0.84;
 		flow = "triangular";}
 
         	TCanvas *cEta = new TCanvas("ceta", "etacanvas", 800, 800);
         	TPad *padeta1 = new TPad("padeta1", "padeta1", 0, 0.4, 1., 1.);
         	padeta1->SetBottomMargin(0);
+		padeta1->SetTopMargin(0.16);
         	padeta1->SetLeftMargin(0.2);
+		padeta1->SetRightMargin(0.05);
         	padeta1->Draw();
         	padeta1->cd();
 		double f3 = (padeta1->GetWNDC())*(padeta1->GetHNDC());
@@ -364,9 +411,11 @@ void ThesisVn(){
         	PvEta1->SetLineColor(Col1+1);
         	PvEta1->SetLineWidth(1);
         	PvEta1->GetYaxis()->SetTitle("differential "+flow+" flow "+Form("#nu_{%d}",harm+1));
-        	PvEta1->GetYaxis()->SetTitleSize(0.12*(1-f3));
-		PvEta1->GetYaxis()->SetLabelSize(0.1*(1-f3));
-		PvEta1->GetYaxis()->SetTitleOffset((2*f3));
+		PvEta1->GetYaxis()->CenterTitle();
+        	PvEta1->GetYaxis()->SetTitleSize(0.18*(1-f3));
+		PvEta1->GetYaxis()->SetLabelSize(0.18*(1-f3));
+		PvEta1->GetYaxis()->SetTitleOffset((1.85-f3));
+		PvEta1->GetYaxis()->SetNdivisions(6);
 		//PvEta1->GetYaxis()->CenterTitle(true);
 		PvEta1->SetStats(0);
 		//PvEta1->GetYaxis()->SetNdivisions(6);
@@ -394,29 +443,48 @@ void ThesisVn(){
         	NvEta4->SetMarkerColor(Col2+3);
         	NvEta4->DrawCopy("same");
 
+                auto L0E = new TLegend(0.05,0.9,0.95,1);
+                L0E->SetTextSize(0.032);
+                L0E->SetHeader("#bf{AVFD Pb-Pb} @ #sqrt{s} = 5.02TeV, #tau_{0} = 0.4 fm/c, #tau_{B} = 0.2 fm/c, p_{T} #in [0.2,5]GeV ","C");
+                L0E->SetFillStyle(0);
+                L0E->SetBorderSize(0);
+
+                auto L02 = new TLegend(x1,0.3,x2,0.4);
+                L02->SetNColumns(2);
+		L02->SetColumnSeparation(0.75);
+		L02->SetTextSize(0.035);
+                L02->AddEntry(DvEta1,Form("#bf{#Delta q, 10%%-20%%}"), "lep");
+                L02->AddEntry(DvEta4,Form("#bf{#Delta q, 40%%-50%%}"), "lep");
+                L02->SetBorderSize(0);
+                L02->SetFillStyle(0);
+
         	auto L2 = new TLegend(x1,y1,x2,y2);
-		L2->SetTextSize(0.04);
-        	L2->SetHeader("#bf{AVFD Simulation Pb-Pb} @ #sqrt{s} = 5.02TeV","C");
-		L2->SetTextSize(0.03);//L2->SetTextAlign(11);//or13
-		L2->AddEntry((TObject*)0, "p_{T} #in {0.2,5} GeV, |#eta| #leq 0.8"," ");
-        	L2->AddEntry((TObject*)0, "#tau_{0} = 0.4 fm/c, #tau_{B} = 0.2 fm/c"," ");
-		L2->SetEntrySeparation(0.006);
+		//L2->SetTextSize(0.04);
+        	//L2->SetHeader("#bf{AVFD Simulation Pb-Pb} @ #sqrt{s} = 5.02TeV","C");
+		L2->SetTextSize(0.056);//L2->SetTextAlign(11);//or13
+		//L2->AddEntry((TObject*)0, "p_{T} #in {0.2,5} GeV, |#eta| #leq 0.8"," ");
+        	//L2->AddEntry((TObject*)0, "#tau_{0} = 0.4 fm/c, #tau_{B} = 0.2 fm/c"," ");
+		//L2->SetColumnSeparation(0.009);
 		L2->SetNColumns(2);
-		L2->AddEntry(PvEta1,Form("+h, Centrality 10%%-20%%"), "lep");
-        	L2->AddEntry(PvEta4,Form("+h, Centrality 40%%-50%%"), "lep");
-        	L2->AddEntry(NvEta1,Form("-h, Centrality 10%%-20%%"), "lep");
-		L2->AddEntry(NvEta4,Form("-h, Centrality 40%%-50%%"), "lep");
-		L2->AddEntry(DvEta1,Form("#Delta q, Centrality 10%%-20%%"),"lep");
-		L2->AddEntry(DvEta4,Form("#Delta q, Centrality 40%%-50%%"), "lep");
+                L2->SetColumnSeparation(0.75);
+		if(harm == 0){L2->SetColumnSeparation(0.1);}
+		L2->AddEntry(PvEta1,Form("#bf{+h, 10%%-20%%}"), "lep");
+        	L2->AddEntry(PvEta4,Form("#bf{+h, 40%%-50%%}"), "lep");
+        	L2->AddEntry(NvEta1,Form("#bf{-h, 10%%-20%%}"), "lep");
+		L2->AddEntry(NvEta4,Form("#bf{-h, 40%%-50%%}"), "lep");
+		//L2->AddEntry(DvEta1,Form("#Delta q, Centrality 10%%-20%%"),"lep");
+		//L2->AddEntry(DvEta4,Form("#Delta q, Centrality 40%%-50%%"), "lep");
 		L2->SetBorderSize(0);
 		L2->SetFillStyle(0);
 		L2->Draw();
         	cEta->cd();
+		L0E->Draw();
+
         	TPad *padeta2 = new TPad("padeta2", "padeta2", 0, 0., 1, 0.4);
         	padeta2->SetTopMargin(0);
         	padeta2->SetLeftMargin(0.2);       //padeta2->SetRightMargin(4.);
-        	padeta2->SetBottomMargin(0.2);
-        	padeta2->SetGridx();
+        	padeta2->SetBottomMargin(0.23);
+        	padeta2->SetRightMargin(0.05);
         	padeta2->Draw();
         	padeta2->cd();
 		double f4 = (padeta2->GetWNDC())*(padeta2->GetHNDC());
@@ -430,21 +498,24 @@ void ThesisVn(){
         	DvEta1->SetMarkerColor(Col1+2);
         	DvEta1->SetLineColor(Col1+2);
         	DvEta1->SetLineWidth(1);
-        	DvEta1->GetYaxis()->SetTitle(Form("difference #nu_{%d}(+h) - #nu_{%d}(-h)",harm+1,harm+1));
-		DvEta1->GetYaxis()->SetTitleSize(0.12*(1-f4));
-        	DvEta1->GetYaxis()->SetLabelSize(0.1*(1-f4));
-		DvEta1->GetYaxis()->SetNdivisions(7);
-		DvEta1->GetXaxis()->SetTitleSize(0.12*(1-f4));
-		DvEta1->GetXaxis()->SetLabelSize(0.1*(1-f4));
-		DvEta1->GetYaxis()->SetTitleOffset((1.15-f4));
+        	DvEta1->GetYaxis()->SetTitle(Form("#nu_{%d}(+h) - #nu_{%d}(-h)",harm+1,harm+1));
+		DvEta1->GetYaxis()->SetTitleSize(0.17*(1-f4));
+        	DvEta1->GetYaxis()->CenterTitle();
+		DvEta1->GetYaxis()->SetLabelSize(0.18*(1-f4));
+		DvEta1->GetYaxis()->SetNdivisions(4);
+		DvEta1->GetXaxis()->SetTitleSize(0.16*(1-f4));
+		DvEta1->GetXaxis()->SetLabelSize(0.17*(1-f4));
+		DvEta1->GetYaxis()->SetTitleOffset((1.2-f4));
 		DvEta1->Draw();
 		DvEta4->SetMarkerStyle(24);
 		DvEta4->SetMarkerColor(Col2+2);
 		DvEta4->SetLineColor(Col2+2);
 		DvEta4->SetLineWidth(1);
 		DvEta4->DrawCopy("same");
-        	cEta->SaveAs(Form("vn/v%d_eta.pdf",harm+1));
-        	delete cEta;
+        	cEta->cd();
+		L02->Draw();
+                cEta->SaveAs(Form("vn/v%d_eta.pdf",harm+1));
+		delete cEta;
 
 	
         	PvEta1->Delete();
